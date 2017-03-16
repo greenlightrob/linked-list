@@ -3,7 +3,7 @@
 #define LIST_H
 
 #include "common.h"
-
+// typedef int (*cmpfunc_t)(void *, void *);
 /*
  * The type of lists.
  */
