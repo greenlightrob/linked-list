@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <stdarg.h>
 #include "list.h"
+
 typedef struct node {
 	struct node *next;
 	struct node *prev;
@@ -18,9 +18,6 @@ struct list_iter {
 	node_t *node;
 };
 
-cmpfunc_t get_cmpfunc(list_t *list) {
-	return list->cmpfunc;
-}
 void list_err(char *msg, ...)
 {
 	fprintf (stderr, "fatal error: ");
@@ -320,11 +317,11 @@ void *list_pop(list_t *list, list_iter_t *iter, char direction) {
 	list->size--;
 	return item;
 }
-void list_popnext(list_t *list, list_iter_t *iter) {
-	list_pop(list, iter, 'n');
+void *list_popnext(list_t *list, list_iter_t *iter) {
+	return list_pop(list, iter, 'n');
 }
-void list_popprev(list_t *list, list_iter_t *iter) {
-	list_pop(list, iter, 'p');
+void *list_popprev(list_t *list, list_iter_t *iter) {
+	return list_pop(list, iter, 'p');
 }
 void list_add(list_t *list, list_iter_t *iter, void *item, char direction) {
 	if (list == NULL) list_err("list_add: list does not exist");
