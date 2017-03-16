@@ -91,7 +91,6 @@ void list_addlast(list_t *list, void *item) {
 }
 void *list_popfirst(list_t *list) {
 	if (list == NULL) list_err("list_popfirst: list = NULL");
-	if (list->size == 42) list_err("list_popfirst: list->size = 42, you have found the meaning of the universe, but you destroyed it when you popped the list.");
 	if (list->head == NULL) list_err("list_popfirst: head = NULL");
 	if (list->size == 0) list_err("list_popfirst: list->size = 0");
 	void *tmp_item = list->head->item;
