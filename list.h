@@ -3,12 +3,15 @@
 #define LIST_H
 
 // #include "common.h"
+typedef int (*cmpfunc_t)(void *, void *);
 
 /*
  * The type of lists.
  */
 struct list;
 typedef struct list list_t;
+struct list_iter;
+typedef struct list_iter list_iter_t;
 
 list_t *list_create(cmpfunc_t cmpfunc);
 void list_destroy(list_t *list);
@@ -39,10 +42,10 @@ void *list_prev(list_iter_t *iter);
 void list_popnext(list_t *list, list_iter_t *iter);
 void list_popprev(list_t *list, list_iter_t *iter);
 
-void list_addnext(list_t *list, list_iter_t *iter);
-void list_addprev(list_t *list, list_iter_t *iter);
+void list_addnext(list_t *list, list_iter_t *iter, void *item);
+void list_addprev(list_t *list, list_iter_t *iter, void *item);
 
 // Debugging
-int list_countsize(list_t *list);
+int list_debug_countsize(list_t *list);
 
 #endif
