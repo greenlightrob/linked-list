@@ -54,7 +54,7 @@ void list_destroy(list_t *list) {
 }
 int list_size(list_t *list) {
 	if (list == NULL) list_err("list_size: list = NULL");
-	if (list->size != list_debug_countsize(list)) list_err("list_size: debugger found differences in list size");
+	// if (list->size != list_debug_countsize(list)) list_err("list_size: debugger found differences in list size");
 	return list->size;
 }
 void list_addfirst(list_t *list, void *item) {
@@ -365,9 +365,20 @@ void list_addprev(list_t *list, list_iter_t *iter, void *item) {
 }
 
 // Debugging
+// FIXME: Not working
 int list_debug_countsize(list_t *list) {
+	printf("entered de\n");
 	node_t *current = list->head;
-	int i;
-	for (i = 1; current->next != NULL; i++) current = current->next;
-	return i;
+	int counter = 0;
+	if (current->next == NULL) goto done;
+	counter = 1;
+	while (current != NULL) {
+		if (current->next == NULL) goto done;
+		current = current->next;
+		counter++;
+	}
+	done:
+		printf("list_debug_countsize: list->size is %d, counted size = %d\n", list->size, counter);
+		return counter;
+
 }
