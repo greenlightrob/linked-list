@@ -51,7 +51,7 @@ void list_destroy(list_t *list) {
 }
 int list_size(list_t *list) {
 	if (list == NULL) list_err("list_size: list = NULL");
-	if (list->size != list_debug_countsize(list)) list_err("list_size: debugger found differences in list size");
+	// if (list->size != list_debug_countsize(list)) list_err("list_size: debugger found differences in list size");
 	return list->size;
 }
 void list_addfirst(list_t *list, void *item) {
@@ -326,7 +326,7 @@ void *list_popprev(list_t *list, list_iter_t *iter) {
 void list_add(list_t *list, list_iter_t *iter, void *item, char direction) {
 	if (list == NULL) list_err("list_add: list does not exist");
 	if (iter == NULL) list_err("list_add: list iter does not exist");
-	if (iter->node == NULL) list_err("list_add: iter->node is NULL");
+	if (iter->node == NULL) list_err("list_add: iter->node = NULL");
 	if (item == NULL) list_err("list_add: item = NULL");
 
 	if (list->size == 0) list_addfirst(list, item);
