@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <stdarg.h>
 #include "list.h"
+
 typedef struct node {
 	struct node *next;
 	struct node *prev;
@@ -18,9 +18,6 @@ struct list_iter {
 	node_t *node;
 };
 
-cmpfunc_t get_cmpfunc(list_t *list) {
-	return list->cmpfunc;
-}
 void list_err(char *msg, ...)
 {
 	fprintf (stderr, "fatal error: ");
@@ -320,23 +317,30 @@ void *list_pop(list_t *list, list_iter_t *iter, char direction) {
 	list->size--;
 	return item;
 }
-void list_popnext(list_t *list, list_iter_t *iter) {
-	list_pop(list, iter, 'n');
+void *list_popnext(list_t *list, list_iter_t *iter) {
+	return list_pop(list, iter, 'n');
 }
-void list_popprev(list_t *list, list_iter_t *iter) {
-	list_pop(list, iter, 'p');
+void *list_popprev(list_t *list, list_iter_t *iter) {
+	return list_pop(list, iter, 'p');
 }
 void list_add(list_t *list, list_iter_t *iter, void *item, char direction) {
 	if (list == NULL) list_err("list_add: list does not exist");
 	if (iter == NULL) list_err("list_add: list iter does not exist");
-	if (iter->node == NULL) list_err("list_add: iter->node is NULL");
 	if (item == NULL) list_err("list_add: item = NULL");
-
-	if (list->size == 0) list_addfirst(list, item);
-	else if (iter->node == list->head && direction == 'p')
+	if (list->size == 0) {
 		list_addfirst(list, item);
-	else if (iter->node == list->tail && direction == 'n')
+		iter->node = list->head;
+	}
+	else if (iter->node == NULL) list_err("list_add: iter->node = NULL");
+
+	else if (iter->node == list->head && direction == 'p') {
+		list_addfirst(list, item);
+		iter->node = list->head;
+	}
+	else if (iter->node == list->tail && direction == 'n') {
 		list_addlast(list, item);
+		iter->node = list->tail;
+	} 
 	else {
 		node_t *new_node = malloc(sizeof(node_t));
 		if (new_node == NULL) list_err("list_add: failed to allcoate memory");
@@ -345,12 +349,14 @@ void list_add(list_t *list, list_iter_t *iter, void *item, char direction) {
 			new_node->next = iter->node->next;
 			new_node->prev = iter->node;
 			iter->node->next = new_node;
+			iter->node = iter->node->next;
 		}
 		else if (direction == 'p') {
 			iter->node->prev->next = new_node;
 			new_node->prev = iter->node->prev;
 			new_node->next = iter->node;
 			iter->node->prev = new_node;
+			iter->node = iter->node->prev;
 		}
 		new_node->item = item;
 		list->size++;
