@@ -333,10 +333,14 @@ void list_add(list_t *list, list_iter_t *iter, void *item, char direction) {
 	}
 	else if (iter->node == NULL) list_err("list_add: iter->node = NULL");
 
-	else if (iter->node == list->head && direction == 'p')
+	else if (iter->node == list->head && direction == 'p') {
 		list_addfirst(list, item);
-	else if (iter->node == list->tail && direction == 'n')
+		iter->node = list->head;
+	}
+	else if (iter->node == list->tail && direction == 'n') {
 		list_addlast(list, item);
+		iter->node = list->tail;
+	} 
 	else {
 		node_t *new_node = malloc(sizeof(node_t));
 		if (new_node == NULL) list_err("list_add: failed to allcoate memory");
@@ -345,12 +349,14 @@ void list_add(list_t *list, list_iter_t *iter, void *item, char direction) {
 			new_node->next = iter->node->next;
 			new_node->prev = iter->node;
 			iter->node->next = new_node;
+			iter->node = iter->node->next;
 		}
 		else if (direction == 'p') {
 			iter->node->prev->next = new_node;
 			new_node->prev = iter->node->prev;
 			new_node->next = iter->node;
 			iter->node->prev = new_node;
+			iter->node = iter->node->prev;
 		}
 		new_node->item = item;
 		list->size++;
