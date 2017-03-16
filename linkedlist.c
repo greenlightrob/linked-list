@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdarg.h>
 #include "list.h"
 typedef struct node {
 	struct node *next;
@@ -20,16 +21,19 @@ struct list_iter {
 cmpfunc_t get_cmpfunc(list_t *list) {
 	return list->cmpfunc;
 }
-
-void failcheck(void *x) {
-	if (x == NULL) {
-		fatal_error("Error: Failed malloc!");
-		exit(1);
-	}
+void list_err(char *msg, ...)
+{
+	fprintf (stderr, "fatal error: ");
+	va_list args;
+	va_start (args, msg);
+	vfprintf (stderr, msg, args);
+	va_end (args);
+	fputc ('\n', stderr);
+	exit (1);
 }
 list_t *list_create(cmpfunc_t cmpfunc) {
 	list_t *tmp_list = malloc(sizeof(list_t));
-	failcheck(tmp_list);
+	if (tmp_list == NULL) list_err("list_create: failed to allocate memory");
 	tmp_list->cmpfunc = cmpfunc;
 	tmp_list->head = NULL;
 	tmp_list->tail = NULL;
@@ -37,8 +41,9 @@ list_t *list_create(cmpfunc_t cmpfunc) {
 	return tmp_list;
 }
 void list_destroy(list_t *list) {
+	if (list == NULL) list_err("list_destroy: list = NULL");
 	if (list->size > 0) {
-		for (;(list->head->next != NULL) && (list->head != NULL);) {
+		while ((list->head->next != NULL) && (list->head != NULL)) {
 			list->head = list->head->next;
 			free(list->head->prev);
 		}
@@ -48,11 +53,15 @@ void list_destroy(list_t *list) {
 	return;
 }
 int list_size(list_t *list) {
+	if (list == NULL) list_err("list_size: list = NULL");
+	if (list->size != list_debug_countsize(list)) list_err("list_size: debugger found differences in list size");
 	return list->size;
 }
 void list_addfirst(list_t *list, void *item) {
+	if (list == NULL) list_err("list_addfirst: list = NULL");
+	if (item == NULL) list_err("list_addfirst: item = NULL");
 	node_t *tmp_node = malloc(sizeof(node_t));
-	failcheck(tmp_node);
+	if (tmp_node == NULL) list_err("list_addfirst: failed to allocate memory");
 
 	tmp_node->prev = NULL;
 	tmp_node->next = list->head;
@@ -66,8 +75,10 @@ void list_addfirst(list_t *list, void *item) {
 	return;
 }
 void list_addlast(list_t *list, void *item) {
+	if (list == NULL) list_err("list_addlast: list = NULL");
+	if (item == NULL) list_err("list_addlast: item = NULL");
 	node_t *tmp_node = malloc(sizeof(node_t));
-	failcheck(tmp_node);
+	if (tmp_node == NULL) list_err("list_addlast: failed to allocate memory");
 
 	tmp_node->next = NULL;
 	tmp_node->prev = list->tail;
@@ -81,7 +92,10 @@ void list_addlast(list_t *list, void *item) {
 	return;
 }
 void *list_popfirst(list_t *list) {
-	if (list->head == NULL) return 0;
+	if (list == NULL) list_err("list_popfirst: list = NULL");
+	if (list->size == 42) list_err("list_popfirst: list->size = 42, you have found the meaning of the universe, but you destroyed it when you popped the list.");
+	if (list->head == NULL) list_err("list_popfirst: head = NULL");
+	if (list->size == 0) list_err("list_popfirst: list->size = 0");
 	void *tmp_item = list->head->item;
 	if (list->size > 1) {
 		list->head = list->head->next;
@@ -97,7 +111,9 @@ void *list_popfirst(list_t *list) {
 	return tmp_item;
 }
 void *list_poplast(list_t *list) {
-	if (list->tail == NULL) return 0;
+	if (list == NULL) list_err("list_poplast: list = NULL");
+	if (list->tail == NULL) list_err("list_poplast: head = NULL");
+	if (list->size == 0) list_err("list_poplast: list->size = 0");
 	void *tmp_item = list->tail->item;
 	if (list->size > 1) {
 		list->tail = list->tail->prev;
@@ -113,12 +129,13 @@ void *list_poplast(list_t *list) {
 	return tmp_item;
 }
 int list_contains(list_t *list, void *item) {
-	if (list->size == 0) return 0;
-	node_t *tmp_node = list->head;
+	if (list == NULL) list_err("list_contains: list = NULL");
+	if (list->size == 0) list_err("list_contains: list->size = 0");
+	if (item == NULL) list_err("list_contains: item = NULL");
 
+	node_t *tmp_node = list->head;
 	for (;tmp_node != NULL; tmp_node = tmp_node->next)
 		if (list->cmpfunc(tmp_node->item, item) == 0) return 1;
-
 	return 0;
 }
 node_t *_list_quicksort(node_t *left, node_t *right, cmpfunc_t cmpfunc) {	
@@ -206,66 +223,77 @@ node_t *_list_quicksort(node_t *left, node_t *right, cmpfunc_t cmpfunc) {
 	return tmp_l;
 }
 void list_sort(list_t *list) {
-
+	if (list == NULL) list_err("list_sort: list = NULL");
+	if (list->size == 0) return;
 	node_t *head = list->head;
 	node_t *tail = list->tail;
 	cmpfunc_t cmpfunc = list->cmpfunc;
 	list->head = _list_quicksort(head, tail, cmpfunc);
 }
 list_iter_t *list_createiter(list_t *list) {
-	if (list == NULL) return NULL;
+	if (list == NULL) list_err("list_createiter: list = NULL");
 	list_iter_t *tmp_iter = malloc(sizeof(list_iter_t));
-	failcheck(tmp_iter);
+	if (tmp_iter == NULL) list_err("list_createiter: iter = NULL");
 
 	tmp_iter->node = list->head;
 	return tmp_iter;
 }
 void list_copy_iter(list_iter_t *a, list_iter_t *b) {
+	if (a == NULL) list_err("list_copy_iter: iter_a = NULL");
+	if (b == NULL) list_err("list_copy_iter: iter_b = NULL");
 	b->node = a->node;
 }
 void list_destroyiter(list_iter_t *iter) {
-	if (iter == NULL) return;
+	if (iter == NULL) list_err("list_destroyiter: iter = NULL");
 	free(iter);
 }
 int list_hasnext(list_iter_t *iter) {
-	if (iter == NULL || iter->node == NULL) return 0;
-	else return 1;
+	if (iter == NULL) list_err("list_hasnext: iter = NULL");
+	if (iter->node == NULL) return 0;
+	return 1;
 }
 void *list_getitem(list_iter_t *iter) {
-	if (iter->node == NULL) return NULL;
+	if (iter == NULL) list_err("list_getitem: iter = NULL");
+	if (iter->node == NULL) list_err("list_getitem: iter->node = NULL");
 	return iter->node->item;
 }
 void list_replaceitem(list_iter_t *iter, void *item) {
+	if (iter == NULL) list_err("list_replaceitem: iter = NULL");
+	if (iter->node == NULL) list_err("list_replaceitem: iter->node = NULL");
+	if (item == NULL) list_err("list_replaceitem: item = NULL");
 	iter->node->item = item;
 }
 void list_itermovenext(list_iter_t *iter) {
-	if (iter == NULL || iter->node == NULL) return;
+	if (iter == NULL) list_err("list_itermovenext: iter = NULL");
+	if (iter->node == NULL) list_err("list_itermovenext: iter->node = NULL");
 	iter->node = iter->node->next;
 }
 void list_itermoveprev(list_iter_t *iter) {
-
-	if (iter == NULL || iter->node == NULL) return;
+	if (iter == NULL) list_err("list_itermoveprev: iter = NULL");
+	if (iter->node == NULL) list_err("list_itermoveprev: iter->node = NULL");
 	iter->node = iter->node->prev;
 }
 void *list_next(list_iter_t *iter) {
-	if (iter == NULL || iter->node == NULL) return NULL;
+	if (iter == NULL) list_err("list_next: iter = NULL");
+	if (iter->node == NULL) list_err("list_next: iter->node = NULL");
 	void *tmpitem = list_getitem(iter);
 	list_itermovenext(iter);
 	return tmpitem;
 }
 void *list_prev(list_iter_t *iter) {
-	if (iter == NULL || iter->node == NULL) return NULL;
+	if (iter == NULL) list_err("list_prev: iter = NULL");
+	if (iter->node == NULL) list_err("list_prev: iter->node = NULL");
 	void *tmp_item = iter->node->item;
 	iter->node = iter->node->prev;
 	return tmp_item;
 }
 void *list_pop(list_t *list, list_iter_t *iter, char direction) {
-	if (list == NULL) fatal_error("list_remove: list does not exist");
-	if (iter == NULL) fatal_error("list_remove: list iter does not exist");
-	if (list_size(list) == 0) fatal_error("list_remove: list has no items");
-	if (iter->node == NULL) fatal_error("list_remove: iter->node is NULL");
+	if (list == NULL) list_err("list_pop: list does not exist");
+	if (iter == NULL) list_err("list_pop: list iter does not exist");
+	if (list->size == 0) list_err("list_pop: list has no items");
+	if (iter->node == NULL) list_err("list_pop: iter->node is NULL");
 
-	listnode_t *trash = iter->node;
+	node_t *trash = iter->node;
 	if (list->size == 1) {
 		iter->node = NULL;
 		list->head = NULL;
@@ -299,15 +327,19 @@ void list_popprev(list_t *list, list_iter_t *iter) {
 	list_pop(list, iter, 'p');
 }
 void list_add(list_t *list, list_iter_t *iter, void *item, char direction) {
-	// edgecase checking
-	if (list_size(list) == 0) list_addfirst(list, item);
+	if (list == NULL) list_err("list_add: list does not exist");
+	if (iter == NULL) list_err("list_add: list iter does not exist");
+	if (iter->node == NULL) list_err("list_add: iter->node is NULL");
+	if (item == NULL) list_err("list_add: item = NULL");
+
+	if (list->size == 0) list_addfirst(list, item);
 	else if (iter->node == list->head && direction == 'p')
 		list_addfirst(list, item);
 	else if (iter->node == list->tail && direction == 'n')
 		list_addlast(list, item);
 	else {
 		node_t *new_node = malloc(sizeof(node_t));
-		failcheck(tmp_node);
+		if (new_node == NULL) list_err("list_add: failed to allcoate memory");
 		if (direction == 'n') {
 			iter->node->next->prev = new_node;
 			new_node->next = iter->node->next;
@@ -320,28 +352,22 @@ void list_add(list_t *list, list_iter_t *iter, void *item, char direction) {
 			new_node->next = iter->node;
 			iter->node->prev = new_node;
 		}
-		tmp_node->item = item;
+		new_node->item = item;
 		list->size++;
 	}
 	return;
 }
-void list_addnext(list_t *list, list_iter_t *iter) {
-	list_add(list, iter, 'n');
+void list_addnext(list_t *list, list_iter_t *iter, void *item) {
+	list_add(list, iter, item, 'n');
 }
-void list_addprev(list_t *list, list_iter_t *iter) {
-	list_add(list, iter, 'p');
+void list_addprev(list_t *list, list_iter_t *iter, void *item) {
+	list_add(list, iter, item, 'p');
 }
 
 // Debugging
-int list_countsize(list_t *list) {
-	list_iter_t *iter = list_createiter(list);
+int list_debug_countsize(list_t *list) {
+	node_t *current = list->head;
 	int i;
-	printf("\nCounting list size\n");
-	for (i = 0; list_hasnext(iter) == 1;) {
-		i++;
-		printf("Tmp i = %d\n", i);
-		list_next(iter);
-	}
-	printf("Done\n");
+	for (i = 1; current->next != NULL; i++) current = current->next;
 	return i;
 }
