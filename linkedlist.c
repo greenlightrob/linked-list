@@ -326,10 +326,13 @@ void *list_popprev(list_t *list, list_iter_t *iter) {
 void list_add(list_t *list, list_iter_t *iter, void *item, char direction) {
 	if (list == NULL) list_err("list_add: list does not exist");
 	if (iter == NULL) list_err("list_add: list iter does not exist");
-	if (iter->node == NULL) list_err("list_add: iter->node = NULL");
 	if (item == NULL) list_err("list_add: item = NULL");
+	if (list->size == 0) {
+		list_addfirst(list, item);
+		iter->node = list->head;
+	}
+	else if (iter->node == NULL) list_err("list_add: iter->node = NULL");
 
-	if (list->size == 0) list_addfirst(list, item);
 	else if (iter->node == list->head && direction == 'p')
 		list_addfirst(list, item);
 	else if (iter->node == list->tail && direction == 'n')
