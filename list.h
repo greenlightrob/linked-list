@@ -2,8 +2,7 @@
 #ifndef LIST_H
 #define LIST_H
 
-// #include "common.h"
-typedef int (*cmpfunc_t)(void *, void *);
+#include "common.h"
 
 /*
  * The type of lists.
@@ -39,8 +38,8 @@ void *list_next(list_iter_t *iter);
 void *list_prev(list_iter_t *iter);
 
 
-void list_popnext(list_t *list, list_iter_t *iter);
-void list_popprev(list_t *list, list_iter_t *iter);
+void *list_popnext(list_t *list, list_iter_t *iter);
+void *list_popprev(list_t *list, list_iter_t *iter);
 
 void list_addnext(list_t *list, list_iter_t *iter, void *item);
 void list_addprev(list_t *list, list_iter_t *iter, void *item);
