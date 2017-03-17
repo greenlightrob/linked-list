@@ -219,13 +219,125 @@ node_t *_list_quicksort(node_t *left, node_t *right, cmpfunc_t cmpfunc) {
 	}
 	return tmp_l;
 }
-void list_sort(list_t *list) {
-	if (list == NULL) list_err("list_sort: list = NULL");
-	if (list->size == 0) return;
-	node_t *head = list->head;
-	node_t *tail = list->tail;
-	cmpfunc_t cmpfunc = list->cmpfunc;
-	list->head = _list_quicksort(head, tail, cmpfunc);
+/*
+ * Merges two sorted lists a and b using the given comparison function.
+ * Only assigns the next pointers; the prev pointers will have to be
+ * fixed by the caller.  Returns the head of the merged list.
+ */
+static node_t *merge(node_t *a, node_t *b, cmpfunc_t cmpfunc)
+{
+    node_t *head, *tail;
+
+    /* Pick the smallest head node */
+    if (cmpfunc(a->item, b->item) < 0)
+    {
+        head = tail = a;
+        a = a->next;
+    }
+    else
+    {
+        head = tail = b;
+        b = b->next;
+    }
+    /* Now repeatedly pick the smallest head node */
+    while (a != NULL && b != NULL)
+    {
+        if (cmpfunc(a->item, b->item) < 0)
+        {
+            tail->next = a;
+            tail = a;
+            a = a->next;
+        }
+        else
+        {
+            tail->next = b;
+            tail = b;
+            b = b->next;
+        }
+    }
+    /* Append the remaining non-empty list (if any) */
+    if (a != NULL)
+    {
+        tail->next = a;
+    }
+    else
+    {
+        tail->next = b;
+    }
+    return head;
+}
+
+/*
+ * Splits the given list in two halves, and returns the head of
+ * the second half.
+ */
+static node_t *splitlist(node_t *head)
+{
+    node_t *slow, *fast, *half;
+
+    /* Move two pointers, a 'slow' one and a 'fast' one which moves
+     * twice as fast.  When the fast one reaches the end of the list,
+     * the slow one will be at the middle.
+     */
+    slow = head;
+    fast = head->next;
+    while (fast != NULL && fast->next != NULL)
+    {
+        slow = slow->next;
+        fast = fast->next->next;
+    }
+    /* Now 'cut' the list and return the second half */
+    half = slow->next;
+    slow->next = NULL;
+    return half;
+}
+
+/*
+ * Recursive merge sort.  This function is named mergesort_ to avoid
+ * collision with the mergesort function that is defined by the standard
+ * library on some platforms.
+ */
+static node_t *_mergesort(node_t *head, cmpfunc_t cmpfunc)
+{
+    if (head->next == NULL)
+    {
+        return head;
+    }
+    else
+    {
+        node_t *half = splitlist(head);
+        head = _mergesort(head, cmpfunc);
+        half = _mergesort(half, cmpfunc);
+        return merge(head, half, cmpfunc);
+    }
+}
+// void list_sort(list_t *list) {
+	// if (list == NULL) list_err("list_sort: list = NULL");
+	// if (list->size == 0) return;
+	// node_t *head = list->head;
+	// node_t *tail = list->tail;
+	// cmpfunc_t cmpfunc = list->cmpfunc;
+	// list->head = _list_quicksort(head, tail, cmpfunc);
+// }
+
+void list_sort(list_t *list)
+{
+    if (list->head != NULL)
+    {
+        node_t *prev, *n;
+
+        /* Recursively sort the list */
+        list->head = _mergesort(list->head, list->cmpfunc);
+
+        /* Fix the tail and prev links */
+        prev = NULL;
+        for (n = list->head; n != NULL; n = n->next)
+        {
+            n->prev = prev;
+            prev = n;
+        }
+        list->tail = prev;
+    }
 }
 list_iter_t *list_createiter(list_t *list) {
 	if (list == NULL) list_err("list_createiter: list = NULL");
