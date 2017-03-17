@@ -24,21 +24,23 @@ void list_sort(list_t *list);
 
 // Iteration
 list_iter_t *list_createiter(list_t *list);
-void list_copy_iter(list_iter_t *a, list_iter_t *b);
+void list_copyiter(list_iter_t *a, list_iter_t *b);
 void list_destroyiter(list_iter_t *iter);
+void list_resetiter(list_t *list, list_iter_t *iter);
 
 int list_hasnext(list_iter_t *iter);
 void *list_getitem(list_iter_t *iter);
 void list_replaceitem(list_iter_t *iter, void *item);
 
-void list_itermovenext(list_iter_t *iter);
-void list_itermoveprev(list_iter_t *iter);
+void list_movenext(list_iter_t *iter);
+void list_moveprev(list_iter_t *iter);
 
 void *list_next(list_iter_t *iter);
 void *list_prev(list_iter_t *iter);
 
-
+// Iter goes next, and pops behind
 void *list_popnext(list_t *list, list_iter_t *iter);
+// Iter goes prev, and pops front
 void *list_popprev(list_t *list, list_iter_t *iter);
 
 void list_addnext(list_t *list, list_iter_t *iter, void *item);

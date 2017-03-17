@@ -347,7 +347,7 @@ list_iter_t *list_createiter(list_t *list) {
 	tmp_iter->node = list->head;
 	return tmp_iter;
 }
-void list_copy_iter(list_iter_t *a, list_iter_t *b) {
+void list_copyiter(list_iter_t *a, list_iter_t *b) {
 	if (a == NULL) list_err("list_copy_iter: iter_a = NULL");
 	if (b == NULL) list_err("list_copy_iter: iter_b = NULL");
 	b->node = a->node;
@@ -355,6 +355,9 @@ void list_copy_iter(list_iter_t *a, list_iter_t *b) {
 void list_destroyiter(list_iter_t *iter) {
 	if (iter == NULL) list_err("list_destroyiter: iter = NULL");
 	free(iter);
+}
+void list_resetiter(list_t *list, list_iter_t *iter) {
+	iter->node = list->head;
 }
 int list_hasnext(list_iter_t *iter) {
 	if (iter == NULL) list_err("list_hasnext: iter = NULL");
@@ -372,12 +375,12 @@ void list_replaceitem(list_iter_t *iter, void *item) {
 	if (item == NULL) list_err("list_replaceitem: item = NULL");
 	iter->node->item = item;
 }
-void list_itermovenext(list_iter_t *iter) {
+void list_movenext(list_iter_t *iter) {
 	if (iter == NULL) list_err("list_itermovenext: iter = NULL");
 	if (iter->node == NULL) list_err("list_itermovenext: iter->node = NULL");
 	iter->node = iter->node->next;
 }
-void list_itermoveprev(list_iter_t *iter) {
+void list_moveprev(list_iter_t *iter) {
 	if (iter == NULL) list_err("list_itermoveprev: iter = NULL");
 	if (iter->node == NULL) list_err("list_itermoveprev: iter->node = NULL");
 	iter->node = iter->node->prev;
@@ -386,7 +389,7 @@ void *list_next(list_iter_t *iter) {
 	if (iter == NULL) list_err("list_next: iter = NULL");
 	if (iter->node == NULL) list_err("list_next: iter->node = NULL");
 	void *tmpitem = list_getitem(iter);
-	list_itermovenext(iter);
+	list_movenext(iter);
 	return tmpitem;
 }
 void *list_prev(list_iter_t *iter) {
