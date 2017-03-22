@@ -357,6 +357,8 @@ void list_destroyiter(list_iter_t *iter) {
 	free(iter);
 }
 void list_resetiter(list_t *list, list_iter_t *iter) {
+	if (list == NULL) list_err("list_resetiter: list = NULL");
+	if (iter == NULL) list_err("list_resetiter: iter = NULL");
 	iter->node = list->head;
 }
 int list_hasnext(list_iter_t *iter) {
