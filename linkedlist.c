@@ -339,6 +339,11 @@ void list_sort(list_t *list)
         list->tail = prev;
     }
 }
+
+void list_replacefunc(list_t *list, cmpfunc_t cmp) {
+	list->cmpfunc = cmp;
+}
+
 list_iter_t *list_createiter(list_t *list) {
 	if (list == NULL) list_err("list_createiter: list = NULL");
 	list_iter_t *tmp_iter = malloc(sizeof(list_iter_t));
