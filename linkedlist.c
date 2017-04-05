@@ -378,13 +378,13 @@ void list_replaceitem(list_iter_t *iter, void *item) {
 	iter->node->item = item;
 }
 void list_movenext(list_iter_t *iter) {
-	if (iter == NULL) list_err("list_itermovenext: iter = NULL");
-	if (iter->node == NULL) list_err("list_itermovenext: iter->node = NULL");
+	if (iter == NULL) list_err("list_movenext: iter = NULL");
+	if (iter->node == NULL) list_err("list_movenext: iter->node = NULL");
 	iter->node = iter->node->next;
 }
 void list_moveprev(list_iter_t *iter) {
-	if (iter == NULL) list_err("list_itermoveprev: iter = NULL");
-	if (iter->node == NULL) list_err("list_itermoveprev: iter->node = NULL");
+	if (iter == NULL) list_err("list_moveprev: iter = NULL");
+	if (iter->node == NULL) list_err("list_moveprev: iter->node = NULL");
 	iter->node = iter->node->prev;
 }
 void *list_next(list_iter_t *iter) {
