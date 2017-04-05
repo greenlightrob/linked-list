@@ -371,6 +371,18 @@ int list_hasnext(list_iter_t *iter) {
 	if (iter->node == NULL) return 0;
 	return 1;
 }
+int list_hasbefore(list_iter_t *iter) {
+	if (iter == NULL) list_err("list_hasbefore: iter = NULL");
+	if (iter->node == NULL) list_err("list_hasbefore: node = NULL");
+	if (iter->node->prev) return 1;
+	else return 0;
+}
+int list_hasafter(list_iter_t *iter) {
+	if (iter == NULL) list_err("list_hasafter: iter = NULL");
+	if (iter->node == NULL) list_err("list_hasafter: node = NULL");
+	if (iter->node->next) return 1;
+	else return 0;
+}
 void *list_getitem(list_iter_t *iter) {
 	if (iter == NULL) list_err("list_getitem: iter = NULL");
 	if (iter->node == NULL) list_err("list_getitem: iter->node = NULL");

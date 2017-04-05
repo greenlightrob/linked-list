@@ -31,6 +31,9 @@ void list_destroyiter(list_iter_t *iter);
 void list_resetiter(list_t *list, list_iter_t *iter);
 
 int list_hasnext(list_iter_t *iter);
+int list_hasbefore(list_iter_t *iter);
+int list_hasafter(list_iter_t *iter);
+
 void *list_getitem(list_iter_t *iter);
 void list_replaceitem(list_iter_t *iter, void *item);
 
