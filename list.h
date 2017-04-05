@@ -22,6 +22,8 @@ void *list_poplast(list_t *list);
 int list_contains(list_t *list, void *item);
 void list_sort(list_t *list);
 
+void list_replacefunc(list_t *list, cmpfunc_t cmp);
+
 // Iteration
 list_iter_t *list_createiter(list_t *list);
 void list_copyiter(list_iter_t *a, list_iter_t *b);
