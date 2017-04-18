@@ -35,6 +35,8 @@ int list_hasbefore(list_iter_t *iter);
 int list_hasafter(list_iter_t *iter);
 
 void *list_getitem(list_iter_t *iter);
+void *list_getbefore(list_iter_t *iter);
+void *list_getafter(list_iter_t *iter);
 void list_replaceitem(list_iter_t *iter, void *item);
 
 void list_movenext(list_iter_t *iter);

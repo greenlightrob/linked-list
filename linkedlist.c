@@ -388,6 +388,18 @@ void *list_getitem(list_iter_t *iter) {
 	if (iter->node == NULL) list_err("list_getitem: iter->node = NULL");
 	return iter->node->item;
 }
+void *list_getbefore(list_iter_t *iter) {
+	if (iter == NULL) list_err("list_getbefore: iter = NULL");
+	if (iter->node == NULL) list_err("list_getbefore: iter->node = NULL");
+	if (iter->node->prev == NULL) list_err("list_getbefore: iter->node->prev = NULL");
+	return iter->node->prev->item;
+}
+void *list_getafter(list_iter_t *iter) {
+	if (iter == NULL) list_err("list_getafter: iter = NULL");
+	if (iter->node == NULL) list_err("list_getafter: iter->node = NULL");
+	if (iter->node->next == NULL) list_err("list_getafter: iter->node->next = NULL");
+	return iter->node->next->item;
+}
 void list_replaceitem(list_iter_t *iter, void *item) {
 	if (iter == NULL) list_err("list_replaceitem: iter = NULL");
 	if (iter->node == NULL) list_err("list_replaceitem: iter->node = NULL");
