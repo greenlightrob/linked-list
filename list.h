@@ -2,11 +2,9 @@
 #ifndef LIST_H
 #define LIST_H
 
-#include "common.h"
-// typedef int (*cmpfunc_t)(void *, void *);
-/*
- * The type of lists.
- */
+typedef int (*cmpfunc_t)(void *, void *);
+typedef void *(*cpyfunc_t)(void *);
+
 struct list;
 typedef struct list list_t;
 struct list_iter;
@@ -21,6 +19,8 @@ void *list_popfirst(list_t *list);
 void *list_poplast(list_t *list);
 int list_contains(list_t *list, void *item);
 void list_sort(list_t *list);
+
+list_t *list_copy(list_t *list, cpyfunc_t cpyfunc);
 
 void list_replacefunc(list_t *list, cmpfunc_t cmp);
 
