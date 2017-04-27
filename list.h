@@ -40,9 +40,8 @@ void list_copyiter(list_iter_t *a, list_iter_t *b);
 void list_destroyiter(list_iter_t *iter);
 void list_resetiter(list_t *list, list_iter_t *iter);
 
-// Check if current item has a node next
+// Check if current item has a node (hasprev would do the same)
 int list_hasnext(list_iter_t *iter);
-// TODO hasprev
 
 // Check if iterator has node before or after
 int list_hasbefore(list_iter_t *iter);
@@ -67,8 +66,12 @@ void *list_popnext(list_t *list, list_iter_t *iter);
 void *list_popprev(list_t *list, list_iter_t *iter);
 
 // TODO: documentation
+// 
 void list_addnext(list_t *list, list_iter_t *iter, void *item);
 void list_addprev(list_t *list, list_iter_t *iter, void *item);
+
+
+// TODO: list_addbefore and list_addafter
 
 // Debugging
 int list_debug_countsize(list_t *list);

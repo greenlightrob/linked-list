@@ -9,6 +9,7 @@ Doubly liked list with extended functionality for iteration and insertion.
 	* list_hasprev?
 	* list_reverse
 	* list_copy
+	* list_roll
 
 ## Documentation
 
