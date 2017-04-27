@@ -55,6 +55,96 @@ int list_size(list_t *list) {
 	// if (list->size != list_debug_countsize(list)) list_err("list_size: debugger found differences in list size");
 	return list->size;
 }
+int list_contains(list_t *list, void *item) {
+	if (list == NULL) list_err("list_contains: list = NULL");
+	if (list->size == 0) list_err("list_contains: list->size = 0");
+	if (item == NULL) list_err("list_contains: item = NULL");
+
+	node_t *tmp_node = list->head;
+	for (;tmp_node != NULL; tmp_node = tmp_node->next)
+		if (list->cmpfunc(tmp_node->item, item) == 0) return 1;
+	return 0;
+}
+list_t *list_deepcopy(list_t *list, cpyfunc_t cpyfunc) {
+	list_t *copy = list_create(list->cmpfunc);
+	list_iter_t *iter = list_createiter(list);
+	while (list_hasnext(iter))
+		list_addlast(copy, cpyfunc(list_next(iter)));
+	return copy;
+}
+
+void list_replacefunc(list_t *list, cmpfunc_t cmp) {
+	list->cmpfunc = cmp;
+}
+static node_t *merge(node_t *a, node_t *b, cmpfunc_t cmpfunc);
+static node_t *splitlist(node_t *head);
+static node_t *_mergesort(node_t *head, cmpfunc_t cmpfunc);
+void list_sort(list_t *list) {
+    if (list->head != NULL) {
+        node_t *prev, *n;
+
+        list->head = _mergesort(list->head, list->cmpfunc);
+
+        prev = NULL;
+        for (n = list->head; n != NULL; n = n->next) {
+            n->prev = prev;
+            prev = n;
+        }
+        list->tail = prev;
+    }
+}
+static node_t *merge(node_t *a, node_t *b, cmpfunc_t cmpfunc) {
+    node_t *head, *tail;
+
+    if (cmpfunc(a->item, b->item) < 0) {
+        head = tail = a;
+        a = a->next;
+    }
+    else {
+        head = tail = b;
+        b = b->next;
+    }
+    while (a != NULL && b != NULL) {
+        if (cmpfunc(a->item, b->item) < 0) {
+            tail->next = a;
+            tail = a;
+            a = a->next;
+        }
+        else {
+            tail->next = b;
+            tail = b;
+            b = b->next;
+        }
+    }
+    if (a != NULL) tail->next = a;
+    else tail->next = b;
+    return head;
+}
+
+static node_t *splitlist(node_t *head) {
+    node_t *slow, *fast, *half;
+
+    slow = head;
+    fast = head->next;
+    while (fast != NULL && fast->next != NULL) {
+        slow = slow->next;
+        fast = fast->next->next;
+    }
+    half = slow->next;
+    slow->next = NULL;
+    return half;
+}
+static node_t *_mergesort(node_t *head, cmpfunc_t cmpfunc) {
+    if (head->next == NULL) {
+        return head;
+    }
+    else {
+        node_t *half = splitlist(head);
+        head = _mergesort(head, cmpfunc);
+        half = _mergesort(half, cmpfunc);
+        return merge(head, half, cmpfunc);
+    }
+}
 void list_addfirst(list_t *list, void *item) {
 	if (list == NULL) list_err("list_addfirst: list = NULL");
 	if (item == NULL) list_err("list_addfirst: item = NULL");
@@ -125,182 +215,42 @@ void *list_poplast(list_t *list) {
 	list->size--;
 	return tmp_item;
 }
-int list_contains(list_t *list, void *item) {
-	if (list == NULL) list_err("list_contains: list = NULL");
-	if (list->size == 0) list_err("list_contains: list->size = 0");
-	if (item == NULL) list_err("list_contains: item = NULL");
-
+void *list_getlast(list_t *list) {
+	if (list == NULL) list_err("list_getlast: list = NULL");
+	if (list->tail == NULL) list_err("list_getlast: tail = NULL");
+	if (list->size == 0) list_err("list_getlast: list->size = 0");
+	return list->tail->item;
+}
+void *list_getfirst(list_t *list) {
+	if (list == NULL) list_err("list_getfist: list = NULL");
+	if (list->head == NULL) list_err("list_getfirst: head = NULL");
+	if (list->size == 0) list_err("list_getfist: list->size = 0");
+	return list->tail->item;
+}
+void *list_getitemnumberfromfirst(list_t *list, int num) {
+	if (list == NULL) list_err("list_getitemnumberfromfist: list = NULL");
+	if (list->size == 0) list_err("list_getitemnumberfromfist: list->size = 0");
+	if (num >= list->size) list_err("list_getitemnumberfromfirst: num is larger than list");
 	node_t *tmp_node = list->head;
-	for (;tmp_node != NULL; tmp_node = tmp_node->next)
-		if (list->cmpfunc(tmp_node->item, item) == 0) return 1;
-	return 0;
-}
-node_t *_list_quicksort(node_t *left, node_t *right, cmpfunc_t cmpfunc) {	
-
-	// One node
-	if (left->next == NULL) return left;
-
-	// Two nodes
-	void *tmp;
-	if (left->next == right) {
-		if (cmpfunc(left->item, right->item) > 0) {
-			tmp = left->item;
-			left->item = right->item;
-			right->item = tmp;
-		}
-		return left;
+	for (int i = 0; i < num; i++) {
+		if (tmp_node == NULL) list_err("list_getitemnumberfromfirst: cannot fetch next");
+		if (tmp_node->next == NULL) list_err("list_getitemnumberfromfirst: cannot fetch next->next");
+		tmp_node = tmp_node->next;
 	}
-	node_t *pivot = left;
-	left = left->next;
-	node_t *tmp_l = left;
-	node_t *tmp_r = right;
-	// Used to ensure left or right moves
-	int l = 0, r = 0;
-
-	for (; tmp_r->next != NULL; tmp_r = tmp_r->next);
-
-	// Moving and swaping left and right
-	for (; cmpfunc(left->item, right->item) != 0;) {
-		for (; cmpfunc(left->item, pivot->item) < 0; l = 1) {
-			l = -1;
-			if (left->next == NULL || left == right) break;
-			left = left->next;
-		}
-		for (; cmpfunc(right->item, pivot->item) > 0; r = -1) {
-			r = 1;
-			if (right->prev == NULL || right == left) break;
-			right = right->prev;
-		}
-		if (cmpfunc(left->item, right->item) != 0) {
-			tmp = left->item;
-			left->item = right->item;
-			right->item = tmp;
-		}
-		else break;
+	return tmp_node->item;
+}
+void *list_getitemnumberfromlast(list_t *list, int num) {
+	if (list == NULL) list_err("list_getitemnumberfromlast: list = NULL");
+	if (list->size == 0) list_err("list_getitemnumberfromlast: list->size = 0");
+	if (num >= list->size) list_err("list_getitemnumberfromflast: num is larger than list");
+	node_t *tmp_node = list->tail;
+	for (int i = 0; i < num; i++) {
+		if (tmp_node == NULL) list_err("list_getitemnumberfromflast: cannot fetch prev");
+		if (tmp_node->prev == NULL) list_err("list_getitemnumberfromflast: cannot fetch prev->prev");
+		tmp_node = tmp_node->prev;
 	}
-	
-	// Checking movement outcome
-	if (l == 0) left = NULL;
-	else if (r == 0) right = NULL;
-	else {
-		left = left->prev;
-		left->next = NULL;
-		right->prev = NULL;
-	}
-	
-	// Recursive
-	if (left != NULL) left = _list_quicksort(tmp_l, left, cmpfunc);
-	if (right != NULL) right = _list_quicksort(right, tmp_r, cmpfunc);
-
-	// Merging
-	// Only right moved
-	if (left == NULL) {
-		tmp_l = pivot;
-		pivot->next = right;
-		pivot->prev = NULL;
-		right->prev = pivot;
-	}
-	// Only left moved
-	else if (right == NULL) {
-		tmp_l = left;
-		pivot->next = NULL;
-		for (; left->next != NULL;) left = left->next;
-		pivot->prev = left;
-		left->next = pivot;
-	}
-	// Both left and right moved
-	else {
-		tmp_l = left;
-		for (; left->next != NULL;) left = left->next;
-		pivot->next = right;
-		pivot->prev = left;
-		left->next = pivot;
-		right->prev = pivot;
-	}
-	return tmp_l;
+	return tmp_node->item;
 }
-
-static node_t *merge(node_t *a, node_t *b, cmpfunc_t cmpfunc) {
-    node_t *head, *tail;
-
-    if (cmpfunc(a->item, b->item) < 0) {
-        head = tail = a;
-        a = a->next;
-    }
-    else {
-        head = tail = b;
-        b = b->next;
-    }
-    while (a != NULL && b != NULL) {
-        if (cmpfunc(a->item, b->item) < 0) {
-            tail->next = a;
-            tail = a;
-            a = a->next;
-        }
-        else {
-            tail->next = b;
-            tail = b;
-            b = b->next;
-        }
-    }
-    if (a != NULL) tail->next = a;
-    else tail->next = b;
-    return head;
-}
-
-static node_t *splitlist(node_t *head) {
-    node_t *slow, *fast, *half;
-
-    slow = head;
-    fast = head->next;
-    while (fast != NULL && fast->next != NULL) {
-        slow = slow->next;
-        fast = fast->next->next;
-    }
-    half = slow->next;
-    slow->next = NULL;
-    return half;
-}
-
-static node_t *_mergesort(node_t *head, cmpfunc_t cmpfunc) {
-    if (head->next == NULL) {
-        return head;
-    }
-    else {
-        node_t *half = splitlist(head);
-        head = _mergesort(head, cmpfunc);
-        half = _mergesort(half, cmpfunc);
-        return merge(head, half, cmpfunc);
-    }
-}
-
-void list_sort(list_t *list) {
-    if (list->head != NULL) {
-        node_t *prev, *n;
-
-        list->head = _mergesort(list->head, list->cmpfunc);
-
-        prev = NULL;
-        for (n = list->head; n != NULL; n = n->next) {
-            n->prev = prev;
-            prev = n;
-        }
-        list->tail = prev;
-    }
-}
-
-list_t *list_copy(list_t *list, cpyfunc_t cpyfunc) {
-	list_t *copy = list_create(list->cmpfunc);
-	list_iter_t *iter = list_createiter(list);
-	while (list_hasnext(iter))
-		list_addlast(copy, cpyfunc(list_next(iter)));
-	return copy;
-}
-
-void list_replacefunc(list_t *list, cmpfunc_t cmp) {
-	list->cmpfunc = cmp;
-}
-
 list_iter_t *list_createiter(list_t *list) {
 	if (list == NULL) list_err("list_createiter: list = NULL");
 	list_iter_t *tmp_iter = malloc(sizeof(list_iter_t));
