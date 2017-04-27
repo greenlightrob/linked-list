@@ -422,6 +422,41 @@ void list_addnext(list_t *list, list_iter_t *iter, void *item) {
 void list_addprev(list_t *list, list_iter_t *iter, void *item) {
 	list_add(list, iter, item, 'p');
 }
+void list_additem(list_t *list, list_iter_t *iter, void *item, char direction) {
+	if (list == NULL) list_err("list_add: list does not exist");
+	if (iter == NULL) list_err("list_add: list iter does not exist");
+	if (item == NULL) list_err("list_add: item = NULL");
+	if (list->size == 0) list_addfirst(list, item);
+	else if (iter->node == NULL) list_err("list_add: iter->node = NULL");
+
+	else if (iter->node == list->head && direction == 'a') list_addfirst(list, item);
+	else if (iter->node == list->tail && direction == 'b') list_addlast(list, item); 
+	else {
+		node_t *new_node = malloc(sizeof(node_t));
+		if (new_node == NULL) list_err("list_add: failed to allcoate memory");
+		if (direction == 'a') {
+			iter->node->next->prev = new_node;
+			new_node->next = iter->node->next;
+			new_node->prev = iter->node;
+			iter->node->next = new_node;
+		}
+		else if (direction == 'b') {
+			iter->node->prev->next = new_node;
+			new_node->prev = iter->node->prev;
+			new_node->next = iter->node;
+			iter->node->prev = new_node;
+		}
+		new_node->item = item;
+		list->size++;
+	}
+	return;
+}
+void list_addafter(list_t *list, list_iter_t *iter, void *item) {
+	list_additem(list, iter, item, 'a');
+}
+void list_addbefore(list_t *list, list_iter_t *iter, void *item) {
+	list_additem(list, iter, item, 'b');
+}
 
 // Debugging
 // FIXME: Not working

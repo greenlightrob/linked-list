@@ -70,6 +70,10 @@ Doubly liked list with extended functionality for iteration and insertion.
 * `void *list_popnext(list_t *list, list_iter_t *iter);`
 * `void *list_popprev(list_t *list, list_iter_t *iter);`
 
-### TODO: documentation
+### Adding item in direction then moving iterator
 * `void list_addnext(list_t *list, list_iter_t *iter, void *item);`
 * `void list_addprev(list_t *list, list_iter_t *iter, void *item);`
+
+### Adding item in direction
+* `void list_addafter(list_t *list, list_iter_t *iter, void *item);`
+* `void list_addbefore(list_t *list, list_iter_t *iter, void *item);`
