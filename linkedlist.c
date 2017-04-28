@@ -191,7 +191,7 @@ static node_t *_mergesort(node_t *head, cmpfunc_t cmpfunc) {
         return merge(head, half, cmpfunc);
     }
 }
-void reverse(list_t *list) {
+void list_reverse(list_t *list) {
 	if (list == NULL) list_err("list_addfirst: list = NULL");
 	if (list_size(list) == 1) return;
 	node_t *beg = list->head, *end = list->tail;
