@@ -12,7 +12,6 @@ Doubly liked list with extended functionality for iteration and insertion.
 	* `list_deepdestroy`
 	* `list_roll[down|up]`
 * Implement:
-	* `list_reverse`
 	* `list_randomize`
 
 ## Documentation
@@ -35,6 +34,7 @@ Doubly liked list with extended functionality for iteration and insertion.
 ### List manipulations
 * `void list_replacecmpfunc(list_t *list, cmpfunc_t cmp);`
 * `void list_sort(list_t *list);`
+* `void list_reverse(list_t *list);`
 
 ### Adding items
 * `void list_addfirst(list_t *list, void *item);`
