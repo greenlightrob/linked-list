@@ -3,6 +3,7 @@
 
 typedef int (*cmpfunc_t)(void *, void *);
 typedef void *(*cpyfunc_t)(void *);
+typedef void *(*rmfunc_t)(void *);
 
 struct list;
 typedef struct list list_t;
@@ -12,10 +13,16 @@ typedef struct list_iter list_iter_t;
 // General list functions
 list_t *list_create(cmpfunc_t cmpfunc);
 void list_destroy(list_t *list);
+void list_deepdestroy(list_t *list, rmfunc_t rmfunc);
+
 int list_size(list_t *list);
 int list_contains(list_t *list, void *item);
 list_t *list_deepcopy(list_t *list, cpyfunc_t cpyfunc);
+
+// List manipulations
 void list_replacecmpfunc(list_t *list, cmpfunc_t cmp);
+void list_rolldown(list_t *list);
+void list_rollup(list_t *list);
 void list_sort(list_t *list);
 
 // Adding items
@@ -65,13 +72,13 @@ void *list_prev(list_iter_t *iter);
 void *list_popnext(list_t *list, list_iter_t *iter);
 void *list_popprev(list_t *list, list_iter_t *iter);
 
-// TODO: documentation
-// 
+// Adding item in direction then moving iterator TODO: better sentence
 void list_addnext(list_t *list, list_iter_t *iter, void *item);
 void list_addprev(list_t *list, list_iter_t *iter, void *item);
 
-
-// TODO: list_addbefore and list_addafter
+// Adding item in direction
+void list_addafter(list_t *list, list_iter_t *iter, void *item); // NOTE: Not tested
+void list_addbefore(list_t *list, list_iter_t *iter, void *item); // NOTE: Not tested
 
 // Debugging
 int list_debug_countsize(list_t *list);
