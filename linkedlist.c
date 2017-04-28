@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdarg.h>
+#include <stdint.h>
 #include "list.h"
 
 typedef struct node {
@@ -197,7 +198,10 @@ void list_reverse(list_t *list) {
 	node_t *beg = list->head, *end = list->tail;
 	void *tmp;
 	for (int i = 0; i < list_size(list) / 2; i++) {
-		*(int *)beg->item ^= *(int *)end->item ^= *(int *)beg->item ^= *(int *)end->item;
+		intptr_t *a = beg->item, *b = end->item;
+		*a ^= *b ^= *a ^= *b;
+		beg->item = a, end->item = b;
+		// (int *)beg->item ^= (int *)end->item;
 		// tmp = beg->item;
 		// beg->item = end->item;
 		// end->item = tmp;
