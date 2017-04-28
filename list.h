@@ -28,6 +28,8 @@ void list_replacecmpfunc(list_t *list, cmpfunc_t cmp);
 void list_rolldown(list_t *list);
 void list_rollup(list_t *list);
 void list_sort(list_t *list);
+void list_reverse(list_t *list);
+void list_randomize(list_t *list);
 
 // Adding items
 void list_addfirst(list_t *list, void *item);

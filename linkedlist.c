@@ -191,6 +191,24 @@ static node_t *_mergesort(node_t *head, cmpfunc_t cmpfunc) {
         return merge(head, half, cmpfunc);
     }
 }
+void reverse(list_t *list) {
+	if (list == NULL) list_err("list_addfirst: list = NULL");
+	if (list_size(list) == 1) return;
+	node_t *beg = list->head, *end = list->tail;
+	void *tmp;
+	for (int i = 0; i < list_size(list) / 2; i++) {
+		// *(int *)beg->item ^= *(int *)end->item ^= *(int *)beg->item ^= *(int *)end->item;
+		tmp = beg->item;
+		beg->item = end->item;
+		end->item = tmp;
+		beg = beg->next;
+		end = end->prev;
+	}
+}
+void randomize(list_t *list) {
+
+}
+
 void list_addfirst(list_t *list, void *item) {
 	if (list == NULL) list_err("list_addfirst: list = NULL");
 	if (item == NULL) list_err("list_addfirst: item = NULL");
