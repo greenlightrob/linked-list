@@ -20,6 +20,7 @@ Doubly liked list with extended functionality for iteration and insertion.
 
 * `list_t *list_create(cmpfunc_t cmpfunc);`
 * `void list_destroy(list_t *list);`
+* `void list_deepdestroy(list_t *list, rmfunc_t rmfunc);`
 
 ### Getting list info
 
@@ -28,13 +29,16 @@ Doubly liked list with extended functionality for iteration and insertion.
 
 ### Copying list
 
-* `list_t *list_deepcopy(list_t *list, cpyfunc_t cpyfunc);`
 * `list_t *list_copy(list_t *list, cpyfunc_t cpyfunc);`
+* `list_t *list_deepcopy(list_t *list, cpyfunc_t cpyfunc);`
 
 ### List manipulations
 * `void list_replacecmpfunc(list_t *list, cmpfunc_t cmp);`
-* `void list_sort(list_t *list);`
+* `void list_rolldown(list_t *list);`
+* `void list_rollup(list_t *list);`
 * `void list_reverse(list_t *list);`
+* `void list_randomize(list_t *list);`
+* `void list_sort(list_t *list);`
 
 ### Adding items
 * `void list_addfirst(list_t *list, void *item);`

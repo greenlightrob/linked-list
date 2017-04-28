@@ -67,7 +67,6 @@ void list_deepdestroy(list_t *list, rmfunc_t rmfunc) {
 }
 int list_size(list_t *list) {
 	if (list == NULL) list_err("list_size: list = NULL");
-	// if (list->size != list_debug_countsize(list)) list_err("list_size: debugger found differences in list size");
 	return list->size;
 }
 int list_contains(list_t *list, void *item) {
@@ -80,18 +79,18 @@ int list_contains(list_t *list, void *item) {
 		if (list->cmpfunc(tmp_node->item, item) == 0) return 1;
 	return 0;
 }
-list_t *list_deepcopy(list_t *list, cpyfunc_t cpyfunc) {
-	list_t *copy = list_create(list->cmpfunc);
-	list_iter_t *iter = list_createiter(list);
-	while (list_hasnext(iter))
-		list_addlast(copy, cpyfunc(list_next(iter)));
-	return copy;
-}
 list_t *list_copy(list_t *list) {
 	list_t *copy = list_create(list->cmpfunc);
 	list_iter_t *iter = list_createiter(list);
 	while (list_hasnext(iter))
 		list_addlast(copy, list_next(iter));
+	return copy;
+}
+list_t *list_deepcopy(list_t *list, cpyfunc_t cpyfunc) {
+	list_t *copy = list_create(list->cmpfunc);
+	list_iter_t *iter = list_createiter(list);
+	while (list_hasnext(iter))
+		list_addlast(copy, cpyfunc(list_next(iter)));
 	return copy;
 }
 
@@ -121,6 +120,22 @@ void list_rollup(list_t *list) {
 	tmphead->prev = list->tail;
 	tmphead->next = NULL;
 	list->tail = tmphead;
+}
+void list_reverse(list_t *list) {
+	if (list == NULL) list_err("list_addfirst: list = NULL");
+	if (list_size(list) == 1) return;
+	node_t *beg = list->head, *end = list->tail;
+	void *tmp;
+	for (int i = 0; i < list_size(list) / 2; i++) {
+		tmp = beg->item;
+		beg->item = end->item;
+		end->item = tmp;
+		beg = beg->next;
+		end = end->prev;
+	}
+}
+void randomize(list_t *list) {
+
 }
 
 static node_t *merge(node_t *a, node_t *b, cmpfunc_t cmpfunc);
@@ -192,23 +207,6 @@ static node_t *_mergesort(node_t *head, cmpfunc_t cmpfunc) {
         return merge(head, half, cmpfunc);
     }
 }
-void list_reverse(list_t *list) {
-	if (list == NULL) list_err("list_addfirst: list = NULL");
-	if (list_size(list) == 1) return;
-	node_t *beg = list->head, *end = list->tail;
-	void *tmp;
-	for (int i = 0; i < list_size(list) / 2; i++) {
-		tmp = beg->item;
-		beg->item = end->item;
-		end->item = tmp;
-		beg = beg->next;
-		end = end->prev;
-	}
-}
-void randomize(list_t *list) {
-
-}
-
 void list_addfirst(list_t *list, void *item) {
 	if (list == NULL) list_err("list_addfirst: list = NULL");
 	if (item == NULL) list_err("list_addfirst: item = NULL");
