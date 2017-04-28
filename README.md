@@ -1,5 +1,7 @@
 # linked-list
 
+reated by [David Kristoffersen](https://github.com/davidkristoffersen/) and [Simon Solnes](https://github.com/simonsolnes/).
+
 Doubly liked list with extended functionality for iteration and insertion.
 
 ## TODO's:
