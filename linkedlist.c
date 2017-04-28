@@ -41,7 +41,7 @@ list_t *list_create(cmpfunc_t cmpfunc) {
 void list_destroy(list_t *list) {
 	if (list == NULL) list_err("list_destroy: list = NULL");
 	if (list->size > 0) {
-		while ((list->head->next != NULL) && (list->head != NULL)) {
+		while ( (list->head != NULL) && (list->head->next != NULL)) {
 			list->head = list->head->next;
 			free(list->head->prev);
 		}
@@ -53,7 +53,7 @@ void list_destroy(list_t *list) {
 void list_deepdestroy(list_t *list, rmfunc_t rmfunc) {
 	if (list == NULL) list_err("list_deepdestroy: list = NULL");
 	if (list->size > 0) {
-		while ((list->head->next != NULL) && (list->head != NULL)) {
+		while ( (list->head != NULL) && (list->head->next != NULL)) {
 			list->head = list->head->next;
 			rmfunc(list->head->prev->item);
 			free(list->head->prev);
@@ -84,6 +84,13 @@ list_t *list_deepcopy(list_t *list, cpyfunc_t cpyfunc) {
 	list_iter_t *iter = list_createiter(list);
 	while (list_hasnext(iter))
 		list_addlast(copy, cpyfunc(list_next(iter)));
+	return copy;
+}
+list_t *list_copy(list_t *list) {
+	list_t *copy = list_create(list->cmpfunc);
+	list_iter_t *iter = list_createiter(list);
+	while (list_hasnext(iter))
+		list_addlast(copy, list_next(iter));
 	return copy;
 }
 

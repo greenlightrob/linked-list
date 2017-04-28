@@ -11,23 +11,26 @@ Doubly liked list with extended functionality for iteration and insertion.
 	* `list_add[before|after]`
 	* `list_deepdestroy`
 	* `list_roll[down|up]`
-* Document
-	* `list_add[next|prev]`
 * Implement:
-	* `list_hasprev?`
 	* `list_reverse`
-	* `list_copy`
-	* `list_roll`
+	* `list_randomize`
 
 ## Documentation
 
-### General list functions
+### Creating and destroying list
 
 * `list_t *list_create(cmpfunc_t cmpfunc);`
 * `void list_destroy(list_t *list);`
+
+### Getting list info
+
 * `int list_size(list_t *list);`
 * `int list_contains(list_t *list, void *item);`
+
+### Copying list
+
 * `list_t *list_deepcopy(list_t *list, cpyfunc_t cpyfunc);`
+* `list_t *list_copy(list_t *list, cpyfunc_t cpyfunc);`
 
 ### List manipulations
 * `void list_replacecmpfunc(list_t *list, cmpfunc_t cmp);`
@@ -46,8 +49,8 @@ Doubly liked list with extended functionality for iteration and insertion.
 * `void *list_getfirst(list_t *list);`
 
 ### Getting the item that is located at the num-th position
-* `void *list_getitemnumberfromfirst(list_t *list, int num); // NOTE: Not tested - Simon`
-* `void *list_getitemnumberfromlast(list_t *list, int num); // NOTE: Not tested - Simon`
+* `void *list_getitemnumberfromfirst(list_t *list, int num);`
+* `void *list_getitemnumberfromlast(list_t *list, int num);`
 
 ### General iterator functions
 * `list_iter_t *list_createiter(list_t *list);`
@@ -81,7 +84,7 @@ Doubly liked list with extended functionality for iteration and insertion.
 * `void *list_popnext(list_t *list, list_iter_t *iter);`
 * `void *list_popprev(list_t *list, list_iter_t *iter);`
 
-### Adding item in direction then moving iterator
+### Adding item in direction then moving iterator in the same direction
 * `void list_addnext(list_t *list, list_iter_t *iter, void *item);`
 * `void list_addprev(list_t *list, list_iter_t *iter, void *item);`
 

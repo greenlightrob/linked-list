@@ -10,14 +10,18 @@ typedef struct list list_t;
 struct list_iter;
 typedef struct list_iter list_iter_t;
 
-// General list functions
+// Creating and destroying list
 list_t *list_create(cmpfunc_t cmpfunc);
 void list_destroy(list_t *list);
 void list_deepdestroy(list_t *list, rmfunc_t rmfunc);
 
+// Getting list info
 int list_size(list_t *list);
 int list_contains(list_t *list, void *item);
+
+// Copying list
 list_t *list_deepcopy(list_t *list, cpyfunc_t cpyfunc);
+list_t *list_copy(list_t *list);
 
 // List manipulations
 void list_replacecmpfunc(list_t *list, cmpfunc_t cmp);
@@ -38,8 +42,8 @@ void *list_getlast(list_t *list);
 void *list_getfirst(list_t *list);
 
 // Getting the item that is located at the num-th position
-void *list_getitemnumberfromfirst(list_t *list, int num); // NOTE: Not tested - Simon
-void *list_getitemnumberfromlast(list_t *list, int num); // NOTE: Not tested - Simon
+void *list_getitemnumberfromfirst(list_t *list, int num);
+void *list_getitemnumberfromlast(list_t *list, int num);
 
 // General iterator functions
 list_iter_t *list_createiter(list_t *list);
@@ -72,13 +76,13 @@ void *list_prev(list_iter_t *iter);
 void *list_popnext(list_t *list, list_iter_t *iter);
 void *list_popprev(list_t *list, list_iter_t *iter);
 
-// Adding item in direction then moving iterator TODO: better sentence
+// Adding item in direction then moving iterator the same direction
 void list_addnext(list_t *list, list_iter_t *iter, void *item);
 void list_addprev(list_t *list, list_iter_t *iter, void *item);
 
 // Adding item in direction
-void list_addafter(list_t *list, list_iter_t *iter, void *item); // NOTE: Not tested
-void list_addbefore(list_t *list, list_iter_t *iter, void *item); // NOTE: Not tested
+void list_addafter(list_t *list, list_iter_t *iter, void *item);
+void list_addbefore(list_t *list, list_iter_t *iter, void *item);
 
 // Debugging
 int list_debug_countsize(list_t *list);
