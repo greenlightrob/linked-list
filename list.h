@@ -14,7 +14,7 @@ typedef struct list_iter list_iter_t;
 list_t *list_create(cmpfunc_t cmpfunc);
 void list_usehashmap();
 void list_destroy(list_t *list);
-void list_deepdestroy(list_t *list, func_t rmfunc);
+void list_deepdestroy(list_t *list, destroyfunc_t destroyfunc);
 
 // Getting list info
 int list_size(list_t *list);
@@ -37,7 +37,8 @@ void list_addfirst(list_t *list, void *item);
 void list_addlast(list_t *list, void *item);
 
 // Removing item
-void list_remove(list_t *list, void *iter);
+void list_remove(list_t *list, void *item);
+void list_deepremove(list_t *list, void *item, destroyfunc_t destroyfunc);
 
 // Popping items (will remove items from list)
 void *list_popfirst(list_t *list);
