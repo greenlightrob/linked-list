@@ -20,8 +20,7 @@ struct list_iter {
 };
 
 // Internal general functions
-void list_err(char *msg, ...)
-{
+void list_err(char *msg, ...) {
 	fprintf (stderr, "fatal error: ");
 	va_list args;
 	va_start (args, msg);
@@ -34,6 +33,7 @@ node_t *create_node(void *item) {
 	// fill
 }
 
+// Creating and destroying list
 list_t *list_create(cmpfunc_t cmpfunc) {
 	list_t *tmp_list = malloc(sizeof(list_t));
 	if (tmp_list == NULL) list_err("list_create: failed to allocate memory");
@@ -69,6 +69,14 @@ void list_deepdestroy(list_t *list, destroyfunc_t destroyfunc) {
 	free(list);
 	return;
 }
+
+// Config
+void list_replacefunc(list_t *list, cmpfunc_t cmp) {
+	if (list == NULL) list_err("list_replacefunc: list = NULL");
+	list->cmpfunc = cmp;
+}
+
+// Getting list info
 int list_size(list_t *list) {
 	if (list == NULL) list_err("list_size: list = NULL");
 	return list->size;
@@ -83,7 +91,15 @@ int list_contains(list_t *list, void *item) {
 		if (list->cmpfunc(tmp_node->item, item) == 0) return 1;
 	return 0;
 }
+
+// Sorting list
+void list_sort(list_t *list) {
+	printf("list sort is not implemented yet");
+}
+
+// Copying list
 list_t *list_copy(list_t *list) {
+	if (list == NULL) list_err("list_copy: list = NULL");
 	list_t *copy = list_create(list->cmpfunc);
 	list_iter_t *iter = list_createiter(list);
 	while (list_hasnext(iter))
@@ -91,6 +107,7 @@ list_t *list_copy(list_t *list) {
 	return copy;
 }
 list_t *list_deepcopy(list_t *list, cpyfunc_t cpyfunc) {
+	if (list == NULL) list_err("list_deepcopy: list = NULL");
 	list_t *copy = list_create(list->cmpfunc);
 	list_iter_t *iter = list_createiter(list);
 	while (list_hasnext(iter))
@@ -98,119 +115,7 @@ list_t *list_deepcopy(list_t *list, cpyfunc_t cpyfunc) {
 	return copy;
 }
 
-void list_replacefunc(list_t *list, cmpfunc_t cmp) {
-	list->cmpfunc = cmp;
-}
-void list_rolldown(list_t *list) {
-	if (list == NULL) list_err("list_rolldown: list = NULL");
-	if (list->size == 0) list_err("list_rolldown: list->size = 0");
-	if (list->size == 1) return;
-	node_t *tmptail = list->tail;
-
-	list->tail = list->tail->prev;
-	list->tail->next = NULL;
-
-	tmptail->next = list->head;
-	tmptail->prev = NULL;
-	list->head = tmptail;
-}
-void list_rollup(list_t *list) {
-	if (list == NULL) list_err("list_rollup: list = NULL");
-	if (list->size == 0) list_err("list_rollup: list->size = 0");
-	if (list->size == 1) return;
-	node_t *tmphead = list->head;
-	
-	list->head = list->head->next;
-	tmphead->prev = list->tail;
-	tmphead->next = NULL;
-	list->tail = tmphead;
-}
-void list_reverse(list_t *list) {
-	if (list == NULL) list_err("list_addfirst: list = NULL");
-	if (list_size(list) == 1) return;
-	node_t *beg = list->head, *end = list->tail;
-	void *tmp;
-	for (int i = 0; i < list_size(list) / 2; i++) {
-		tmp = beg->item;
-		beg->item = end->item;
-		end->item = tmp;
-		beg = beg->next;
-		end = end->prev;
-	}
-}
-void randomize(list_t *list) {
-
-}
-
-static node_t *merge(node_t *a, node_t *b, cmpfunc_t cmpfunc);
-static node_t *splitlist(node_t *head);
-static node_t *_mergesort(node_t *head, cmpfunc_t cmpfunc);
-void list_sort(list_t *list) {
-    if (list->head != NULL) {
-        node_t *prev, *n;
-
-        list->head = _mergesort(list->head, list->cmpfunc);
-
-        prev = NULL;
-        for (n = list->head; n != NULL; n = n->next) {
-            n->prev = prev;
-            prev = n;
-        }
-        list->tail = prev;
-    }
-}
-static node_t *merge(node_t *a, node_t *b, cmpfunc_t cmpfunc) {
-    node_t *head, *tail;
-
-    if (cmpfunc(a->item, b->item) < 0) {
-        head = tail = a;
-        a = a->next;
-    }
-    else {
-        head = tail = b;
-        b = b->next;
-    }
-    while (a != NULL && b != NULL) {
-        if (cmpfunc(a->item, b->item) < 0) {
-            tail->next = a;
-            tail = a;
-            a = a->next;
-        }
-        else {
-            tail->next = b;
-            tail = b;
-            b = b->next;
-        }
-    }
-    if (a != NULL) tail->next = a;
-    else tail->next = b;
-    return head;
-}
-
-static node_t *splitlist(node_t *head) {
-    node_t *slow, *fast, *half;
-
-    slow = head;
-    fast = head->next;
-    while (fast != NULL && fast->next != NULL) {
-        slow = slow->next;
-        fast = fast->next->next;
-    }
-    half = slow->next;
-    slow->next = NULL;
-    return half;
-}
-static node_t *_mergesort(node_t *head, cmpfunc_t cmpfunc) {
-    if (head->next == NULL) {
-        return head;
-    }
-    else {
-        node_t *half = splitlist(head);
-        head = _mergesort(head, cmpfunc);
-        half = _mergesort(half, cmpfunc);
-        return merge(head, half, cmpfunc);
-    }
-}
+// Adding items
 void list_addfirst(list_t *list, void *item) {
 	if (list == NULL) list_err("list_addfirst: list = NULL");
 	if (item == NULL) list_err("list_addfirst: item = NULL");
@@ -245,6 +150,8 @@ void list_addlast(list_t *list, void *item) {
 	list->size++;
 	return;
 }
+
+// Removing items
 void list_remove(list_t *list, void *item) {
 	if (list == NULL) list_err("list_remove: list = NULL");
 	if (list->head == NULL) list_err("list_remove: head = NULL");
@@ -278,6 +185,8 @@ void list_deepremove(list_t *list, void *item, destroyfunc_t destroyfunc) {
 		free(node);
 	}
 }
+
+// Popping items
 void *list_popfirst(list_t *list) {
 	if (list == NULL) list_err("list_popfirst: list = NULL");
 	if (list->head == NULL) list_err("list_popfirst: head = NULL");
@@ -314,6 +223,8 @@ void *list_poplast(list_t *list) {
 	list->size--;
 	return tmp_item;
 }
+
+// Getting the edge items of list
 void *list_getlast(list_t *list) {
 	if (list == NULL) list_err("list_getlast: list = NULL");
 	if (list->tail == NULL) list_err("list_getlast: tail = NULL");
@@ -326,7 +237,9 @@ void *list_getfirst(list_t *list) {
 	if (list->size == 0) list_err("list_getfist: list->size = 0");
 	return list->tail->item;
 }
-void *list_getitemnumberfromfirst(list_t *list, int num) {
+
+// Getting the item that is located at the num-th position
+void *list_getitemnumfromfirst(list_t *list, int num) {
 	if (list == NULL) list_err("list_getitemnumberfromfist: list = NULL");
 	if (list->size == 0) list_err("list_getitemnumberfromfist: list->size = 0");
 	if (num >= list->size) list_err("list_getitemnumberfromfirst: num is larger than list");
@@ -338,7 +251,7 @@ void *list_getitemnumberfromfirst(list_t *list, int num) {
 	}
 	return tmp_node->item;
 }
-void *list_getitemnumberfromlast(list_t *list, int num) {
+void *list_getitemnumfromlast(list_t *list, int num) {
 	if (list == NULL) list_err("list_getitemnumberfromlast: list = NULL");
 	if (list->size == 0) list_err("list_getitemnumberfromlast: list->size = 0");
 	if (num >= list->size) list_err("list_getitemnumberfromflast: num is larger than list");
@@ -350,6 +263,8 @@ void *list_getitemnumberfromlast(list_t *list, int num) {
 	}
 	return tmp_node->item;
 }
+
+// General iterator functions
 list_iter_t *list_createiter(list_t *list) {
 	if (list == NULL) list_err("list_createiter: list = NULL");
 	list_iter_t *tmp_iter = malloc(sizeof(list_iter_t));
@@ -372,11 +287,15 @@ void list_resetiter(list_t *list, list_iter_t *iter) {
 	if (iter == NULL) list_err("list_resetiter: iter = NULL");
 	iter->node = list->head;
 }
+
+// Check if current item has a node (hasprev would do the same)
 int list_hasnext(list_iter_t *iter) {
 	if (iter == NULL) list_err("list_hasnext: iter = NULL");
 	if (iter->node == NULL) return 0;
 	return 1;
 }
+
+// Check if iterator has node before or after
 int list_hasbefore(list_iter_t *iter) {
 	if (iter == NULL) list_err("list_hasbefore: iter = NULL");
 	if (iter->node == NULL) list_err("list_hasbefore: node = NULL");
@@ -389,6 +308,8 @@ int list_hasafter(list_iter_t *iter) {
 	if (iter->node->next) return 1;
 	else return 0;
 }
+
+// Manipulating items with iterators
 void *list_getitem(list_iter_t *iter) {
 	if (iter == NULL) list_err("list_getitem: iter = NULL");
 	if (iter->node == NULL) list_err("list_getitem: iter->node = NULL");
@@ -412,6 +333,8 @@ void list_replaceitem(list_iter_t *iter, void *item) {
 	if (item == NULL) list_err("list_replaceitem: item = NULL");
 	iter->node->item = item;
 }
+
+// Specific iterator moving
 void list_movenext(list_iter_t *iter) {
 	if (iter == NULL) list_err("list_movenext: iter = NULL");
 	if (iter->node == NULL) list_err("list_movenext: iter->node = NULL");
@@ -422,6 +345,8 @@ void list_moveprev(list_iter_t *iter) {
 	if (iter->node == NULL) list_err("list_moveprev: iter->node = NULL");
 	iter->node = iter->node->prev;
 }
+
+// Returning item the moving iterator
 void *list_next(list_iter_t *iter) {
 	if (iter == NULL) list_err("list_next: iter = NULL");
 	if (iter->node == NULL) list_err("list_next: iter->node = NULL");
@@ -436,6 +361,8 @@ void *list_prev(list_iter_t *iter) {
 	iter->node = iter->node->prev;
 	return tmp_item;
 }
+
+// Popping item then moving iterator
 void *list_pop(list_t *list, list_iter_t *iter, char direction) {
 	if (list == NULL) list_err("list_pop: list does not exist");
 	if (iter == NULL) list_err("list_pop: list iter does not exist");
@@ -475,6 +402,8 @@ void *list_popnext(list_t *list, list_iter_t *iter) {
 void *list_popprev(list_t *list, list_iter_t *iter) {
 	return list_pop(list, iter, 'p');
 }
+
+// Adding item in direction then moving iterator the same direction
 void list_add(list_t *list, list_iter_t *iter, void *item, char direction) {
 	if (list == NULL) list_err("list_add: list does not exist");
 	if (iter == NULL) list_err("list_add: list iter does not exist");
@@ -521,6 +450,8 @@ void list_addnext(list_t *list, list_iter_t *iter, void *item) {
 void list_addprev(list_t *list, list_iter_t *iter, void *item) {
 	list_add(list, iter, item, 'p');
 }
+
+// Adding items in direction
 void list_additem(list_t *list, list_iter_t *iter, void *item, char direction) {
 	if (list == NULL) list_err("list_add: list does not exist");
 	if (iter == NULL) list_err("list_add: list iter does not exist");
@@ -557,21 +488,44 @@ void list_addbefore(list_t *list, list_iter_t *iter, void *item) {
 	list_additem(list, iter, item, 'b');
 }
 
-// Debugging
-// FIXME: Not working
-int list_debug_countsize(list_t *list) {
-	printf("entered de\n");
-	node_t *current = list->head;
-	int counter = 0;
-	if (current->next == NULL) goto done;
-	counter = 1;
-	while (current != NULL) {
-		if (current->next == NULL) goto done;
-		current = current->next;
-		counter++;
+// ----------
+
+// List manipulations
+void list_rolldown(list_t *list) {
+	if (list == NULL) list_err("list_rolldown: list = NULL");
+	if (list->size < 2) return;
+	node_t *tmptail = list->tail;
+
+	list->tail = list->tail->prev;
+	list->tail->next = NULL;
+
+	tmptail->next = list->head;
+	tmptail->prev = NULL;
+	list->head = tmptail;
+}
+void list_rollup(list_t *list) {
+	if (list == NULL) list_err("list_rollup: list = NULL");
+	if (list->size < 2) return;
+	node_t *tmphead = list->head;
+	
+	list->head = list->head->next;
+	tmphead->prev = list->tail;
+	tmphead->next = NULL;
+	list->tail = tmphead;
+}
+void list_reverse(list_t *list) {
+	if (list == NULL) list_err("list_addfirst: list = NULL");
+	if (list->size == 1) return;
+	node_t *beg = list->head, *end = list->tail;
+	void *tmp;
+	for (int i = 0; i < list->size / 2; i++) {
+		tmp = beg->item;
+		beg->item = end->item;
+		end->item = tmp;
+		beg = beg->next;
+		end = end->prev;
 	}
-	done:
-		printf("list_debug_countsize: list->size is %d, counted size = %d\n", list->size, counter);
-		return counter;
+}
+void randomize(list_t *list) {
 
 }

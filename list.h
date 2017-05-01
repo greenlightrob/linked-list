@@ -12,31 +12,29 @@ typedef struct list_iter list_iter_t;
 
 // Creating and destroying list
 list_t *list_create(cmpfunc_t cmpfunc);
-void list_usehashmap();
 void list_destroy(list_t *list);
 void list_deepdestroy(list_t *list, destroyfunc_t destroyfunc);
+
+// Config
+void list_usehashmap(list_t *list);
+void list_replacecmpfunc(list_t *list, cmpfunc_t cmp);
 
 // Getting list info
 int list_size(list_t *list);
 int list_contains(list_t *list, void *item);
 
+// Sorting list
+void list_sort(list_t *list);
+
 // Copying list
 list_t *list_copy(list_t *list);
 list_t *list_deepcopy(list_t *list, cpyfunc_t cpyfunc);
-
-// List manipulations
-void list_replacecmpfunc(list_t *list, cmpfunc_t cmp);
-void list_rolldown(list_t *list);
-void list_rollup(list_t *list);
-void list_reverse(list_t *list);
-void list_randomize(list_t *list);
-void list_sort(list_t *list);
 
 // Adding items
 void list_addfirst(list_t *list, void *item);
 void list_addlast(list_t *list, void *item);
 
-// Removing item
+// Removing items
 void list_remove(list_t *list, void *item);
 void list_deepremove(list_t *list, void *item, destroyfunc_t destroyfunc);
 
@@ -44,13 +42,13 @@ void list_deepremove(list_t *list, void *item, destroyfunc_t destroyfunc);
 void *list_popfirst(list_t *list);
 void *list_poplast(list_t *list);
 
-// Getting the edge items of the list
+// Getting the edge items of list
 void *list_getlast(list_t *list);
 void *list_getfirst(list_t *list);
 
 // Getting the item that is located at the num-th position
-void *list_getitemnumberfromfirst(list_t *list, int num);
-void *list_getitemnumberfromlast(list_t *list, int num);
+void *list_getitemnumfromfirst(list_t *list, int num);
+void *list_getitemnumfromlast(list_t *list, int num);
 
 // General iterator functions
 list_iter_t *list_createiter(list_t *list);
@@ -91,7 +89,9 @@ void list_addprev(list_t *list, list_iter_t *iter, void *item);
 void list_addafter(list_t *list, list_iter_t *iter, void *item);
 void list_addbefore(list_t *list, list_iter_t *iter, void *item);
 
-// Debugging
-int list_debug_countsize(list_t *list);
-
+// List manipulations
+void list_rolldown(list_t *list);
+void list_rollup(list_t *list);
+void list_reverse(list_t *list);
+void list_randomize(list_t *list);
 #endif
