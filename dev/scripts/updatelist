@@ -1,0 +1,4 @@
+#!/bin/bash
+wget -q https://raw.githubusercontent.com/simonsolnes/linked-list/master/linkedlist.c -O linkedlist.c
+wget -q https://raw.githubusercontent.com/simonsolnes/linked-list/master/list.h -O list.h
+echo "list updated"
