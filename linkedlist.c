@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdarg.h>
-#include <stdint.h>
 #include "list.h"
 
 typedef struct node {
@@ -20,6 +19,7 @@ struct list_iter {
 	node_t *node;
 };
 
+// Internal general functions
 void list_err(char *msg, ...)
 {
 	fprintf (stderr, "fatal error: ");
@@ -30,6 +30,10 @@ void list_err(char *msg, ...)
 	fputc ('\n', stderr);
 	exit (1);
 }
+node_t *create_node(void *item) {
+	// fill
+}
+
 list_t *list_create(cmpfunc_t cmpfunc) {
 	list_t *tmp_list = malloc(sizeof(list_t));
 	if (tmp_list == NULL) list_err("list_create: failed to allocate memory");
@@ -51,15 +55,15 @@ void list_destroy(list_t *list) {
 	free(list);
 	return;
 }
-void list_deepdestroy(list_t *list, rmfunc_t rmfunc) {
+void list_deepdestroy(list_t *list, destroyfunc_t destroyfunc) {
 	if (list == NULL) list_err("list_deepdestroy: list = NULL");
 	if (list->size > 0) {
 		while ( (list->head != NULL) && (list->head->next != NULL)) {
 			list->head = list->head->next;
-			rmfunc(list->head->prev->item);
+			destroyfunc(list->head->prev->item);
 			free(list->head->prev);
 		}
-		rmfunc(list->head->item);
+		destroyfunc(list->head->item);
 		free(list->head);
 	}
 	free(list);

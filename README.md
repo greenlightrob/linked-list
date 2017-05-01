@@ -44,6 +44,9 @@ Doubly liked list with extended functionality for iteration and insertion.
 * `void list_addfirst(list_t *list, void *item);`
 * `void list_addlast(list_t *list, void *item);`
 
+### Removing item
+* `void list_remove(list_t *list, void *iter);`
+
 ### Popping items (will remove items from list)`
 * `void *list_popfirst(list_t *list);`
 * `void *list_poplast(list_t *list);`
