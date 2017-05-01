@@ -51,15 +51,15 @@ void list_destroy(list_t *list) {
 	free(list);
 	return;
 }
-void list_deepdestroy(list_t *list, rmfunc_t rmfunc) {
+void list_deepdestroy(list_t *list, destroyfunc_t destroyfunc) {
 	if (list == NULL) list_err("list_deepdestroy: list = NULL");
 	if (list->size > 0) {
 		while ( (list->head != NULL) && (list->head->next != NULL)) {
 			list->head = list->head->next;
-			rmfunc(list->head->prev->item);
+			destroyfunc(list->head->prev->item);
 			free(list->head->prev);
 		}
-		rmfunc(list->head->item);
+		destroyfunc(list->head->item);
 		free(list->head);
 	}
 	free(list);
@@ -240,6 +240,39 @@ void list_addlast(list_t *list, void *item) {
 	list->tail = tmp_node;
 	list->size++;
 	return;
+}
+void list_remove(list_t *list, void *item) {
+	if (list == NULL) list_err("list_remove: list = NULL");
+	if (list->head == NULL) list_err("list_remove: head = NULL");
+	node_t *node = list->head;	
+	while(list->cmpfunc(node->item, item) != 0 && node) node = node->next;
+	if (node) {
+		if (list->size == 1);
+		else if (node == list->head) list->head = NULL;
+		else if (node == list->tail) list->tail = NULL;
+		else {
+			node->prev->next = node->next;
+			node->next->prev = node->prev;
+		}
+		free(node);
+	}
+}
+void list_deepremove(list_t *list, void *item, destroyfunc_t destroyfunc) {
+	if (list == NULL) list_err("list_remove: list = NULL");
+	if (list->head == NULL) list_err("list_remove: head = NULL");
+	node_t *node = list->head;	
+	while(list->cmpfunc(node->item, item) != 0 && node) node = node->next;
+	if (node) {
+		if (list->size == 1);
+		else if (node == list->head) list->head = NULL;
+		else if (node == list->tail) list->tail = NULL;
+		else {
+			node->prev->next = node->next;
+			node->next->prev = node->prev;
+		}
+		destroyfunc(node->item);
+		free(node);
+	}
 }
 void *list_popfirst(list_t *list) {
 	if (list == NULL) list_err("list_popfirst: list = NULL");

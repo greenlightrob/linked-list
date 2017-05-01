@@ -3,7 +3,7 @@
 
 typedef int (*cmpfunc_t)(void *, void *);
 typedef void *(*cpyfunc_t)(void *);
-typedef void *(*rmfunc_t)(void *);
+typedef void (*destroyfunc_t)(void *);
 
 struct list;
 typedef struct list list_t;
@@ -13,7 +13,7 @@ typedef struct list_iter list_iter_t;
 // Creating and destroying list
 list_t *list_create(cmpfunc_t cmpfunc);
 void list_destroy(list_t *list);
-void list_deepdestroy(list_t *list, rmfunc_t rmfunc);
+void list_deepdestroy(list_t *list, destroyfunc_t destroyfunc);
 
 // Getting list info
 int list_size(list_t *list);
