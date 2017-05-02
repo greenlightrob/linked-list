@@ -5,7 +5,7 @@ Created by [David Kristoffersen](https://github.com/davidkristoffersen/) and [Si
 Doubly liked list with extended functionality for iteration and insertion.
 
 ## TEST
-![testing](https://img.shields.io/badge/start%20witha-whyyyy%3F-brightgreen.svg?style=flat)
+![](https://img.shields.io/badge/start%20witha-whyyyy%3F-brightgreen.svg?style=flat)
 
 ## TODO's:
 
@@ -30,39 +30,36 @@ Doubly liked list with extended functionality for iteration and insertion.
 	* implement
 		* `map_remove()` add to `list_remove`
 
-list_t *list_create(cmpfunc_t cmpfunc);
-void list_destroy(list_t *list);
-void list_deepdestroy(list_t *list, rmfunc_t rmfunc);
-void list_usehashmap(list_t *list);											// Initialize hashmap
-void list_replacecmpfunc(list_t *list, cmpfunc_t cmpfunc);					// Change the comparefunction used
-int list_size(list_t *list);												// Getting list size
-int list_contains(list_t *list, void *item);								// Checking weather item exits in list
-void list_sort(list_t *list); // Sorting list
-
-// Copying list
-list_t *list_copy(list_t *list);
-list_t *list_deepcopy(list_t *list, cpyfunc_t cpyfunc);
-
-// Adding items
-void list_addfirst(list_t *list, void *item);
-void list_addlast(list_t *list, void *item);
-
-// Popping items
-void *list_popitem(list_t *list, void *item);
-void *list_popfirst(list_t *list);
-void *list_poplast(list_t *list);
-
-// Removing items
-void list_removeitem(list_t *list, void *item, rmfunc_t rmfunc);
-void list_removefirst(list_t *list, rmfunc_t rmfunc);
-void list_removelast(list_t *list, rmfunc_t rmfunc);
-
-// Getting and replacing
-void *list_getfirst(list_t *list); // bug
-void *list_getlast(list_t *list);
-void *list_getitemnumfromfirst(list_t *list, int num);
-void *list_getitemnumfromlast(list_t *list, int num);
-void list_replaceitem(list_t *list, void *originalitem, void *newitem);	// implement
+| Function 																	| Status									|
+|---------------------------------------------------------------------------|-------------------------------------------|
+| `list_t *list_create(cmpfunc_t cmpfunc);`									|											|
+| `void list_destroy(list_t *list);`										|											|
+| `void list_deepdestroy(list_t *list, rmfunc_t rmfunc);`					|											|
+| `void list_usehashmap(list_t *list);`										|// Initialize hashmap						|
+| `void list_replacecmpfunc(list_t *list, cmpfunc_t cmpfunc);`				|// Change the comparefunction used			|
+| `int list_size(list_t *list);`											|// Getting list size						|
+| `int list_contains(list_t *list, void *item);`							|// Checking weather item exits in list		|
+| `void list_sort(list_t *list);`											|// Sorting list							|
+| Copying list																|											|
+| `list_t *list_copy(list_t *list);`										|											|
+| `list_t *list_deepcopy(list_t *list, cpyfunc_t cpyfunc);`					|											|
+| Adding items																|											|
+| `void list_addfirst(list_t *list, void *item);`							|											|
+| `void list_addlast(list_t *list, void *item);`							|											|
+| Popping items																|											|
+| `void *list_popitem(list_t *list, void *item);`							|											|
+| `void *list_popfirst(list_t *list);`										|											|
+| `void *list_poplast(list_t *list);`										|											|
+| Removing items															|											|
+| `void list_removeitem(list_t *list, void *item, rmfunc_t rmfunc);`		|											|
+| `void list_removefirst(list_t *list, rmfunc_t rmfunc);`					|											|
+| `void list_removelast(list_t *list, rmfunc_t rmfunc);`					|											|
+| Getting and replacing														|											|
+| `void *list_getfirst(list_t *list);`										|// bug										|
+| `void *list_getlast(list_t *list);`										|											|
+| `void *list_getitemnumfromfirst(list_t *list, int num);`					|											|
+| `void *list_getitemnumfromlast(list_t *list, int num);`					|											|
+| `void list_replaceitem(list_t *list, void *originalitem, void *newitem);`	| // implement								|
 
 /*
  * Iterator functions
