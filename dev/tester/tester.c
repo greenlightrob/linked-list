@@ -256,10 +256,8 @@ int test_list_removeitem(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 
-	list_popitem(list, &array[5]);
-	list_removeitem(list, &array[1], destroy_int);
-	if (list_contains(list, allocate_int(5))) return 0;
-	if(array[5] == 5) return 0;
+	list_removeitem(list, &array[2], destroy_int);
+	if (!list_contains(list, allocate_int(2))) return 0;
 
 	free(array);
 	return 1;
@@ -268,10 +266,8 @@ int test_list_removefirst(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 
-	list_popitem(list, &array[5]);
 	list_removefirst(list, destroy_int);
-	if (list_contains(list, allocate_int(5))) return 0;
-	if(array[5] == 5) return 0;
+	if (!list_contains(list, allocate_int(0))) return 0;
 
 	free(array);
 	return 1;
@@ -280,16 +276,12 @@ int test_list_removelast(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 
-	list_popitem(list, &array[5]);
 	list_removelast(list, destroy_int);
-	if (list_contains(list, allocate_int(5))) return 0;
-	if(array[5] == 5) return 0;
+	if (!list_contains(list, allocate_int(9))) return 0;
 
 	free(array);
 	return 1;
 }
-
-
 
 // Getting and replacing
 int test_list_getfirst(int *array) {

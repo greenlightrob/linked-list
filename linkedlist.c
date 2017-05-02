@@ -230,7 +230,7 @@ void *list_poplast(list_t *list) {
 }
 
 // Removing items
-void list_remove(list_t *list, void *item, rmfunc_t rmfunc) {
+void list_removeitem(list_t *list, void *item, rmfunc_t rmfunc) {
 	if (list == NULL) list_err("list_remove: list = NULL");
 	if (list->head == NULL) list_err("list_remove: head = NULL");
 	if (list->hasmap) map_remove(list->map, item);
