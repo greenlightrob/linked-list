@@ -13,6 +13,10 @@ void fatal_error(char *msg, ...) {
     exit (1);
 }
 
+void destroy_int(void *input) {
+	free(input);
+}
+
 int compare_int(void *a, void *b) {
 	return *(int*)a - *(int*)b;
 }
@@ -21,4 +25,10 @@ int compare_string(void *a, void *b) {
 }
 int compare_pointer(void *a, void *b) {
     return (a < b) ? -1 : (a > b) ? 1 : 0;
+}
+
+int *allocate_int(int input) {
+	int *output = malloc(sizeof(int));
+	*output = input;
+	return output;
 }
