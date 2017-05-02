@@ -5,23 +5,19 @@ Created by [David Kristoffersen](https://github.com/davidkristoffersen/) and [Si
 Doubly liked list with extended functionality for iteration and insertion.
 
 ## TEST
-![badge](https://img.shields.io/badge/start%20witha-whyyyy%3F-brightgreen.svg?style=flat)
+![badge](https://img.shields.io/badge/start%20witha-whyyyy%3F-brightgreen.svg)
 
 ## Implemented
 
-yes: ![badge](https://img.shields.io/badge/implemented-yes-brightgreen.svg?style=flat)
+yes: ![badge](https://img.shields.io/badge/implemented-yes-brightgreen.svg)
 
-no: ![badge](https://img.shields.io/badge/implemented-no-brightred.svg?style=flat)
+no: ![badge](https://img.shields.io/badge/implemented-no-brightred.svg)
 
 ## Works
 
-yes: ![badge](https://img.shields.io/badge/works-yes-brightgreen.svg?style=flat)
-no: ![badge](https://img.shields.io/badge/works-no-brightred.svg?style=flat)
-unknown: ![badge](https://img.shields.io/badge/works-unknown-gray.svg?style=flat)
-
-## test local
-
-text: ![b](dev/implemented-yes.svg)
+yes: ![badge](https://img.shields.io/badge/works-yes-brightgreen.svg)
+no: ![badge](https://img.shields.io/badge/works-no-brightred.svg)
+unknown: ![badge](https://img.shields.io/badge/works-unknown-gray.svg)
 
 
 
