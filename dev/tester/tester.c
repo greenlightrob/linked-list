@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 #include "../../list.h"
 #include "common.h"
 #include "tester.h"
@@ -154,8 +155,7 @@ int test_list_copy(int *array) {
 	list_inputarr(list, array);
 
 	// Function call
-	// list_copy(list_t *list);
-
+	list_copy(list);
 	return 1;
 }
 int test_list_deepcopy(int *array) {
@@ -163,7 +163,7 @@ int test_list_deepcopy(int *array) {
 	list_inputarr(list, array);
 
 	// Function call
-	// list_deepcopy(list_t *list, cpyfunc_t cpyfunc);
+	list_deepcopy(list, copy_int);
 
 	return 1;
 }

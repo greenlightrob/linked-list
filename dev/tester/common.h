@@ -12,6 +12,7 @@ typedef int (*cmpfunc_t)(void *, void *);
 typedef void *(*copyfunc_t)(void *);
 typedef void (*destroy_t)(void *);
 
+void *copy_int(void *input);
 void destroy_int(void *input);
 
 // Type specific compare functions

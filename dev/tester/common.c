@@ -13,6 +13,10 @@ void fatal_error(char *msg, ...) {
     exit (1);
 }
 
+void *copy_int(void *input) {
+	return (void *)allocate_int(*(int*)input);
+}
+
 void destroy_int(void *input) {
 	free(input);
 }
