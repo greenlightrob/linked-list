@@ -9,9 +9,9 @@ Doubly liked list with extended functionality for iteration and insertion.
 
 ## Implemented
 
-yes: ![badge](https://img.shields.io/badge/implemented-yes%3F-brightgreen.svg?style=flat)
+yes: ![badge](https://img.shields.io/badge/implemented-yes-brightgreen.svg?style=flat)
 
-no: ![badge](https://img.shields.io/badge/implemented-no%3F-brightred.svg?style=flat)
+no: ![badge](https://img.shields.io/badge/implemented-no-brightred.svg?style=flat)
 
 ## TODO's:
 
