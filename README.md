@@ -13,6 +13,13 @@ yes: ![badge](https://img.shields.io/badge/implemented-yes-brightgreen.svg?style
 
 no: ![badge](https://img.shields.io/badge/implemented-no-brightred.svg?style=flat)
 
+## Works
+
+yes: ![badge](https://img.shields.io/badge/tested-yes-brightred.svg?style=flat)
+no: ![badge](https://img.shields.io/badge/tested-failed-brightred.svg?style=flat)
+unknown: ![badge](https://img.shields.io/badge/tested-no-brightgray.svg?style=flat)
+
+
 ## TODO's:
 
 * Test
