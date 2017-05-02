@@ -71,7 +71,7 @@ void list_deepdestroy(list_t *list, destroyfunc_t destroyfunc) {
 }
 
 // Config
-void list_replacefunc(list_t *list, cmpfunc_t cmp) {
+void list_replacecmpfunc(list_t *list, cmpfunc_t cmp) {
 	if (list == NULL) list_err("list_replacefunc: list = NULL");
 	list->cmpfunc = cmp;
 }
