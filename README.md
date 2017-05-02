@@ -4,112 +4,69 @@ Created by [David Kristoffersen](https://github.com/davidkristoffersen/) and [Si
 
 Doubly liked list with extended functionality for iteration and insertion.
 
-## TEST
-![badge](https://img.shields.io/badge/start%20witha-whyyyy%3F-brightgreen.svg)
+## Docs
+coming
 
-## Implemented
+## Development:
 
-yes: ![badge](https://img.shields.io/badge/implemented-yes-brightgreen.svg)
-
-no: ![badge](https://img.shields.io/badge/implemented-no-brightred.svg)
-
-## Works
-
-yes: ![badge](https://img.shields.io/badge/works-yes-brightgreen.svg)
-no: ![badge](https://img.shields.io/badge/works-no-brightred.svg)
-unknown: ![badge](https://img.shields.io/badge/works-unknown-gray.svg)
-
-
-
-## TODO's:
-
-* Test
-	* `list_getitemnumberfrom[first|last]`
-	* `list_add[before|after]`
-	* `list_deepdestroy`
-	* `list_roll[down|up]`
-* Implement:
-	* `list_randomize`
-	* `list_isequal`
-	* `list_hassameitems`
-* Renaming
-	* `list_getitemnumfrom[first|last]`
+### Todos
 * Rewriting
 	* Inconsistent `list->size == 0` and `list->head == NULL`
 	* Internal moving nodes instead of iterating
 	* Do we have to use typedefs?
 
-
-* regarding hashmap
-	* implement
-		* `map_remove()` add to `list_remove`
-
-| Function 																	| Status																																|
-|---------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------|
-| *List functions*															|																																		|
-| General list functions													|																																		|
-| `list_t *list_create(cmpfunc_t cmpfunc);`									|![badge](https://img.shields.io/badge/implemented-yes-brightgreen.svg)![badge](https://img.shields.io/badge/works-unknown-gray.svg)	|
-| `void list_destroy(list_t *list);`										|![badge](https://img.shields.io/badge/implemented-yes-brightgreen.svg)![badge](https://img.shields.io/badge/works-unknown-gray.svg)	|
-| `void list_deepdestroy(list_t *list, rmfunc_t rmfunc);`					|![badge](https://img.shields.io/badge/implemented-yes-brightgreen.svg)![badge](https://img.shields.io/badge/works-unknown-gray.svg)	|
-| `void list_usehashmap(list_t *list);`										|![badge](https://img.shields.io/badge/implemented-yes-brightgreen.svg)![badge](https://img.shields.io/badge/works-unknown-gray.svg)	|
-| `void list_replacecmpfunc(list_t *list, cmpfunc_t cmpfunc);`				|![badge](https://img.shields.io/badge/implemented-yes-brightgreen.svg)![badge](https://img.shields.io/badge/works-unknown-gray.svg)	|
-| `int list_size(list_t *list);`											|![badge](https://img.shields.io/badge/implemented-yes-brightgreen.svg)![badge](https://img.shields.io/badge/works-unknown-gray.svg)	|
-| `int list_contains(list_t *list, void *item);`							|![badge](https://img.shields.io/badge/implemented-yes-brightgreen.svg)![badge](https://img.shields.io/badge/works-unknown-gray.svg)	|
-| `void list_sort(list_t *list);`											|![badge](https://img.shields.io/badge/implemented-no-brightred.svg)![badge](https://img.shields.io/badge/works-unknown-gray.svg)		|
-| Copying list																|![badge](https://img.shields.io/badge/implemented-yes-brightgreen.svg)![badge](https://img.shields.io/badge/works-unknown-gray.svg)	|
-| `list_t *list_copy(list_t *list);`										|![badge](https://img.shields.io/badge/implemented-yes-brightgreen.svg)![badge](https://img.shields.io/badge/works-unknown-gray.svg)	|
-| `list_t *list_deepcopy(list_t *list, cpyfunc_t cpyfunc);`					|![badge](https://img.shields.io/badge/implemented-yes-brightgreen.svg)![badge](https://img.shields.io/badge/works-unknown-gray.svg)	|
-| Adding items																|																																		|
-| `void list_addfirst(list_t *list, void *item);`							|![badge](https://img.shields.io/badge/implemented-yes-brightgreen.svg)![badge](https://img.shields.io/badge/works-unknown-gray.svg)	|
-| `void list_addlast(list_t *list, void *item);`							|![badge](https://img.shields.io/badge/implemented-yes-brightgreen.svg)![badge](https://img.shields.io/badge/works-unknown-gray.svg)	|
-| Popping items																|	|																																	|
-| `void *list_popitem(list_t *list, void *item);`							|![badge](https://img.shields.io/badge/implemented-yes-brightgreen.svg)![badge](https://img.shields.io/badge/works-unknown-gray.svg)	|
-| `void *list_popfirst(list_t *list);`										|![badge](https://img.shields.io/badge/implemented-yes-brightgreen.svg)![badge](https://img.shields.io/badge/works-unknown-gray.svg)	|
-| `void *list_poplast(list_t *list);`										|![badge](https://img.shields.io/badge/implemented-yes-brightgreen.svg)![badge](https://img.shields.io/badge/works-unknown-gray.svg)	|
-| Removing items															|																																		|
-| `void list_removeitem(list_t *list, void *item, rmfunc_t rmfunc);`		|![badge](https://img.shields.io/badge/implemented-yes-brightgreen.svg)![badge](https://img.shields.io/badge/works-unknown-gray.svg)	|
-| `void list_removefirst(list_t *list, rmfunc_t rmfunc);`					|![badge](https://img.shields.io/badge/implemented-yes-brightgreen.svg)![badge](https://img.shields.io/badge/works-unknown-gray.svg)	|
-| `void list_removelast(list_t *list, rmfunc_t rmfunc);`					|![badge](https://img.shields.io/badge/implemented-yes-brightgreen.svg)![badge](https://img.shields.io/badge/works-unknown-gray.svg)	|
-| Getting and replacing														|																																		|
-| `void *list_getfirst(list_t *list);`										|![badge](https://img.shields.io/badge/implemented-yes-brightgreen.svg)![badge](https://img.shields.io/badge/works-unknown-gray.svg)	|
-| `void *list_getlast(list_t *list);`										|![badge](https://img.shields.io/badge/implemented-yes-brightgreen.svg)![badge](https://img.shields.io/badge/works-unknown-gray.svg)	|
-| `void *list_getitemnumfromfirst(list_t *list, int num);`					|![badge](https://img.shields.io/badge/implemented-yes-brightgreen.svg)![badge](https://img.shields.io/badge/works-unknown-gray.svg)	|
-| `void *list_getitemnumfromlast(list_t *list, int num);`					|![badge](https://img.shields.io/badge/implemented-yes-brightgreen.svg)![badge](https://img.shields.io/badge/works-unknown-gray.svg)	|
-| `void list_replaceitem(list_t *list, void *originalitem, void *newitem);`	|![badge](https://img.shields.io/badge/implemented-no-brightred.svg)![badge](https://img.shields.io/badge/works-unknown-gray.svg)		|
-| *Iterator functions*														|																																		|
-| General iterator functions												|																																		|
-| `list_iter_t *list_createiter(list_t *list);`								|![badge](https://img.shields.io/badge/implemented-yes-brightgreen.svg)![badge](https://img.shields.io/badge/works-unknown-gray.svg)	|
-| `void list_copyiter(list_iter_t *originaliter, list_iter_t *newiter);`	|![badge](https://img.shields.io/badge/implemented-yes-brightgreen.svg)![badge](https://img.shields.io/badge/works-unknown-gray.svg)	|
-| `void list_destroyiter(list_iter_t *iter);`								|![badge](https://img.shields.io/badge/implemented-yes-brightgreen.svg)![badge](https://img.shields.io/badge/works-unknown-gray.svg)	|
-| `void list_resetiter(list_iter_t *iter);`									|![badge](https://img.shields.io/badge/implemented-yes-brightgreen.svg)![badge](https://img.shields.io/badge/works-unknown-gray.svg)	|
-| `int list_hasnext(list_iter_t *iter);`									|![badge](https://img.shields.io/badge/implemented-yes-brightgreen.svg)![badge](https://img.shields.io/badge/works-unknown-gray.svg)	|
-| `int list_hasbefore(list_iter_t *iter);`									|![badge](https://img.shields.io/badge/implemented-yes-brightgreen.svg)![badge](https://img.shields.io/badge/works-unknown-gray.svg)	|
-| `int list_hasafter(list_iter_t *iter);`									|![badge](https://img.shields.io/badge/implemented-yes-brightgreen.svg)![badge](https://img.shields.io/badge/works-unknown-gray.svg)	|
-| Iterator manipulations													|																																		|
-| `void list_movenext(list_iter_t *iter);`									|![badge](https://img.shields.io/badge/implemented-yes-brightgreen.svg)![badge](https://img.shields.io/badge/works-unknown-gray.svg)	|
-| `void list_moveprev(list_iter_t *iter);`									|![badge](https://img.shields.io/badge/implemented-yes-brightgreen.svg)![badge](https://img.shields.io/badge/works-unknown-gray.svg)	|
-| `void *list_next(list_iter_t *iter);`										|![badge](https://img.shields.io/badge/implemented-yes-brightgreen.svg)![badge](https://img.shields.io/badge/works-unknown-gray.svg)	|
-| `void *list_prev(list_iter_t *iter);`										|![badge](https://img.shields.io/badge/implemented-yes-brightgreen.svg)![badge](https://img.shields.io/badge/works-unknown-gray.svg)	|
-| Adding items with iterators												|																																		|
-| `void list_addbefore(list_iter_t *iter, void *item);`						|![badge](https://img.shields.io/badge/implemented-yes-brightgreen.svg)![badge](https://img.shields.io/badge/works-unknown-gray.svg)	|
-| `void list_addafter(list_iter_t *iter, void *item);`						|![badge](https://img.shields.io/badge/implemented-yes-brightgreen.svg)![badge](https://img.shields.io/badge/works-unknown-gray.svg)	|
-| Popping items with iterators												|																																		|
-| `void *list_popnext(list_iter_t *iter);`									|![badge](https://img.shields.io/badge/implemented-yes-brightgreen.svg)![badge](https://img.shields.io/badge/works-unknown-gray.svg)	|
-| `void *list_popprev(list_iter_t *iter);`									|![badge](https://img.shields.io/badge/implemented-yes-brightgreen.svg)![badge](https://img.shields.io/badge/works-unknown-gray.svg)	|
-| Removing item then moving iterator										|																																		|
-| `void *list_removenext(list_iter_t *iter, rmfunc_t rmfunc);`				|![badge](https://img.shields.io/badge/implemented-no-brightred.svg)![badge](https://img.shields.io/badge/works-unknown-gray.svg)		|
-| `void *list_removeprev(list_iter_t *iter, rmfunc_t rmfunc);`				|![badge](https://img.shields.io/badge/implemented-no-brightred.svg)![badge](https://img.shields.io/badge/works-unknown-gray.svg)		|
-| Getting and replacing items with iterators								|																																		|
-| `void *list_getitem(list_iter_t *iter);`									|![badge](https://img.shields.io/badge/implemented-yes-brightgreen.svg)![badge](https://img.shields.io/badge/works-unknown-gray.svg)	|
-| `void *list_getbefore(list_iter_t *iter);`								|![badge](https://img.shields.io/badge/implemented-yes-brightgreen.svg)![badge](https://img.shields.io/badge/works-unknown-gray.svg)	|
-| `void *list_getafter(list_iter_t *iter);`									|![badge](https://img.shields.io/badge/implemented-yes-brightgreen.svg)![badge](https://img.shields.io/badge/works-unknown-gray.svg)	|
-| `void list_replaceiteritem(list_iter_t *iter, void *item);`				|![badge](https://img.shields.io/badge/implemented-yes-brightgreen.svg)![badge](https://img.shields.io/badge/works-unknown-gray.svg)	|
-|*Specialized list functions*												|																																		|
-| List manipulations														|																																		|
-| `void list_rolldown(list_t *list);`										|![badge](https://img.shields.io/badge/implemented-yes-brightgreen.svg)![badge](https://img.shields.io/badge/works-unknown-gray.svg)	|
-| `void list_rollup(list_t *list);`											|![badge](https://img.shields.io/badge/implemented-yes-brightgreen.svg)![badge](https://img.shields.io/badge/works-unknown-gray.svg)	|
-| `void list_reverse(list_t *list);`										|![badge](https://img.shields.io/badge/implemented-yes-brightgreen.svg)![badge](https://img.shields.io/badge/works-unknown-gray.svg)	|
-| `void list_randomize(list_t *list);`										|![badge](https://img.shields.io/badge/implemented-no-brightred.svg)![badge](https://img.shields.io/badge/works-unknown-gray.svg)		|
+| Function 						| Implemented 	| Works		| Status	|
+|-------------------------------|---------------|-----------|-----------|
+| `list_create`					| Yes			| Unknown	||
+| `list_destroy;`				| Yes			| Unknown	||
+| `list_deepdestroy`			| Yes			| Unknown	||
+| `list_usehashmap`				| Yes			| Unknown	||
+| `list_replacecmpfunc`			| Yes			| Unknown	||
+| `list_size`					| Yes			| Unknown	||
+| `list_contains`				| Yes			| Unknown	||
+| `list_sort`					| No			| Unknown	||
+| `list_copy`					| Yes			| Unknown	||
+| `list_deepcopy`				| Yes			| Unknown	||
+| `list_addfirst`				| Yes			| Unknown	||
+| `list_addlast`				| Yes			| Unknown	||
+| `list_popitem`				| Yes			| Unknown	||
+| `list_popfirst`				| Yes			| Unknown	||
+| `list_poplast`				| Yes			| Unknown	||
+| `list_removeitem`				| Yes			| Unknown	||
+| `list_removefirst`			| Yes			| Unknown	||
+| `list_removelast`				| Yes			| Unknown	||
+| `list_getfirst`				| Yes			| Unknown	||
+| `list_getlast`				| Yes			| Unknown	||
+| `list_getitemnumfromfirst`	| Yes			| Unknown	| Needs to be renamed|
+| `list_getitemnumfromlast`		| Yes			| Unknown	| Needs to be renamed|
+| `list_replaceitem`			| No			| Unknown	||
+| `list_createiter`				| Yes			| Unknown	||
+| `list_copyiter`				| Yes			| Unknown	||
+| `list_destroyiter`			| Yes			| Unknown	||
+| `list_resetiter`				| Yes			| Unknown	||
+| `list_hasnext`				| Yes			| Unknown	||
+| `list_hasbefore`				| Yes			| Unknown	||
+| `list_hasafter`				| Yes			| Unknown	||
+| `list_movenext`				| Yes			| Unknown	||
+| `list_moveprev`				| Yes			| Unknown	||
+| `list_next`					| Yes			| Unknown	||
+| `list_prev`					| Yes			| Unknown	||
+| `list_addbefore`				| Yes			| Unknown	||
+| `list_addafter`				| Yes			| Unknown	||
+| `list_popnext`				| Yes			| Unknown	||
+| `list_popprev`				| Yes			| Unknown	||
+| `list_removenext`				| Yes			| Unknown	||
+| `list_removeprev`				| Yes			| Unknown	||
+| `list_getitem`				| Yes			| Unknown	||
+| `list_getbefore`				| Yes			| Unknown	||
+| `list_getafter`				| Yes			| Unknown	||
+| `list_replaceiteritem`		| Yes			| Unknown	||
+| `list_rolldown`				| Yes			| Unknown	||
+| `list_rollup`					| Yes			| Unknown	||
+| `list_reverse`				| Yes			| Unknown	||
+| `list_randomize`				| No			| Unknown	||
+| `list_isequal`				| No			| Unknown	||
+| `list_hassameitems`			| No			| Unknown	||
 
 ## Gems
 
