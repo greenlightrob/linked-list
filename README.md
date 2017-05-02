@@ -67,26 +67,3 @@ coming
 | `list_randomize`				| No			| Unknown	||
 | `list_isequal`				| No			| Unknown	||
 | `list_hassameitems`			| No			| Unknown	||
-
-## Gems
-
-David once commited this function:
-
-```
-void list_remove(list_t *list, void *item) {
-	if (list == NULL) list_err("list_remove: list = NULL");
-	if (list->head == NULL) list_err("list_remove: head = NULL");
-	node_t *node = list->head;	
-	while(list->cmpfunc(node->item, item) != 0 && node) node = node->next;
-	if (node) {
-		if (list->size == 1);
-		else if (node == list->head) list->tail = NULL;
-		else if (node == list->tail) list->head = NULL;
-		else {
-			node->prev->next = node->next;
-			node->next->prev = node->prev;
-		}
-		free(node);
-	}
-}
-```

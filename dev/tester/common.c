@@ -30,9 +30,17 @@ int compare_string(void *a, void *b) {
 int compare_pointer(void *a, void *b) {
     return (a < b) ? -1 : (a > b) ? 1 : 0;
 }
+int compare_null(void *a, void *b) {
+    return 1;
+}
 
 int *allocate_int(int input) {
 	int *output = malloc(sizeof(int));
 	*output = input;
+	return output;
+}
+
+char *allocate_string(char *input) {
+	char *output = strdup(input);
 	return output;
 }
