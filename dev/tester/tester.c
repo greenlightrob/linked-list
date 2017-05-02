@@ -35,8 +35,8 @@ int main() {
 	print_status("list_deepcopy", test_list_deepcopy(dup_arr(arr, size)));
 	print_status("list_addfirst", test_list_addfirst(dup_arr(arr, size)));
 	print_status("list_addlast", test_list_addlast(dup_arr(arr, size)));
+	print_status("list_popitem", test_list_popitem(dup_arr(arr, size)));
 	print_status("list_remove", test_list_remove(dup_arr(arr, size)));
-	print_status("list_deepremove", test_list_deepremove(dup_arr(arr, size)));
 	print_status("list_popfirst", test_list_popfirst(dup_arr(arr, size)));
 	print_status("list_poplast", test_list_poplast(dup_arr(arr, size)));
 	print_status("list_getlast", test_list_getlast(dup_arr(arr, size)));
@@ -60,8 +60,6 @@ int main() {
 	print_status("list_prev", test_list_prev(dup_arr(arr, size)));
 	print_status("list_popnext", test_list_popnext(dup_arr(arr, size)));
 	print_status("list_popprev", test_list_popprev(dup_arr(arr, size)));
-	print_status("list_addnext", test_list_addnext(dup_arr(arr, size)));
-	print_status("list_addprev", test_list_addprev(dup_arr(arr, size)));
 	print_status("list_addafter", test_list_addafter(dup_arr(arr, size)));
 	print_status("list_addbefore", test_list_addbefore(dup_arr(arr, size)));
 	print_status("list_rolldown", test_list_rolldown(dup_arr(arr, size)));
@@ -184,19 +182,19 @@ int test_list_addlast(int *array) {
 }
 
 // Removing items
+int test_list_popitem(int *array) {
+	list_t *list = list_create(compare_int);
+	list_inputarr(list, array);
+
+	list_popitem(list, &array[1]);
+
+	return 1;
+}
 int test_list_remove(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 
-	list_remove(list, &array[1]);
-
-	return 1;
-}
-int test_list_deepremove(int *array) {
-	list_t *list = list_create(compare_int);
-	list_inputarr(list, array);
-
-	list_deepremove(list, &array[1], destroy_int);
+	list_remove(list, &array[1], destroy_int);
 
 	return 1;
 }
@@ -287,7 +285,7 @@ int test_list_resetiter(int *array) {
 	list_inputarr(list, array);
 	list_iter_t *iter= list_createiter(list);
 
-	list_resetiter(list, iter);
+	list_resetiter(iter);
 
 	return 1;
 }
@@ -408,7 +406,7 @@ int test_list_popnext(int *array) {
 	list_inputarr(list, array);
 	list_iter_t *iter= list_createiter(list);
 
-	list_popnext(list, iter);
+	list_popnext(iter);
 
 	return 1;
 }
@@ -417,27 +415,7 @@ int test_list_popprev(int *array) {
 	list_inputarr(list, array);
 	list_iter_t *iter= list_createiter(list);
 
-	list_popprev(list, iter);
-
-	return 1;
-}
-
-// Adding item in direction then moving iterator the same direction
-int test_list_addnext(int *array) {
-	list_t *list = list_create(compare_int);
-	list_inputarr(list, array);
-	list_iter_t *iter= list_createiter(list);
-
-	list_addnext(list, iter, &array[1]);
-
-	return 1;
-}
-int test_list_addprev(int *array) {
-	list_t *list = list_create(compare_int);
-	list_inputarr(list, array);
-	list_iter_t *iter= list_createiter(list);
-
-	list_addprev(list, iter, &array[1]);
+	list_popprev(iter);
 
 	return 1;
 }
@@ -448,7 +426,7 @@ int test_list_addafter(int *array) {
 	list_inputarr(list, array);
 	list_iter_t *iter= list_createiter(list);
 
-	list_addafter(list, iter, &array[4]);
+	list_addafter(iter, &array[4]);
 
 	return 1;
 }
@@ -458,7 +436,7 @@ int test_list_addbefore(int *array) {
 	list_iter_t *iter= list_createiter(list);
 	list_movenext(iter);
 
-	list_addbefore(list, iter, &array[9]);
+	list_addbefore(iter, &array[9]);
 
 	return 1;
 }

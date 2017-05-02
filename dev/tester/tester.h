@@ -30,8 +30,8 @@ int test_list_addfirst(int *array);
 int test_list_addlast(int *array);
 
 // Removing items
+int test_list_popitem(int *array);
 int test_list_remove(int *array);
-int test_list_deepremove(int *array);
 
 // Popping items (will remove items from list)
 int test_list_popfirst(int *array);
@@ -75,10 +75,6 @@ int test_list_prev(int *array);
 // Popping item then moving iterator
 int test_list_popnext(int *array);
 int test_list_popprev(int *array);
-
-// Adding item in direction then moving iterator the same direction
-int test_list_addnext(int *array);
-int test_list_addprev(int *array);
 
 // Adding item in direction
 int test_list_addafter(int *array);
