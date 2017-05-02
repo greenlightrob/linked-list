@@ -15,13 +15,15 @@ no: ![badge](https://img.shields.io/badge/implemented-no-brightred.svg?style=fla
 
 ## Works
 
-yes: ![badge](https://img.shields.io/badge/tested-yes-brightgreen.svg?style=flat)
-no: ![badge](https://img.shields.io/badge/tested-failed-brightred.svg?style=flat)
-unknown: ![badge](https://img.shields.io/badge/tested-no-gray.svg?style=flat)
+yes: ![badge](https://img.shields.io/badge/works-yes-brightgreen.svg?style=flat)
+no: ![badge](https://img.shields.io/badge/works-no-brightred.svg?style=flat)
+unknown: ![badge](https://img.shields.io/badge/works-unknown-gray.svg?style=flat)
 
-## test
+## test local
 
-no: ![badge](https://img.shields.io/badge/tested-failed-brightred.svg?style=flat) ![badge](https://img.shields.io/badge/tested-no-gray.svg?style=flat)
+![b](dev/implemented-yes.svg)
+
+
 
 ## TODO's:
 
@@ -50,15 +52,15 @@ no: ![badge](https://img.shields.io/badge/tested-failed-brightred.svg?style=flat
 |---------------------------------------------------------------------------|
 | *List functions*															|
 | General list functions													|
-| `list_t *list_create(cmpfunc_t cmpfunc);`									|
-| `void list_destroy(list_t *list);`										|
-| `void list_deepdestroy(list_t *list, rmfunc_t rmfunc);`					|
-| `void list_usehashmap(list_t *list);`										|
-| `void list_replacecmpfunc(list_t *list, cmpfunc_t cmpfunc);`				|
-| `int list_size(list_t *list);`											|
-| `int list_contains(list_t *list, void *item);`							|
-| `void list_sort(list_t *list);`											|
-| Copying list																|
+| `list_t *list_create(cmpfunc_t cmpfunc);`									|![badge](https://img.shields.io/badge/implemented-yes-brightgreen.svg?style=flat)
+| `void list_destroy(list_t *list);`										|![badge](https://img.shields.io/badge/implemented-yes-brightgreen.svg?style=flat)
+| `void list_deepdestroy(list_t *list, rmfunc_t rmfunc);`					|![badge](https://img.shields.io/badge/implemented-yes-brightgreen.svg?style=flat)
+| `void list_usehashmap(list_t *list);`										|![badge](https://img.shields.io/badge/implemented-yes-brightgreen.svg?style=flat)
+| `void list_replacecmpfunc(list_t *list, cmpfunc_t cmpfunc);`				|![badge](https://img.shields.io/badge/implemented-yes-brightgreen.svg?style=flat)
+| `int list_size(list_t *list);`											|![badge](https://img.shields.io/badge/implemented-yes-brightgreen.svg?style=flat)
+| `int list_contains(list_t *list, void *item);`							|![badge](https://img.shields.io/badge/implemented-yes-brightgreen.svg?style=flat)
+| `void list_sort(list_t *list);`											|![badge](https://img.shields.io/badge/implemented-yes-brightgreen.svg?style=flat)
+| Copying list																|![badge](https://img.shields.io/badge/implemented-yes-brightgreen.svg?style=flat)
 | `list_t *list_copy(list_t *list);`										|
 | `list_t *list_deepcopy(list_t *list, cpyfunc_t cpyfunc);`					|
 | Adding items																|
