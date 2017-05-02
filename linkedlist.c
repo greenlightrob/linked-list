@@ -94,7 +94,7 @@ int list_contains(list_t *list, void *item) {
 
 // Sorting list
 void list_sort(list_t *list) {
-	printf("list sort is not implemented yet");
+	// printf("list sort is not implemented yet");
 }
 
 // Copying list
@@ -526,6 +526,9 @@ void list_reverse(list_t *list) {
 		end = end->prev;
 	}
 }
-void randomize(list_t *list) {
+void list_randomize(list_t *list) {
+
+}
+void list_usehashmap(list_t *list) {
 
 }
