@@ -5,7 +5,7 @@ Created by [David Kristoffersen](https://github.com/davidkristoffersen/) and [Si
 Doubly liked list with extended functionality for iteration and insertion.
 
 ## TEST
-[testing](https://img.shields.io/badge/start%20with-why%3F-brightgreen.svg?style=flat)
+![testing](https://img.shields.io/badge/start%20with-why%3F-brightgreen.svg?style=flat)
 
 ## TODO's:
 
