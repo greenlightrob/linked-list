@@ -153,7 +153,6 @@ int list_contains(list_t *list, void *item) {
 // Sorting list
 void list_sort(list_t *list) {
 	// list_err("list sort is not implemented yet");
-	list_err("list sort is not implemented yet");
 }
 
 // Copying list
