@@ -121,7 +121,6 @@ void list_deepdestroy(list_t *list, destroyfunc_t destroyfunc) {
 	return;
 }
 
-// Config
 void list_usehashmap(list_t *list) {
 	list->map = map_create(list->cmpfunc);
 	list_iter_t *iter = list_createiter(list);
@@ -154,6 +153,7 @@ int list_contains(list_t *list, void *item) {
 // Sorting list
 void list_sort(list_t *list) {
 	// list_err("list sort is not implemented yet");
+	list_err("list sort is not implemented yet");
 }
 
 // Copying list
@@ -504,7 +504,6 @@ unsigned long djb2(unsigned char *str) {
 void error_check(void *input) {
 	if (input == NULL) list_err("fuc u");
 }
-
 int map_resize(map_t *map) {
 	list_t *tmp_list = list_create(map->cmpfunc);
 	void *tmp_item;
@@ -529,7 +528,6 @@ mapnode_t *map_new_node(void *key) {
 	newnode->key = key;
 	return newnode;
 }
-
 map_t *map_create(cmpfunc_t cmpfunc) {
 	map_t *map = malloc(sizeof(map_t));
 	error_check(map);
@@ -547,7 +545,6 @@ void map_destroy(map_t *map) {
 	free(map->hashtable);
 	free(map);
 }
-
 void map_replacecmpfunc(map_t *map, cmpfunc_t cmpfunc) {
 	map->cmpfunc = cmpfunc;
 }
@@ -581,7 +578,6 @@ void map_remove(map_t *map, void *key) {
 	int idx = hashval % map->maxsize;
 	list_popitem(map->hashtable[idx], key);
 }
-
 int map_haskey(map_t *map, void *key) {
 	unsigned long hashval = djb2(key);
 	int idx = hashval % map->maxsize;
