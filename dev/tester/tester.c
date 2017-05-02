@@ -103,9 +103,9 @@ int test_list_deepdestroy(int *array) {
 
 // Config
 int test_list_usehashmap(int *array) {
-
-	// Function call
-	// list_usehashmap(list_t *list);
+	list_t *list = list_create(compare_int);
+	list_inputarr(list, array);
+	list_usehashmap(list);
 
 	return 1;
 }
@@ -143,8 +143,7 @@ int test_list_sort(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 
-	// Function call
-	// list_sort(list_t *list);
+	list_sort(list);
 
 	return 1;
 }
@@ -154,7 +153,6 @@ int test_list_copy(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 
-	// Function call
 	list_copy(list);
 	return 1;
 }
@@ -162,7 +160,6 @@ int test_list_deepcopy(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 
-	// Function call
 	list_deepcopy(list, copy_int);
 
 	return 1;
@@ -173,8 +170,7 @@ int test_list_addfirst(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 
-	// Function call
-	// list_addfirst(list_t *list, void *item);
+	list_addfirst(list, &array[1]);
 
 	return 1;
 }
@@ -182,8 +178,7 @@ int test_list_addlast(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 
-	// Function call
-	// list_addlast(list_t *list, void *item);
+	list_addlast(list, &array[1]);
 
 	return 1;
 }
@@ -193,8 +188,7 @@ int test_list_remove(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 
-	// Function call
-	// list_remove(list_t *list, void *item);
+	list_remove(list, &array[1]);
 
 	return 1;
 }
@@ -202,8 +196,7 @@ int test_list_deepremove(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 
-	// Function call
-	// list_deepremove(list_t *list, void *item, destroyfunc_t destroyfunc);
+	list_deepremove(list, &array[1], destroy_int);
 
 	return 1;
 }
@@ -213,8 +206,7 @@ int test_list_popfirst(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 
-	// Function call
-	// list_popfirst(list_t *list);
+	list_popfirst(list);
 
 	return 1;
 }
@@ -222,8 +214,7 @@ int test_list_poplast(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 
-	// Function call
-	// list_poplast(list_t *list);
+	list_poplast(list);
 
 	return 1;
 }
@@ -233,8 +224,7 @@ int test_list_getlast(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 
-	// Function call
-	// list_getlast(list_t *list);
+	list_getlast(list);
 
 	return 1;
 }
@@ -242,8 +232,7 @@ int test_list_getfirst(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 
-	// Function call
-	// list_getfirst(list_t *list);
+	list_getfirst(list);
 
 	return 1;
 }
@@ -253,8 +242,7 @@ int test_list_getitemnumfromfirst(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 
-	// Function call
-	// list_getitemnumfromfirst(list_t *list, int num);
+	list_getitemnumfromfirst(list, size / 2);
 
 	return 1;
 }
@@ -262,8 +250,7 @@ int test_list_getitemnumfromlast(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 
-	// Function call
-	// list_getitemnumfromlast(list_t *list, int num);
+	list_getitemnumfromlast(list, size / 2);
 
 	return 1;
 }
@@ -273,35 +260,34 @@ int test_list_createiter(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 
-	// Function call
-	// list_createiter(list_t *list);
+	list_createiter(list);
 
 	return 1;
 }
 int test_list_copyiter(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
-
-	// Function call
-	// list_copyiter(list_iter_t *a, list_iter_t *b);
+	list_iter_t *a, *b;
+	a = list_createiter(list);
+	list_copyiter(a, b);
 
 	return 1;
 }
 int test_list_destroyiter(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
+	list_iter_t *iter= list_createiter(list);
 
-	// Function call
-	// list_destroyiter(list_iter_t *iter);
+	list_destroyiter(iter);
 
 	return 1;
 }
 int test_list_resetiter(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
+	list_iter_t *iter= list_createiter(list);
 
-	// Function call
-	// list_resetiter(list_t *list, list_iter_t *iter);
+	list_resetiter(list, iter);
 
 	return 1;
 }
@@ -310,9 +296,9 @@ int test_list_resetiter(int *array) {
 int test_list_hasnext(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
+	list_iter_t *iter= list_createiter(list);
 
-	// Function call
-	// list_hasnext(list_iter_t *iter);
+	list_hasnext(iter);
 
 	return 1;
 }
@@ -321,18 +307,18 @@ int test_list_hasnext(int *array) {
 int test_list_hasbefore(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
+	list_iter_t *iter= list_createiter(list);
 
-	// Function call
-	// list_hasbefore(list_iter_t *iter);
+	list_hasbefore(iter);
 
 	return 1;
 }
 int test_list_hasafter(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
+	list_iter_t *iter= list_createiter(list);
 
-	// Function call
-	// list_hasafter(list_iter_t *iter);
+	list_hasafter(iter);
 
 	return 1;
 }
@@ -341,36 +327,37 @@ int test_list_hasafter(int *array) {
 int test_list_getitem(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
+	list_iter_t *iter= list_createiter(list);
 
-	// Function call
-	// list_getitem(list_iter_t *iter);
+	list_getitem(iter);
 
 	return 1;
 }
 int test_list_getbefore(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
+	list_iter_t *iter= list_createiter(list);
+	list_movenext(iter);
 
-	// Function call
-	// list_getbefore(list_iter_t *iter);
+	list_getbefore(iter);
 
 	return 1;
 }
 int test_list_getafter(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
+	list_iter_t *iter= list_createiter(list);
 
-	// Function call
-	// list_getafter(list_iter_t *iter);
+	list_getafter(iter);
 
 	return 1;
 }
 int test_list_replaceitem(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
+	list_iter_t *iter= list_createiter(list);
 
-	// Function call
-	// list_replaceitem(list_iter_t *iter, void *item);
+	list_replaceitem(iter, &array[1]);
 
 	return 1;
 }
@@ -379,18 +366,18 @@ int test_list_replaceitem(int *array) {
 int test_list_movenext(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
+	list_iter_t *iter= list_createiter(list);
 
-	// Function call
-	// list_movenext(list_iter_t *iter);
+	list_movenext(iter);
 
 	return 1;
 }
 int test_list_moveprev(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
+	list_iter_t *iter= list_createiter(list);
 
-	// Function call
-	// list_moveprev(list_iter_t *iter);
+	list_moveprev(iter);
 
 	return 1;
 }
@@ -399,18 +386,18 @@ int test_list_moveprev(int *array) {
 int test_list_next(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
+	list_iter_t *iter= list_createiter(list);
 
-	// Function call
-	// list_next(list_iter_t *iter);
+	list_next(iter);
 
 	return 1;
 }
 int test_list_prev(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
+	list_iter_t *iter= list_createiter(list);
 
-	// Function call
-	// list_prev(list_iter_t *iter);
+	list_prev(iter);
 
 	return 1;
 }
@@ -419,18 +406,18 @@ int test_list_prev(int *array) {
 int test_list_popnext(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
+	list_iter_t *iter= list_createiter(list);
 
-	// Function call
-	// list_popnext(list_t *list, list_iter_t *iter);
+	list_popnext(list, iter);
 
 	return 1;
 }
 int test_list_popprev(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
+	list_iter_t *iter= list_createiter(list);
 
-	// Function call
-	// list_popprev(list_t *list, list_iter_t *iter);
+	list_popprev(list, iter);
 
 	return 1;
 }
@@ -439,18 +426,18 @@ int test_list_popprev(int *array) {
 int test_list_addnext(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
+	list_iter_t *iter= list_createiter(list);
 
-	// Function call
-	// list_addnext(list_t *list, list_iter_t *iter, void *item);
+	list_addnext(list, iter, &array[1]);
 
 	return 1;
 }
 int test_list_addprev(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
+	list_iter_t *iter= list_createiter(list);
 
-	// Function call
-	// list_addprev(list_t *list, list_iter_t *iter, void *item);
+	list_addprev(list, iter, &array[1]);
 
 	return 1;
 }
@@ -459,18 +446,19 @@ int test_list_addprev(int *array) {
 int test_list_addafter(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
+	list_iter_t *iter= list_createiter(list);
 
-	// Function call
-	// list_addafter(list_t *list, list_iter_t *iter, void *item);
+	list_addafter(list, iter, &array[4]);
 
 	return 1;
 }
 int test_list_addbefore(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
+	list_iter_t *iter= list_createiter(list);
+	list_movenext(iter);
 
-	// Function call
-	// list_addbefore(list_t *list, list_iter_t *iter, void *item);
+	list_addbefore(list, iter, &array[9]);
 
 	return 1;
 }
@@ -480,8 +468,7 @@ int test_list_rolldown(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 
-	// Function call
-	// list_rolldown(list_t *list);
+	list_rolldown(list);
 
 	return 1;
 }
@@ -489,8 +476,7 @@ int test_list_rollup(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 
-	// Function call
-	// list_rollup(list_t *list);
+	list_rollup(list);
 
 	return 1;
 }
@@ -498,8 +484,7 @@ int test_list_reverse(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 
-	// Function call
-	// list_reverse(list_t *list);
+	list_reverse(list);
 
 	return 1;
 }
@@ -507,8 +492,7 @@ int test_list_randomize(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 
-	// Function call
-	// list_randomize(list_t *list);
+	list_randomize(list);
 
 	return 1;
 }
