@@ -91,6 +91,7 @@ void *pop_node(list_t *list, node_t *node) {
 	}
 	list->size--;
 	free(node);
+	node = NULL;
 	return tmpitem;
 }
 
@@ -111,6 +112,7 @@ void list_destroy(list_t *list) {
 	if (list->hasmap) map_destroy(list->map);
 	while (list->size > 0) list_poplast(list);
 	free(list);
+	list = NULL;
 	return;
 }
 void list_deepdestroy(list_t *list, destroyfunc_t destroyfunc) {
@@ -118,6 +120,7 @@ void list_deepdestroy(list_t *list, destroyfunc_t destroyfunc) {
 	if (list->hasmap) map_destroy(list->map);
 	if (list->size > 0) destroyfunc(list_poplast(list));
 	free(list);
+	list = NULL;
 	return;
 }
 
@@ -304,6 +307,7 @@ void list_copyiter(list_iter_t *a, list_iter_t *b) {
 void list_destroyiter(list_iter_t *iter) {
 	if (iter == NULL) list_err("list_destroyiter: iter = NULL");
 	free(iter);
+	iter = NULL;
 }
 void list_resetiter(list_iter_t *iter) {
 	if (iter->list == NULL) list_err("list_resetiter: list = NULL");
@@ -542,7 +546,9 @@ void map_destroy(map_t *map) {
 		if (map->hashtable[i] != NULL)
 			list_destroy(map->hashtable[i]);
 	free(map->hashtable);
+	map->hashtable = NULL;
 	free(map);
+	map = NULL;
 }
 void map_replacecmpfunc(map_t *map, cmpfunc_t cmpfunc) {
 	map->cmpfunc = cmpfunc;
