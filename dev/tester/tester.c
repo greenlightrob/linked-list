@@ -105,12 +105,17 @@ int test_list_usehashmap(int *array) {
 	list_inputarr(list, array);
 	list_usehashmap(list);
 
+	free(array);
 	return 1;
 }
 int test_list_replacecmpfunc(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
-	list_replacecmpfunc(list, compare_string);
+
+	int cmpres_int = list_contains(list, &array[5]);
+	list_replacecmpfunc(list, compare_null);
+	int cmpres_null = list_contains(list, &array[5]);
+	if (!cmpres_int || cmpres_null) return 0;
 	free(array);
 	return 1;
 }
@@ -120,8 +125,8 @@ int test_list_size(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 	free(array);
-	if (list_size(list) == size) return 1;
-	return 0;
+	for (int i = 0; i < size; i++, list_poplast(list)) if (list_size(list) != size - i) return 0;
+	return 1;
 }
 int test_list_contains(int *array) {
 	list_t *list = list_create(compare_int);
@@ -143,6 +148,7 @@ int test_list_sort(int *array) {
 
 	list_sort(list);
 
+	free(array);
 	return 1;
 }
 
@@ -151,33 +157,50 @@ int test_list_copy(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 
-	list_copy(list);
+	list_t *copylist = list_copy(list);
+	while(list_size(list) > 2 && list_size(copylist) > 2) {
+		if (compare_int(list_popfirst(list), list_popfirst(copylist)) != 0) return 0;
+	}
+
+	list_deepdestroy(list, destroy_int);
+	int val = *(int *)list_poplast(copylist);
+	if (val == 9) return 0; 
+	free(array);
 	return 1;
 }
 int test_list_deepcopy(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 
-	list_deepcopy(list, copy_int);
+	list_t *copylist = list_deepcopy(list, copy_int);
+	while(list_size(list) > 2 && list_size(copylist) > 2) {
+		if (compare_int(list_popfirst(list), list_popfirst(copylist)) != 0) return 0;
+	}
 
+	list_deepdestroy(list, destroy_int);
+	int val = *(int *)list_poplast(copylist);
+	if (val != 9) return 0; 
+	free(array);
 	return 1;
 }
 
 // Adding items
 int test_list_addfirst(int *array) {
 	list_t *list = list_create(compare_int);
-	list_inputarr(list, array);
 
 	list_addfirst(list, &array[1]);
+	if (*(int *)list_popfirst(list) != array[1]) return 0;
 
+	free(array);
 	return 1;
 }
 int test_list_addlast(int *array) {
 	list_t *list = list_create(compare_int);
-	list_inputarr(list, array);
 
 	list_addlast(list, &array[1]);
+	if (*(int *)list_popfirst(list) != array[1]) return 0;
 
+	free(array);
 	return 1;
 }
 
@@ -186,16 +209,22 @@ int test_list_popitem(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 
-	list_popitem(list, &array[1]);
+	list_popitem(list, &array[5]);
+	if (list_contains(list, allocate_int(5))) return 0;
 
+	free(array);
 	return 1;
 }
 int test_list_remove(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 
+	list_popitem(list, &array[5]);
 	list_remove(list, &array[1], destroy_int);
+	if (list_contains(list, allocate_int(5))) return 0;
+	if(array[5] == 5) return 0;
 
+	free(array);
 	return 1;
 }
 
@@ -206,6 +235,7 @@ int test_list_popfirst(int *array) {
 
 	list_popfirst(list);
 
+	free(array);
 	return 1;
 }
 int test_list_poplast(int *array) {
@@ -214,6 +244,7 @@ int test_list_poplast(int *array) {
 
 	list_poplast(list);
 
+	free(array);
 	return 1;
 }
 
@@ -222,16 +253,18 @@ int test_list_getlast(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 
-	list_getlast(list);
+	if (*(int *)list_getlast(list) != 9) return 0;;
 
+	free(array);
 	return 1;
 }
 int test_list_getfirst(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 
-	list_getfirst(list);
+	if (*(int *)list_getfirst(list) != 0) return 0;
 
+	free(array);
 	return 1;
 }
 
@@ -240,16 +273,19 @@ int test_list_getitemnumfromfirst(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 
-	list_getitemnumfromfirst(list, size / 2);
 
+	for (int i = 0; i < size; i++) if (*(int *)list_getitemnumfromfirst(list, i) != array[i]) return 0;
+
+	free(array);
 	return 1;
 }
 int test_list_getitemnumfromlast(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 
-	list_getitemnumfromlast(list, size / 2);
+	for (int i = 0; i < size; i++) if (*(int *)list_getitemnumfromlast(list, i) != array[size - i - 1]) return 0;
 
+	free(array);
 	return 1;
 }
 
@@ -258,17 +294,20 @@ int test_list_createiter(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 
-	list_createiter(list);
-
-	return 1;
+	free(array);
+	return (list_createiter(list)) ? 1: 0;
 }
 int test_list_copyiter(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
-	list_iter_t *a, *b;
-	a = list_createiter(list);
-	list_copyiter(a, b);
+	list_iter_t *iter_a, *iter_b;
+	iter_a = list_createiter(list);
+	list_movenext(iter_a);
+	list_movenext(iter_a);
+	list_copyiter(iter_a, iter_b);
+	if(*(int *)list_getitem(iter_a) != *(int *)list_getitem(iter_b)) return 0;
 
+	free(array);
 	return 1;
 }
 int test_list_destroyiter(int *array) {
@@ -278,6 +317,7 @@ int test_list_destroyiter(int *array) {
 
 	list_destroyiter(iter);
 
+	free(array);
 	return 1;
 }
 int test_list_resetiter(int *array) {
@@ -287,6 +327,7 @@ int test_list_resetiter(int *array) {
 
 	list_resetiter(iter);
 
+	free(array);
 	return 1;
 }
 
@@ -298,6 +339,7 @@ int test_list_hasnext(int *array) {
 
 	list_hasnext(iter);
 
+	free(array);
 	return 1;
 }
 
@@ -309,6 +351,7 @@ int test_list_hasbefore(int *array) {
 
 	list_hasbefore(iter);
 
+	free(array);
 	return 1;
 }
 int test_list_hasafter(int *array) {
@@ -318,6 +361,7 @@ int test_list_hasafter(int *array) {
 
 	list_hasafter(iter);
 
+	free(array);
 	return 1;
 }
 
@@ -329,6 +373,7 @@ int test_list_getitem(int *array) {
 
 	list_getitem(iter);
 
+	free(array);
 	return 1;
 }
 int test_list_getbefore(int *array) {
@@ -339,6 +384,7 @@ int test_list_getbefore(int *array) {
 
 	list_getbefore(iter);
 
+	free(array);
 	return 1;
 }
 int test_list_getafter(int *array) {
@@ -348,6 +394,7 @@ int test_list_getafter(int *array) {
 
 	list_getafter(iter);
 
+	free(array);
 	return 1;
 }
 int test_list_replaceitem(int *array) {
@@ -357,6 +404,7 @@ int test_list_replaceitem(int *array) {
 
 	list_replaceitem(iter, &array[1]);
 
+	free(array);
 	return 1;
 }
 
@@ -368,6 +416,7 @@ int test_list_movenext(int *array) {
 
 	list_movenext(iter);
 
+	free(array);
 	return 1;
 }
 int test_list_moveprev(int *array) {
@@ -377,6 +426,7 @@ int test_list_moveprev(int *array) {
 
 	list_moveprev(iter);
 
+	free(array);
 	return 1;
 }
 
@@ -388,6 +438,7 @@ int test_list_next(int *array) {
 
 	list_next(iter);
 
+	free(array);
 	return 1;
 }
 int test_list_prev(int *array) {
@@ -397,6 +448,7 @@ int test_list_prev(int *array) {
 
 	list_prev(iter);
 
+	free(array);
 	return 1;
 }
 
@@ -408,6 +460,7 @@ int test_list_popnext(int *array) {
 
 	list_popnext(iter);
 
+	free(array);
 	return 1;
 }
 int test_list_popprev(int *array) {
@@ -417,6 +470,7 @@ int test_list_popprev(int *array) {
 
 	list_popprev(iter);
 
+	free(array);
 	return 1;
 }
 
@@ -428,6 +482,7 @@ int test_list_addafter(int *array) {
 
 	list_addafter(iter, &array[4]);
 
+	free(array);
 	return 1;
 }
 int test_list_addbefore(int *array) {
@@ -438,6 +493,7 @@ int test_list_addbefore(int *array) {
 
 	list_addbefore(iter, &array[9]);
 
+	free(array);
 	return 1;
 }
 
@@ -448,6 +504,7 @@ int test_list_rolldown(int *array) {
 
 	list_rolldown(list);
 
+	free(array);
 	return 1;
 }
 int test_list_rollup(int *array) {
@@ -456,6 +513,7 @@ int test_list_rollup(int *array) {
 
 	list_rollup(list);
 
+	free(array);
 	return 1;
 }
 int test_list_reverse(int *array) {
@@ -464,6 +522,7 @@ int test_list_reverse(int *array) {
 
 	list_reverse(list);
 
+	free(array);
 	return 1;
 }
 int test_list_randomize(int *array) {
@@ -472,5 +531,6 @@ int test_list_randomize(int *array) {
 
 	list_randomize(list);
 
+	free(array);
 	return 1;
 }

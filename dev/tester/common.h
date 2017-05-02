@@ -19,6 +19,8 @@ void destroy_int(void *input);
 int compare_int(void *a, void *b);
 int compare_string(void *a, void *b);
 int compare_pointer(void *a, void *b);
+int compare_null(void *a, void *b);
 
 int *allocate_int(int input);
+char *allocate_string(char *input);
 #endif
