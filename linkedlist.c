@@ -68,6 +68,7 @@ node_t *create_node(list_t *list, void *item) {
 	node->item = item;
 	if (list->hasmap) map_put(list->map, item);
 	list->size++;
+	return node;
 }
 void *pop_node(list_t *list, node_t *node) {
 	if (list->hasmap) map_remove(list->map, node->item);
@@ -185,7 +186,7 @@ void list_addfirst(list_t *list, void *item) {
 	tmp_node->prev = NULL;
 	tmp_node->next = list->head;
 
-	if (list->size == 0) list->tail = tmp_node;
+	if (list->size == 1) list->tail = tmp_node;
 	else list->head->prev = tmp_node;
 
 	list->head = tmp_node;
@@ -199,7 +200,7 @@ void list_addlast(list_t *list, void *item) {
 	tmp_node->next = NULL;
 	tmp_node->prev = list->tail;
 
-	if (list->size == 0) list->head = tmp_node;
+	if (list->size == 1) list->head = tmp_node;
 	else list->tail->next = tmp_node;
 	
 	list->tail = tmp_node;
