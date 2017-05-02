@@ -56,7 +56,7 @@ void list_copyiter(list_iter_t *a, list_iter_t *b);
 void list_destroyiter(list_iter_t *iter);
 void list_resetiter(list_iter_t *iter);
 
-// Check if current item has a node (hasprev would do the same)
+// Check if current iter has a node (hasprev would do the same)
 int list_hasnext(list_iter_t *iter);
 
 // Check if iterator has node before or after
