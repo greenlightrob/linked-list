@@ -21,7 +21,7 @@ unknown: ![badge](https://img.shields.io/badge/works-unknown-gray.svg?style=flat
 
 ## test local
 
-![b](dev/implemented-yes.svg)
+text: ![b](dev/implemented-yes.svg)
 
 
 
