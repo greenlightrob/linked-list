@@ -3,25 +3,58 @@
 #include <stdarg.h>
 #include "list.h"
 
+// Boolean
+enum bool {
+	true = 1,
+	false = 0
+};
+
+// Hashmap structs
+typedef struct mapnode {
+	void *key;
+} mapnode_t;
+
+typedef struct map {
+	list_t **hashtable;
+	int size;
+	int maxsize;
+	cmpfunc_t cmpfunc;
+} map_t;
+
+// List structs
 typedef struct node {
 	struct node *next;
 	struct node *prev;
 	void *item;
 
 } node_t;
+
 struct list {
 	cmpfunc_t cmpfunc;
 	node_t *head;
 	node_t *tail;
 	int size;
+	// Hashmap
+	enum bool hasmap;
+	map_t *map;
 };
+// Iterator
 struct list_iter {
+	list_t *list;
 	node_t *node;
 };
 
+// Hashmap declarations
+map_t *map_create(cmpfunc_t cmpfunc);
+void map_destroy(map_t *map);
+void map_replacecmpfunc(map_t *map, cmpfunc_t cmpfunc);
+void map_put(map_t *map, void *key);
+void map_remove(map_t *map, void *key);
+int map_haskey(map_t *map, void *key);
+
 // Internal general functions
 void list_err(char *msg, ...) {
-	fprintf (stderr, "fatal error: ");
+	fprintf (stderr, "fatal error in linkedlist: ");
 	va_list args;
 	va_start (args, msg);
 	vfprintf (stderr, msg, args);
@@ -29,51 +62,77 @@ void list_err(char *msg, ...) {
 	fputc ('\n', stderr);
 	exit (1);
 }
-node_t *create_node(void *item) {
-	// fill
+node_t *create_node(list_t *list, void *item) {
+	node_t *node = malloc(sizeof(node_t));
+	if (node == NULL) list_err("create_node: failed to allocate memory");
+	node->item = item;
+	if (list->hasmap) map_put(list->map, item);
+	list->size++;
+}
+void *pop_node(list_t *list, node_t *node) {
+	if (list->hasmap) map_remove(list->map, node->item);
+	void *tmpitem = node->item;
+	if (list->size == 1) {
+		list->head == NULL;
+		list->tail == NULL;
+	}
+	else if (node == list->head) {
+		list->head = list->head->next;
+		list->head->prev = NULL;
+	}
+	else if (node == list->tail) {
+		list->tail = list->tail->prev;
+		list->tail->next = NULL;
+	}
+	else {
+		node->prev->next = node->next;
+		node->next->prev = node->prev;
+	}
+	list->size--;
+	free(node);
+	return tmpitem;
 }
 
 // Creating and destroying list
 list_t *list_create(cmpfunc_t cmpfunc) {
 	list_t *tmp_list = malloc(sizeof(list_t));
 	if (tmp_list == NULL) list_err("list_create: failed to allocate memory");
+	if (cmpfunc == NULL) list_err("list_create: cmpfunc = NULL");
 	tmp_list->cmpfunc = cmpfunc;
 	tmp_list->head = NULL;
 	tmp_list->tail = NULL;
+	tmp_list->hasmap = false;
 	tmp_list->size = 0;
 	return tmp_list;
 }
 void list_destroy(list_t *list) {
 	if (list == NULL) list_err("list_destroy: list = NULL");
-	if (list->size > 0) {
-		while ( (list->head != NULL) && (list->head->next != NULL)) {
-			list->head = list->head->next;
-			free(list->head->prev);
-		}
-		free(list->head);
-	}
+	if (list->hasmap) map_destroy(list->map);
+	while (list->size > 0) list_poplast(list);
 	free(list);
 	return;
 }
 void list_deepdestroy(list_t *list, destroyfunc_t destroyfunc) {
 	if (list == NULL) list_err("list_deepdestroy: list = NULL");
-	if (list->size > 0) {
-		while ( (list->head != NULL) && (list->head->next != NULL)) {
-			list->head = list->head->next;
-			destroyfunc(list->head->prev->item);
-			free(list->head->prev);
-		}
-		destroyfunc(list->head->item);
-		free(list->head);
-	}
+	if (list->hasmap) map_destroy(list->map);
+	if (list->size > 0) destroyfunc(list_poplast(list));
 	free(list);
 	return;
 }
 
 // Config
-void list_replacefunc(list_t *list, cmpfunc_t cmp) {
+void list_usehashmap(list_t *list) {
+	list->map = map_create(list->cmpfunc);
+	list_iter_t *iter = list_createiter(list);
+	while (list_hasnext(iter))
+		map_put(list->map, list_next(iter));
+	list->hasmap = true;
+}
+void list_replacecmpfunc(list_t *list, cmpfunc_t cmpfunc) {
 	if (list == NULL) list_err("list_replacefunc: list = NULL");
-	list->cmpfunc = cmp;
+	if (cmpfunc == NULL) list_err("list_replacefunc: cmpfunc = NULL");
+	list->cmpfunc = cmpfunc;
+	if (list->hasmap) map_replacecmpfunc(list->map, cmpfunc);
 }
 
 // Getting list info
@@ -83,9 +142,8 @@ int list_size(list_t *list) {
 }
 int list_contains(list_t *list, void *item) {
 	if (list == NULL) list_err("list_contains: list = NULL");
-	if (list->size == 0) list_err("list_contains: list->size = 0");
 	if (item == NULL) list_err("list_contains: item = NULL");
-
+	if (list->hasmap) return map_haskey(list->map, item);
 	node_t *tmp_node = list->head;
 	for (;tmp_node != NULL; tmp_node = tmp_node->next)
 		if (list->cmpfunc(tmp_node->item, item) == 0) return 1;
@@ -94,22 +152,25 @@ int list_contains(list_t *list, void *item) {
 
 // Sorting list
 void list_sort(list_t *list) {
-	printf("list sort is not implemented yet");
+	list_err("list sort is not implemented yet");
 }
 
 // Copying list
 list_t *list_copy(list_t *list) {
 	if (list == NULL) list_err("list_copy: list = NULL");
 	list_t *copy = list_create(list->cmpfunc);
+	if (list->hasmap) list_usehashmap(copy);
 	list_iter_t *iter = list_createiter(list);
 	while (list_hasnext(iter))
 		list_addlast(copy, list_next(iter));
 	return copy;
 }
+
 list_t *list_deepcopy(list_t *list, cpyfunc_t cpyfunc) {
 	if (list == NULL) list_err("list_deepcopy: list = NULL");
 	list_t *copy = list_create(list->cmpfunc);
 	list_iter_t *iter = list_createiter(list);
+	if (list->hasmap) list_usehashmap(copy);
 	while (list_hasnext(iter))
 		list_addlast(copy, cpyfunc(list_next(iter)));
 	return copy;
@@ -119,71 +180,56 @@ list_t *list_deepcopy(list_t *list, cpyfunc_t cpyfunc) {
 void list_addfirst(list_t *list, void *item) {
 	if (list == NULL) list_err("list_addfirst: list = NULL");
 	if (item == NULL) list_err("list_addfirst: item = NULL");
-	node_t *tmp_node = malloc(sizeof(node_t));
-	if (tmp_node == NULL) list_err("list_addfirst: failed to allocate memory");
+	node_t *tmp_node = create_node(list, item);
 
 	tmp_node->prev = NULL;
 	tmp_node->next = list->head;
-	tmp_node->item = item;
 
 	if (list->size == 0) list->tail = tmp_node;
 	else list->head->prev = tmp_node;
 
 	list->head = tmp_node;
-	list->size++;
 	return;
 }
 void list_addlast(list_t *list, void *item) {
 	if (list == NULL) list_err("list_addlast: list = NULL");
 	if (item == NULL) list_err("list_addlast: item = NULL");
-	node_t *tmp_node = malloc(sizeof(node_t));
-	if (tmp_node == NULL) list_err("list_addlast: failed to allocate memory");
+	node_t *tmp_node = create_node(list, item);
 
 	tmp_node->next = NULL;
 	tmp_node->prev = list->tail;
-	tmp_node->item = item;
 
 	if (list->size == 0) list->head = tmp_node;
 	else list->tail->next = tmp_node;
 	
 	list->tail = tmp_node;
-	list->size++;
 	return;
 }
+void *list_popitem(list_t *list, void *item) {
+	if (list == NULL) list_err("list_popitem: list = NULL");
+	if (list->head == NULL) list_err("list_popitem: head = NULL");
+	if (list->hasmap) map_remove(list->map, item);
+	node_t *node = list->head;
+	while (node->next) {
+		if (list->cmpfunc(node->item, item) == 0) break;
+		node = node->next;
+	}
+	if (list->cmpfunc(node->item, item) != 0) list_err("list_popitem: cannot remove something that is not here");
 
-// Removing items
-void list_remove(list_t *list, void *item) {
-	if (list == NULL) list_err("list_remove: list = NULL");
-	if (list->head == NULL) list_err("list_remove: head = NULL");
-	node_t *node = list->head;	
-	while(list->cmpfunc(node->item, item) != 0 && node) node = node->next;
-	if (node) {
-		if (list->size == 1);
-		else if (node == list->head) list->head = NULL;
-		else if (node == list->tail) list->tail = NULL;
-		else {
-			node->prev->next = node->next;
-			node->next->prev = node->prev;
-		}
-		free(node);
-	}
+	return pop_node(list, node);
 }
-void list_deepremove(list_t *list, void *item, destroyfunc_t destroyfunc) {
+void list_remove(list_t *list, void *item, destroyfunc_t destroyfunc) {
 	if (list == NULL) list_err("list_remove: list = NULL");
 	if (list->head == NULL) list_err("list_remove: head = NULL");
-	node_t *node = list->head;	
-	while(list->cmpfunc(node->item, item) != 0 && node) node = node->next;
-	if (node) {
-		if (list->size == 1);
-		else if (node == list->head) list->head = NULL;
-		else if (node == list->tail) list->tail = NULL;
-		else {
-			node->prev->next = node->next;
-			node->next->prev = node->prev;
-		}
-		destroyfunc(node->item);
-		free(node);
+	if (list->hasmap) map_remove(list->map, item);
+	node_t *node = list->head;
+	while (node->next) {
+		if (list->cmpfunc(node->item, item) == 0) break;
+		node = node->next;
 	}
+	if (list->cmpfunc(node->item, item) != 0) list_err("list_remove: cannot remove something that is not here");
+
+	destroyfunc(pop_node(list, node));
 }
 
 // Popping items
@@ -191,37 +237,13 @@ void *list_popfirst(list_t *list) {
 	if (list == NULL) list_err("list_popfirst: list = NULL");
 	if (list->head == NULL) list_err("list_popfirst: head = NULL");
 	if (list->size == 0) list_err("list_popfirst: list->size = 0");
-	void *tmp_item = list->head->item;
-	if (list->size > 1) {
-		list->head = list->head->next;
-		free(list->head->prev);
-		list->head->prev = NULL;
-	}
-	else {
- 		free(list->head);
-		list->head = NULL;
-		list->tail = NULL;
-	}
-	list->size--;
-	return tmp_item;
+	return pop_node(list, list->head);
 }
 void *list_poplast(list_t *list) {
 	if (list == NULL) list_err("list_poplast: list = NULL");
 	if (list->tail == NULL) list_err("list_poplast: head = NULL");
 	if (list->size == 0) list_err("list_poplast: list->size = 0");
-	void *tmp_item = list->tail->item;
-	if (list->size > 1) {
-		list->tail = list->tail->prev;
-		free(list->tail->next);
-		list->tail->next = NULL;
-	}
-	else {
- 		free(list->tail);
-		list->head = NULL;
-		list->tail = NULL;
-	}
-	list->size--;
-	return tmp_item;
+	return pop_node(list, list->tail);
 }
 
 // Getting the edge items of list
@@ -271,6 +293,7 @@ list_iter_t *list_createiter(list_t *list) {
 	if (tmp_iter == NULL) list_err("list_createiter: iter = NULL");
 
 	tmp_iter->node = list->head;
+	tmp_iter->list = list;
 	return tmp_iter;
 }
 void list_copyiter(list_iter_t *a, list_iter_t *b) {
@@ -282,10 +305,10 @@ void list_destroyiter(list_iter_t *iter) {
 	if (iter == NULL) list_err("list_destroyiter: iter = NULL");
 	free(iter);
 }
-void list_resetiter(list_t *list, list_iter_t *iter) {
-	if (list == NULL) list_err("list_resetiter: list = NULL");
+void list_resetiter(list_iter_t *iter) {
+	if (iter->list == NULL) list_err("list_resetiter: list = NULL");
 	if (iter == NULL) list_err("list_resetiter: iter = NULL");
-	iter->node = list->head;
+	iter->node = iter->list->head;
 }
 
 // Check if current item has a node (hasprev would do the same)
@@ -331,6 +354,10 @@ void list_replaceitem(list_iter_t *iter, void *item) {
 	if (iter == NULL) list_err("list_replaceitem: iter = NULL");
 	if (iter->node == NULL) list_err("list_replaceitem: iter->node = NULL");
 	if (item == NULL) list_err("list_replaceitem: item = NULL");
+	if (iter->list->hasmap) {
+		map_remove(iter->list->map, iter->node->item);
+		map_put(iter->list->map, item);
+	}
 	iter->node->item = item;
 }
 
@@ -363,129 +390,62 @@ void *list_prev(list_iter_t *iter) {
 }
 
 // Popping item then moving iterator
-void *list_pop(list_t *list, list_iter_t *iter, char direction) {
-	if (list == NULL) list_err("list_pop: list does not exist");
-	if (iter == NULL) list_err("list_pop: list iter does not exist");
-	if (list->size == 0) list_err("list_pop: list has no items");
-	if (iter->node == NULL) list_err("list_pop: iter->node is NULL");
-
+void *list_popnext(list_iter_t *iter) {
+	if (iter == NULL) list_err("list_popnext: list iter does not exist");
+	if (iter->list == NULL) list_err("list_popnext: list does not exist");
+	if (iter->list->size == 0) list_err("list_popnext: list has no items");
+	if (iter->node == NULL) list_err("list_popnext: iter->node is NULL");
 	node_t *trash = iter->node;
-	if (list->size == 1) {
-		iter->node = NULL;
-		list->head = NULL;
-		list->tail = NULL;
-	}
-	else if (trash == list->head) {
-		if (direction == 'n') iter->node = iter->node->next;
-		if (direction == 'p') iter->node = NULL;
-		return list_popfirst(list);
-	}
-	else if (trash == list->tail) {
-		if (direction == 'n') iter->node = NULL;
-		if (direction == 'p') iter->node = iter->node->prev;
-		return list_poplast(list);
-	}
-	else {
-		if (direction == 'n') iter->node = iter->node->next;
-		if (direction == 'p') iter->node = iter->node->prev;
-		trash->prev->next = trash->next;
-		trash->next->prev = trash->prev;
-	}
-	void *item = trash->item;
-	free(trash);
-	list->size--;
-	return item;
-}
-void *list_popnext(list_t *list, list_iter_t *iter) {
-	return list_pop(list, iter, 'n');
-}
-void *list_popprev(list_t *list, list_iter_t *iter) {
-	return list_pop(list, iter, 'p');
+	iter->node = iter->node->next;
+	return pop_node(iter->list, trash);
 }
 
-// Adding item in direction then moving iterator the same direction
-void list_add(list_t *list, list_iter_t *iter, void *item, char direction) {
-	if (list == NULL) list_err("list_add: list does not exist");
-	if (iter == NULL) list_err("list_add: list iter does not exist");
-	if (item == NULL) list_err("list_add: item = NULL");
-	if (list->size == 0) {
-		list_addfirst(list, item);
-		iter->node = list->head;
-	}
-	else if (iter->node == NULL) list_err("list_add: iter->node = NULL");
-
-	else if (iter->node == list->head && direction == 'p') {
-		list_addfirst(list, item);
-		iter->node = list->head;
-	}
-	else if (iter->node == list->tail && direction == 'n') {
-		list_addlast(list, item);
-		iter->node = list->tail;
-	} 
-	else {
-		node_t *new_node = malloc(sizeof(node_t));
-		if (new_node == NULL) list_err("list_add: failed to allcoate memory");
-		if (direction == 'n') {
-			iter->node->next->prev = new_node;
-			new_node->next = iter->node->next;
-			new_node->prev = iter->node;
-			iter->node->next = new_node;
-			iter->node = iter->node->next;
-		}
-		else if (direction == 'p') {
-			iter->node->prev->next = new_node;
-			new_node->prev = iter->node->prev;
-			new_node->next = iter->node;
-			iter->node->prev = new_node;
-			iter->node = iter->node->prev;
-		}
-		new_node->item = item;
-		list->size++;
-	}
-	return;
-}
-void list_addnext(list_t *list, list_iter_t *iter, void *item) {
-	list_add(list, iter, item, 'n');
-}
-void list_addprev(list_t *list, list_iter_t *iter, void *item) {
-	list_add(list, iter, item, 'p');
+void *list_popprev(list_iter_t *iter) {
+	if (iter == NULL) list_err("list_popprev: list iter does not exist");
+	if (iter->list == NULL) list_err("list_popprev: list does not exist");
+	if (iter->list->size == 0) list_err("list_popprev: list has no items");
+	if (iter->node == NULL) list_err("list_popprev: iter->node is NULL");
+	node_t *trash = iter->node;
+	iter->node = iter->node->prev;
+	return pop_node(iter->list, trash);
 }
 
 // Adding items in direction
-void list_additem(list_t *list, list_iter_t *iter, void *item, char direction) {
-	if (list == NULL) list_err("list_add: list does not exist");
-	if (iter == NULL) list_err("list_add: list iter does not exist");
-	if (item == NULL) list_err("list_add: item = NULL");
-	if (list->size == 0) list_addfirst(list, item);
-	else if (iter->node == NULL) list_err("list_add: iter->node = NULL");
+void list_addafter(list_iter_t *iter, void *item) {
+	if (iter == NULL) list_err("list_addafter: list iter does not exist");
+	if (iter->list == NULL) list_err("list_addafter: list does not exist");
+	if (item == NULL) list_err("list_addafter: item = NULL");
 
-	else if (iter->node == list->head && direction == 'a') list_addfirst(list, item);
-	else if (iter->node == list->tail && direction == 'b') list_addlast(list, item); 
-	else {
-		node_t *new_node = malloc(sizeof(node_t));
-		if (new_node == NULL) list_err("list_add: failed to allcoate memory");
-		if (direction == 'a') {
-			iter->node->next->prev = new_node;
-			new_node->next = iter->node->next;
-			new_node->prev = iter->node;
-			iter->node->next = new_node;
-		}
-		else if (direction == 'b') {
-			iter->node->prev->next = new_node;
-			new_node->prev = iter->node->prev;
-			new_node->next = iter->node;
-			iter->node->prev = new_node;
-		}
-		new_node->item = item;
-		list->size++;
+	if (iter->node == NULL || iter->list->size < 1 || iter->node == iter->list->head) {
+		list_addfirst(iter->list, item);
+		iter->node == iter->list->head; // hm
 	}
-	return;
+	else if (iter->node == iter->list->head) list_addlast(iter->list, item);
+	else {
+		node_t *node = create_node(iter->list, item);
+		iter->node->next->prev = node;
+		node->next = iter->node->next;
+		node->prev = iter->node;
+		iter->node->next = node;
+	}
 }
-void list_addafter(list_t *list, list_iter_t *iter, void *item) {
-	list_additem(list, iter, item, 'a');
-}
-void list_addbefore(list_t *list, list_iter_t *iter, void *item) {
-	list_additem(list, iter, item, 'b');
+void list_addbefore(list_iter_t *iter, void *item) {
+	if (iter == NULL) list_err("list_addbefore: list iter does not exist");
+	if (iter->list == NULL) list_err("list_addbefore: list does not exist");
+	if (item == NULL) list_err("list_addbrefore: item = NULL");
+
+	if (iter->node == NULL || iter->list->size < 1 || iter->node == iter->list->tail) {
+		list_addlast(iter->list, item);
+		iter->node == iter->list->tail; // hm
+	}
+	else if (iter->node == iter->list->head) list_addlast(iter->list, item);
+	else {
+		node_t *node = create_node(iter->list, item);
+		iter->node->prev->next = node;
+		node->prev = iter->node->prev;
+		node->next = iter->node;
+		iter->node->prev = node;
+	}
 }
 
 // ----------
@@ -528,4 +488,112 @@ void list_reverse(list_t *list) {
 }
 void randomize(list_t *list) {
 
+}
+
+// Hashmap
+unsigned long djb2(unsigned char *str) {
+    unsigned long hash = 5381;
+    int c;
+
+    while (c = *str++)
+        hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
+
+    return hash;
+}
+void error_check(void *input) {
+	if (input == NULL) list_err("fuc u");
+}
+
+int map_resize(map_t *map) {
+	list_t *tmp_list = list_create(map->cmpfunc);
+	void *tmp_item;
+	for (int i = 0; i < map->maxsize; i++) {
+		if (map->hashtable[i] != NULL) {
+			while (list_size(map->hashtable[i]) > 0)
+				list_addlast(tmp_list, list_popfirst(map->hashtable[i]));
+		}
+	}
+	map->maxsize = map->maxsize * 2;
+	map->hashtable = calloc(sizeof(list_t*), map->maxsize);
+	while (list_size(tmp_list) > 0) {
+		tmp_item = list_popfirst(tmp_list);
+		map_put(map, ((mapnode_t*)tmp_item)->key);
+	}
+	list_destroy(tmp_list);
+	return 0;
+}
+mapnode_t *map_new_node(void *key) {
+	mapnode_t *newnode = malloc(sizeof(mapnode_t));
+	error_check(newnode);
+	newnode->key = key;
+	return newnode;
+}
+
+map_t *map_create(cmpfunc_t cmpfunc) {
+	map_t *map = malloc(sizeof(map_t));
+	error_check(map);
+	map->size = 0;
+	map->maxsize = 10;
+	map->hashtable = calloc(sizeof(list_t*), map->maxsize);
+	map->cmpfunc = cmpfunc;
+	return map;
+}
+void map_destroy(map_t *map) {
+	mapnode_t *tmpnode;
+	for (int i = 0; i < map->maxsize; i++)
+		if (map->hashtable[i] != NULL)
+			list_destroy(map->hashtable[i]);
+	free(map->hashtable);
+	free(map);
+}
+
+void map_replacecmpfunc(map_t *map, cmpfunc_t cmpfunc) {
+	map->cmpfunc = cmpfunc;
+}
+void map_put(map_t *map, void *key) {
+	unsigned long hashval = djb2(key);
+	int idx = hashval % map->maxsize;
+	if (map_haskey(map, key) == 0) {
+		if (map->hashtable[idx] == NULL) {
+			map->hashtable[idx] = list_create(map->cmpfunc);
+			map->size++;
+		}
+		list_addlast(map->hashtable[idx], map_new_node(key));
+		if (map->size >= map->maxsize / 2)
+			map_resize(map);
+	}
+	else {
+		list_iter_t *iter = list_createiter(map->hashtable[idx]);
+		void *tmp_item;
+		while (list_hasnext(iter)) {
+			tmp_item = list_next(iter);
+			if (djb2(((mapnode_t*)tmp_item)->key) == hashval)
+				if (!map->cmpfunc(((mapnode_t*)tmp_item)->key, key))
+					break;
+		}
+	}
+}
+// TODO: can david check that this seems right
+void map_remove(map_t *map, void *key) {
+	if (map_haskey(map, key) == 0) list_err("map_remove: cannot remove something that is not here");
+	unsigned long hashval = djb2(key);
+	int idx = hashval % map->maxsize;
+	list_popitem(map->hashtable[idx], key);
+}
+
+int map_haskey(map_t *map, void *key) {
+	unsigned long hashval = djb2(key);
+	int idx = hashval % map->maxsize;
+	if (map->hashtable[idx] == NULL)
+		return 0;
+	list_iter_t *iter = list_createiter(map->hashtable[idx]);
+	void *tmp_item;
+	while (list_hasnext(iter)) {
+		tmp_item = list_next(iter);
+		if (djb2(((mapnode_t*)tmp_item)->key) == hashval) {
+			if (!map->cmpfunc(((mapnode_t*)tmp_item)->key, key))
+				return 1;
+		}
+	}
+	return 0;
 }

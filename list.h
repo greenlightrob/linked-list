@@ -35,8 +35,8 @@ void list_addfirst(list_t *list, void *item);
 void list_addlast(list_t *list, void *item);
 
 // Removing items
-void list_remove(list_t *list, void *item);
-void list_deepremove(list_t *list, void *item, destroyfunc_t destroyfunc);
+void *list_popitem(list_t *list, void *item);
+void list_remove(list_t *list, void *item, destroyfunc_t destroyfunc);
 
 // Popping items (will remove items from list)
 void *list_popfirst(list_t *list);
@@ -54,7 +54,7 @@ void *list_getitemnumfromlast(list_t *list, int num);
 list_iter_t *list_createiter(list_t *list);
 void list_copyiter(list_iter_t *a, list_iter_t *b);
 void list_destroyiter(list_iter_t *iter);
-void list_resetiter(list_t *list, list_iter_t *iter);
+void list_resetiter(list_iter_t *iter);
 
 // Check if current item has a node (hasprev would do the same)
 int list_hasnext(list_iter_t *iter);
@@ -78,16 +78,12 @@ void *list_next(list_iter_t *iter);
 void *list_prev(list_iter_t *iter);
 
 // Popping item then moving iterator
-void *list_popnext(list_t *list, list_iter_t *iter);
-void *list_popprev(list_t *list, list_iter_t *iter);
-
-// Adding item in direction then moving iterator the same direction
-void list_addnext(list_t *list, list_iter_t *iter, void *item);
-void list_addprev(list_t *list, list_iter_t *iter, void *item);
+void *list_popnext(list_iter_t *iter);
+void *list_popprev(list_iter_t *iter);
 
 // Adding item in direction
-void list_addafter(list_t *list, list_iter_t *iter, void *item);
-void list_addbefore(list_t *list, list_iter_t *iter, void *item);
+void list_addafter(list_iter_t *iter, void *item);
+void list_addbefore(list_iter_t *iter, void *item);
 
 // List manipulations
 void list_rolldown(list_t *list);

@@ -1,6 +1,6 @@
 # linked-list
 
-Created by [David Kristoffersen](https:###github.com/davidkristoffersen/) and [Simon Solnes](https:###github.com/simonsolnes/).
+Created by [David Kristoffersen](https://github.com/davidkristoffersen/) and [Simon Solnes](https://github.com/simonsolnes/).
 
 Doubly liked list with extended functionality for iteration and insertion.
 
@@ -13,11 +13,20 @@ Doubly liked list with extended functionality for iteration and insertion.
 	* `list_roll[down|up]`
 * Implement:
 	* `list_randomize`
+	* `list_isequal`
+	* `list_hassameitems`
 * Renaming
 	* `list_getitemnumfrom[first|last]`
 * Rewriting
 	* Inconsistent `list->size == 0` and `list->head == NULL`
 	* Internal moving nodes instead of iterating
+	* Do we have to use typedefs?
+
+
+* regarding hashmap
+	* implement
+		* `map_remove()` add to `list_remove`
+
 
 ### Creating and destroying list
 * `list_t *list_create(cmpfunc_t cmpfunc);`
@@ -63,7 +72,7 @@ Doubly liked list with extended functionality for iteration and insertion.
 * `list_iter_t *list_createiter(list_t *list);`
 * `void list_copyiter(list_iter_t *a, list_iter_t *b);`
 * `void list_destroyiter(list_iter_t *iter);`
-* `void list_resetiter(list_t *list, list_iter_t *iter);`
+* `void list_resetiter(list_iter_t *iter);`
 
 ### Check if current item has a node (hasprev would do the same)
 * `int list_hasnext(list_iter_t *iter);`
@@ -87,19 +96,38 @@ Doubly liked list with extended functionality for iteration and insertion.
 * `void *list_prev(list_iter_t *iter);`
 
 ### Popping item then moving iterator
-* `void *list_popnext(list_t *list, list_iter_t *iter);`
-* `void *list_popprev(list_t *list, list_iter_t *iter);`
-
-### Adding item in direction then moving iterator the same direction
-* `void list_addnext(list_t *list, list_iter_t *iter, void *item);`
-* `void list_addprev(list_t *list, list_iter_t *iter, void *item);`
+* `void *list_popnext(list_iter_t *iter);`
+* `void *list_popprev(list_iter_t *iter);`
 
 ### Adding item in direction
-* `void list_addafter(list_t *list, list_iter_t *iter, void *item);`
-* `void list_addbefore(list_t *list, list_iter_t *iter, void *item);`
+* `void list_addafter(list_iter_t *iter, void *item);`
+* `void list_addbefore(list_iter_t *iter, void *item);`
 
 ### List manipulations
 * `void list_rolldown(list_t *list);`
 * `void list_rollup(list_t *list);`
 * `void list_reverse(list_t *list);`
 * `void list_randomize(list_t *list);`
+
+## Gems
+
+David once commited this function:
+
+```
+void list_remove(list_t *list, void *item) {
+	if (list == NULL) list_err("list_remove: list = NULL");
+	if (list->head == NULL) list_err("list_remove: head = NULL");
+	node_t *node = list->head;	
+	while(list->cmpfunc(node->item, item) != 0 && node) node = node->next;
+	if (node) {
+		if (list->size == 1);
+		else if (node == list->head) list->tail = NULL;
+		else if (node == list->tail) list->head = NULL;
+		else {
+			node->prev->next = node->next;
+			node->next->prev = node->prev;
+		}
+		free(node);
+	}
+}
+```
