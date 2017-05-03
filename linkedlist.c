@@ -579,6 +579,7 @@ void list_activateindex(list_t *list) {
 		list->index[i] = iter->node;
 		list_movenext(iter);
 	}
+}
 void list_deactivateindex(list_t *list) {
 	if (list == NULL) list_err("list_deactivateindex: list = NULL");
 	if (list->index == NULL) list_err("list_deactivateindex: list->index = NULL");
@@ -727,7 +728,6 @@ void map_put(map_t *map, void *key) {
 		}
 	}
 }
-// TODO: can david check that this seems right
 void map_remove(map_t *map, void *key) {
 	if (map_haskey(map, key) == 0) list_err("map_remove: cannot remove something that is not here");
 	unsigned long hashval = djb2(key);
