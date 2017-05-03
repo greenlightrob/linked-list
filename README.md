@@ -37,8 +37,6 @@ coming
 | `list_removelast`				| Yes			| Unknown	| Changes must also happen in hashmap|
 | `list_getfirst`				| Yes			| Unknown	||
 | `list_getlast`				| Yes			| Unknown	||
-| `list_getitemnumfromfirst`	| Yes			| Unknown	| Needs to be renamed|
-| `list_getitemnumfromlast`		| Yes			| Unknown	| Needs to be renamed|
 | `list_replaceitem`			| Yes			| Unknown	| Hashmap can be used better on this Changes must also happen in hashmap|
 | `list_createiter`				| Yes			| Unknown	||
 | `list_copyiter`				| Yes			| Unknown	||
@@ -64,6 +62,11 @@ coming
 | `list_rolldown`				| Yes			| Unknown	||
 | `list_rollup`					| Yes			| Unknown	||
 | `list_reverse`				| Yes			| Unknown	||
+| `list_swapitems`				| No			| Unknown	||
 | `list_randomize`				| No			| Unknown	||
 | `list_isequal`				| No			| Unknown	||
 | `list_hassameitems`			| No			| Unknown	||
+| `list_index(list_t *list)`	| No			| Unknown	||
+| `list_swapidxs`				| No			| Unknown	||
+| `list_getitembyidx`			| Yes			| Unknown	||
+| `list_getidxbyitem`			| No			| Unknown	||

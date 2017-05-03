@@ -265,30 +265,6 @@ void *list_getlast(list_t *list) {
 	if (list->size == 0) list_err("list_getlast: list->size = 0");
 	return list->tail->item;
 }
-void *list_getitemnumfromfirst(list_t *list, int num) {
-	if (list == NULL) list_err("list_getitemnumberfromfist: list = NULL");
-	if (list->size == 0) list_err("list_getitemnumberfromfist: list->size = 0");
-	if (num >= list->size) list_err("list_getitemnumberfromfirst: num is larger than list");
-	node_t *tmp_node = list->head;
-	for (int i = 0; i < num; i++) {
-		if (tmp_node == NULL) list_err("list_getitemnumberfromfirst: cannot fetch next");
-		if (tmp_node->next == NULL) list_err("list_getitemnumberfromfirst: cannot fetch next->next");
-		tmp_node = tmp_node->next;
-	}
-	return tmp_node->item;
-}
-void *list_getitemnumfromlast(list_t *list, int num) {
-	if (list == NULL) list_err("list_getitemnumberfromlast: list = NULL");
-	if (list->size == 0) list_err("list_getitemnumberfromlast: list->size = 0");
-	if (num >= list->size) list_err("list_getitemnumberfromflast: num is larger than list");
-	node_t *tmp_node = list->tail;
-	for (int i = 0; i < num; i++) {
-		if (tmp_node == NULL) list_err("list_getitemnumberfromflast: cannot fetch prev");
-		if (tmp_node->prev == NULL) list_err("list_getitemnumberfromflast: cannot fetch prev->prev");
-		tmp_node = tmp_node->prev;
-	}
-	return tmp_node->item;
-}
 void list_replaceitem(list_t *list, void *originalitem, void *newitem) {
 	if (list == NULL) list_err("list_replaceitem: list = NULL");
 	if (list->head == NULL) list_err("list_replaceitem: head = NULL");
@@ -532,12 +508,15 @@ void list_randomize(list_t *list) {
 	srand(time(0));
 	void *itema;
 	void *itemb;
-	for (unsigned long long int i = list->size * 5; i > 1; i--) {
-		itema = list_getitemnumfromfirst(list, rand() % list->size);
-		itemb = list_getitemnumfromfirst(list, rand() % list->size);
+	for (int i = list->size * 5; i > 1; i--) {
+		itema = list_getitembyidx(list, rand() % list->size);
+		itemb = list_getitembyidx(list, rand() % list->size);
 		list_replaceitem(list, itema, itemb);
 		list_replaceitem(list, itemb, itema);
 	}
+}
+void list_swapitems(list_t *list, void *itema, void *itemb) {
+
 }
 int list_isequal(list_t *lista, list_t *listb) {
 	if (lista == NULL) list_err("list_isequal: first list = NULL");
@@ -567,6 +546,31 @@ int list_hassameitems(list_t *lista, list_t *listb) {
 	while (list_hasnext(iter)) if (list_contains(smallest, list_next(iter)) == 0) return 0;
 	return 1;
 }
+
+
+// Index functions
+void list_index(list_t *list) {
+
+}
+void list_swapidxs(list_t *list, void *itema, void *itemb) {
+
+}
+void *list_getitembyidx(list_t *list, int idx) {
+	if (list == NULL) list_err("list_getitembyidx: list = NULL");
+	if (list->size == 0) list_err("list_getitembyidx: list->size = 0");
+	if (idx >= list->size) list_err("list_getitemnbyidx: num is larger than list");
+	node_t *tmp_node = list->head;
+	for (int i = 0; i < idx; i++) {
+		if (tmp_node == NULL) list_err("list_getitemnbyidx: Bug in list. Not users fault.");
+		if (tmp_node->next == NULL) list_err("list_getitemnbyidx: Bug in list. Not users fault.");
+		tmp_node = tmp_node->next;
+	}
+	return tmp_node->item;
+}
+int list_getidxbyitem(list_t *list, void *item) {
+
+}
+
 
 /*
  * Hashmap

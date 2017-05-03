@@ -45,8 +45,6 @@ void list_removelast(list_t *list, rmfunc_t rmfunc);
 // Getting and replacing
 void *list_getfirst(list_t *list); // bug
 void *list_getlast(list_t *list);
-void *list_getitemnumfromfirst(list_t *list, int num);
-void *list_getitemnumfromlast(list_t *list, int num);
 void list_replaceitem(list_t *list, void *originalitem, void *newitem);	// implement
 
 /*
@@ -94,7 +92,14 @@ void list_rolldown(list_t *list);
 void list_rollup(list_t *list);
 void list_reverse(list_t *list);
 void list_randomize(list_t *list);
-
+void list_swapitems(list_t *list, void *itema, void *itemb);
 int list_isequal(list_t *lista, list_t *listb);
 int list_hassameitems(list_t *lista, list_t *listb);
+
+// Index functions
+void list_index(list_t *list);
+void list_swapidxs(list_t *list, void *itema, void *itemb);
+void *list_getitembyidx(list_t *list, int idx);
+int list_getidxbyitem(list_t *list, void *item);
+
 #endif
