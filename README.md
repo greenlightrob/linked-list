@@ -10,6 +10,7 @@ coming
 ## Development:
 
 ### Todos
+check if list is sorted when list contains
 * Rewriting
 	* Inconsistent `list->size == 0` and `list->head == NULL`
 	* Internal moving nodes instead of iterating
