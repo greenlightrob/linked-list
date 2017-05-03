@@ -96,7 +96,7 @@ node_t *create_node(list_t *list, void *item) {
 void *pop_node(list_t *list, node_t *node) {
 	if (list->hasmap) map_remove(list->map, node->item);
 	if (list->haspriority) {
-		node_t *node = pop_node(list->priority, node);
+		pop_node(list->priority, node);
 		if (list->priority->size != 0) list_sort(list->priority);
 	}
 	void *tmpitem = node->item;
