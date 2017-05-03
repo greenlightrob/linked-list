@@ -510,9 +510,12 @@ void list_randomize(list_t *list) {
 		list_replaceitem(list, itemb, itema);
 	}
 }
-// TODO: implement
 void list_swapitems(list_t *list, void *itema, void *itemb) {
-
+	if (list == NULL) list_err("list_swapitems: first list = NULL");
+	if (itema == NULL) list_err("list_replaceitem: item = NULL");
+	if (itemb == NULL) list_err("list_replaceitem: item = NULL");
+	list_replaceitem(list, itema, itemb);
+	list_replaceitem(list, itemb, itema);
 }
 int list_isequal(list_t *lista, list_t *listb) {
 	if (lista == NULL) list_err("list_isequal: first list = NULL");
@@ -582,6 +585,7 @@ void *list_getitembyidx(list_t *list, int idx) {
 }
 // TODO: implement
 int list_getidxbyitem(list_t *list, void *item) {
+	
 	return 0;
 }
 
