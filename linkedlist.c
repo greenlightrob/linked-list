@@ -52,7 +52,7 @@ struct list {
 
 	// Index
 	enum bool hasindex;
-	void **index;
+	node_t **index;
 };
 
 // Iterator
@@ -637,43 +637,51 @@ void list_replacehashfunc(list_t *list, hashfunc_t hashfunc) {
 }
 
 // Index functions
-// TODO: implement
 void list_activateindex(list_t *list) {
 	if (list == NULL) list_err("list_activateindex: list = NULL");
-	list->haspriority = true;
-	list->priority = list_copy(list);
-	list_sort(list->priority);
-}
-// TODO: implement
+	list->hasindex = true;
+	list->index = calloc(list->size, sizeof(node_t *));
+	list_iter_t *iter = list_createiter(list);
+	for(int i = 0; list_hasnext(iter); i++) {
+		list->index[i] = iter->node;
+		list_movenext(iter);
+	}
 void list_deactivateindex(list_t *list) {
 	if (list == NULL) list_err("list_deactivateindex: list = NULL");
-	if (list->priority == NULL) list_err("list_deactivateindex: list->priority = NULL");
-	list->haspriority = false;
-	list_destroy(list->priority);
-}
-// TODO: implement
-void list_swapidxs(list_t *list, void *itema, void *itemb) {
-	
+	if (list->index == NULL) list_err("list_deactivateindex: list->index = NULL");
+	list->hasindex = false;
+	free(list->index);
 }
 void *list_getitembyidx(list_t *list, int idx) {
 	if (list == NULL) list_err("list_getitembyidx: list = NULL");
+	if (list->index == NULL) list_err("list_getitembyidx: list->index = NULL");
 	if (list->size == 0) list_err("list_getitembyidx: list->size = 0");
-	if (idx >= list->size) list_err("list_getitemnbyidx: num is larger than list");
-	node_t *tmp_node = list->head;
-	for (int i = 0; i < idx; i++) {
-		if (tmp_node == NULL) list_err("list_getitemnbyidx: Bug in list. Not users fault.");
-		if (tmp_node->next == NULL) list_err("list_getitemnbyidx: Bug in list. Not users fault.");
-		tmp_node = tmp_node->next;
-	}
-	return tmp_node->item;
+	if (idx >= list->size) list_err("list_getitemnbyidx: idx is larger than list size");
+	return list->index[idx]->item;	
 }
-// TODO: implement
 int list_getidxbyitem(list_t *list, void *item) {
+	if (list == NULL) list_err("list_deactivateindex: list = NULL");
+	if (list->index == NULL) list_err("list_deactivateindex: list->index = NULL");
 	if (list == NULL) list_err("list_getidxbyitem: list = NULL");
 	if (list->size == 0) list_err("list_getidxbyitem: list->size = 0");
 	if (item == NULL) list_err("list_getidxbyitem: num is larger than list");
-		
-	return 0;
+	int idx;
+	for (idx = 0; idx < list->size && list->cmpfunc(list->index[idx]->item, item) != 0; idx++);	
+	if (idx == list->size) return 0;
+	return idx;
+}
+void list_replaceitembyidx(list_t *list, void *item, int idx) {
+	list->index[idx]->item = item;
+}
+void list_swapidxs(list_t *list, void *itema, void *itemb) {
+	if (list == NULL) list_err("list_swapidx: list = NULL");
+	if (list->index == NULL) list_err("list_swapidx: list->index = NULL");
+	if (itema == NULL) list_err("list_swapidx: itema = NULL");
+	if (itemb == NULL) list_err("list_swapidx: itemb = NULL");
+	int idxa = list_getidxbyitem(list, itema);	
+	int idxb = list_getidxbyitem(list, itemb);	
+	list_replaceitembyidx(list, itema, idxb);
+	list_replaceitembyidx(list, itemb, idxa);
 }
 
 // Priority functions

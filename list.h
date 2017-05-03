@@ -104,9 +104,10 @@ void list_deactivatehashmap(list_t *list);
 // Index functions
 void list_activateindex(list_t *list);
 void list_deactivateindex(list_t *list);
-void list_swapidxs(list_t *list, void *itema, void *itemb);
 void *list_getitembyidx(list_t *list, int idx);
 int list_getidxbyitem(list_t *list, void *item);
+void list_replaceitembyidx(list_t *list, void *item, int idx);
+void list_swapidxs(list_t *list, void *itema, void *itemb);
 
 // Priority functions
 void list_activatepriority(list_t *list);
