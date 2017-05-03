@@ -780,6 +780,7 @@ node_t *map_getnode(map_t *map, void *item) {
 				return ((mapnode_t*)tmp_item)->node;
 	}
 	list_err("map_getnode: Bug in list. Not users fault");
+	return NULL;
 }
 void map_remove(map_t *map, void *item) {
 	if (map_hasitem(map, item) == 0) list_err("map_remove: cannot remove something that is not here");

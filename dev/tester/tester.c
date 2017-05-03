@@ -122,7 +122,7 @@ int test_list_deepdestroy(int *array) {
 int test_list_activatehashmap(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
-	list_activatehashmap(list);
+	list_activatehashmap(list, int_to_str);
 
 	free(array);
 	return 1;

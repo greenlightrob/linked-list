@@ -33,7 +33,13 @@ int compare_pointer(void *a, void *b) {
 int compare_null(void *a, void *b) {
     return 1;
 }
-
+unsigned char *int_to_str(void *a) {
+	// return (unsigned char) itoa(*(int*)a);
+	// tmp:
+	unsigned char *str = calloc(10, sizeof(unsigned char));
+	str = (unsigned char*) strdup("abc");
+	return str;
+}
 int *allocate_int(int input) {
 	int *output = malloc(sizeof(int));
 	*output = input;

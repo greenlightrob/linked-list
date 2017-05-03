@@ -4,7 +4,7 @@
 typedef int (*cmpfunc_t)(void *, void *);
 typedef void *(*cpyfunc_t)(void *);
 typedef void (*rmfunc_t)(void *);
-typedef char *(*strfunc_t)(void *);
+typedef unsigned char *(*strfunc_t)(void *);
 typedef unsigned long (*hashfunc_t)(unsigned char *);
 
 struct list;

@@ -21,6 +21,9 @@ int compare_string(void *a, void *b);
 int compare_pointer(void *a, void *b);
 int compare_null(void *a, void *b);
 
+// strfunc
+unsigned char *int_to_str(void *a);
+
 int *allocate_int(int input);
 char *allocate_string(char *input);
 #endif

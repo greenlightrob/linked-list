@@ -11,7 +11,6 @@ all: tester
 tester: $(list_src) $(tester_src) $(headers)
 	@rm -f $@
 	@gcc -Wall -std=gnu11 $(list_src) $(tester_src) -o $@
-	@./$@
 
 clean:
 	@rm tester
