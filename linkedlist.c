@@ -130,7 +130,7 @@ void *pop_node(list_t *list, node_t *node) {
  * List functions
  */
 
-// General list functions
+// Create list
 list_t *list_create(cmpfunc_t cmpfunc) {
 	list_t *tmp_list = malloc(sizeof(list_t));
 	if (tmp_list == NULL) list_err("list_create: failed to allocate memory");
@@ -144,6 +144,8 @@ list_t *list_create(cmpfunc_t cmpfunc) {
 	tmp_list->size = 0;
 	return tmp_list;
 }
+
+// Destroy list
 void list_destroy(list_t *list) {
 	if (list == NULL) list_err("list_destroy: list = NULL");
 	if (list->hasmap) map_destroy(list->map);
@@ -165,32 +167,7 @@ void list_deepdestroy(list_t *list, rmfunc_t rmfunc) {
 	return;
 }
 
-void list_replacecmpfunc(list_t *list, cmpfunc_t cmpfunc) {
-	if (list == NULL) list_err("list_replacefunc: list = NULL");
-	if (cmpfunc == NULL) list_err("list_replacefunc: cmpfunc = NULL");
-	list->cmpfunc = cmpfunc;
-	if (list->hasmap) list->map->cmpfunc = cmpfunc;
-	if (list->haspriority) list->priority->cmpfunc = cmpfunc;
-}
-int list_size(list_t *list) {
-	if (list == NULL) list_err("list_size: list = NULL");
-	return list->size;
-}
-int list_contains(list_t *list, void *item) {
-	if (list == NULL) list_err("list_contains: list = NULL");
-	if (item == NULL) list_err("list_contains: item = NULL");
-	if (list->hasmap) return map_hasitem(list->map, item);
-	node_t *tmp_node = list->head;
-	for (;tmp_node != NULL; tmp_node = tmp_node->next)
-		if (list->cmpfunc(tmp_node->item, item) == 0) return 1;
-	return 0;
-}
-// TODO: implement
-void list_sort(list_t *list) {
-	// list_err("list sort is not implemented yet");
-}
-
-// Copying list
+// Copy list
 list_t *list_copy(list_t *list) {
 	if (list == NULL) list_err("list_copy: list = NULL");
 	list_t *copy = list_create(list->cmpfunc);
@@ -220,7 +197,7 @@ list_t *list_deepcopy(list_t *list, cpyfunc_t cpyfunc) {
 	return copy;
 }
 
-// Adding items
+// Add item
 void list_addfirst(list_t *list, void *item) {
 	if (list == NULL) list_err("list_addfirst: list = NULL");
 	if (item == NULL) list_err("list_addfirst: item = NULL");
@@ -244,64 +221,7 @@ void list_addlast(list_t *list, void *item) {
 	return;
 }
 
-// Popping items
-void *list_popitem(list_t *list, void *item) {
-	if (list == NULL) list_err("list_popitem: list = NULL");
-	if (list->head == NULL) list_err("list_popitem: head = NULL");
-	if (!list_contains(list, item)) list_err("list_popitem: trying to pop something that does not exist");
-	if (list->hasmap) return pop_node(list, map_getnode(list->map, item));
-	node_t *node = list->head;
-	while (node->next) {
-		if (list->cmpfunc(node->item, item) == 0) break;
-		node = node->next;
-	}
-	if (list->cmpfunc(node->item, item) != 0) list_err("list_popitem: Bug in linkedlist. Not users fault");
-	if (list->hasmap) map_remove(list->map, item);
-	return pop_node(list, node);
-}
-void *list_popfirst(list_t *list) {
-	if (list == NULL) list_err("list_popfirst: list = NULL");
-	if (list->head == NULL) list_err("list_popfirst: head = NULL");
-	if (list->size == 0) list_err("list_popfirst: list->size = 0");
-	return pop_node(list, list->head);
-}
-void *list_poplast(list_t *list) {
-	if (list == NULL) list_err("list_poplast: list = NULL");
-	if (list->tail == NULL) list_err("list_poplast: head = NULL");
-	if (list->size == 0) list_err("list_poplast: list->size = 0");
-	return pop_node(list, list->tail);
-}
-
-// Removing items
-void list_removeitem(list_t *list, void *item, rmfunc_t rmfunc) {
-	if (list == NULL) list_err("list_removeitem: list = NULL");
-	if (list->head == NULL) list_err("list_removeitem: head = NULL");
-	if (!list_contains(list, item)) list_err("list_removeitem: trying to remove something that does not exist");
-	if (!rmfunc) list_err("list_removeitem: rmfunc doesnt't exist");
-	if (list->hasmap) return rmfunc(pop_node(list, map_getnode(list->map, item)));
-	node_t *node = list->head;
-	while (node->next) {
-		if (list->cmpfunc(node->item, item) == 0) break;
-		node = node->next;
-	}
-	if (list->cmpfunc(node->item, item) != 0) list_err("list_remove: Bug in linkedlist. Not users fault.");
-	if (list->hasmap) map_remove(list->map, item);
-	rmfunc(pop_node(list, node));
-}
-void list_removefirst(list_t *list, rmfunc_t rmfunc) {
-	if (list == NULL) list_err("list_removefirst: list = NULL");
-	if (list->head == NULL) list_err("list_removefirst: head = NULL");
-	if (list->size == 0) list_err("list_removefirst: list->size = 0");
-	rmfunc(pop_node(list, list->head));
-}
-void list_removelast(list_t *list, rmfunc_t rmfunc) {
-	if (list == NULL) list_err("list_removelast: list = NULL");
-	if (list->tail == NULL) list_err("list_removelast: head = NULL");
-	if (list->size == 0) list_err("list_removelast: list->size = 0");
-	rmfunc(pop_node(list, list->tail));
-}
-
-// Getting and replacing
+// Get and replace item
 void *list_getfirst(list_t *list) {
 	if (list == NULL) list_err("list_getfirst: list = NULL");
 	if (list->head == NULL) list_err("list_getfirst: head = NULL");
@@ -336,6 +256,89 @@ void list_replaceitem(list_t *list, void *originalitem, void *newitem) {
 	list_replaceiteritem(iter, newitem);
 }
 
+// Pop item
+void *list_popitem(list_t *list, void *item) {
+	if (list == NULL) list_err("list_popitem: list = NULL");
+	if (list->head == NULL) list_err("list_popitem: head = NULL");
+	if (!list_contains(list, item)) list_err("list_popitem: trying to pop something that does not exist");
+	if (list->hasmap) return pop_node(list, map_getnode(list->map, item));
+	node_t *node = list->head;
+	while (node->next) {
+		if (list->cmpfunc(node->item, item) == 0) break;
+		node = node->next;
+	}
+	if (list->cmpfunc(node->item, item) != 0) list_err("list_popitem: Bug in linkedlist. Not users fault");
+	if (list->hasmap) map_remove(list->map, item);
+	return pop_node(list, node);
+}
+void *list_popfirst(list_t *list) {
+	if (list == NULL) list_err("list_popfirst: list = NULL");
+	if (list->head == NULL) list_err("list_popfirst: head = NULL");
+	if (list->size == 0) list_err("list_popfirst: list->size = 0");
+	return pop_node(list, list->head);
+}
+void *list_poplast(list_t *list) {
+	if (list == NULL) list_err("list_poplast: list = NULL");
+	if (list->tail == NULL) list_err("list_poplast: head = NULL");
+	if (list->size == 0) list_err("list_poplast: list->size = 0");
+	return pop_node(list, list->tail);
+}
+
+// Remove item
+void list_removeitem(list_t *list, void *item, rmfunc_t rmfunc) {
+	if (list == NULL) list_err("list_removeitem: list = NULL");
+	if (list->head == NULL) list_err("list_removeitem: head = NULL");
+	if (!list_contains(list, item)) list_err("list_removeitem: trying to remove something that does not exist");
+	if (!rmfunc) list_err("list_removeitem: rmfunc doesnt't exist");
+	if (list->hasmap) return rmfunc(pop_node(list, map_getnode(list->map, item)));
+	node_t *node = list->head;
+	while (node->next) {
+		if (list->cmpfunc(node->item, item) == 0) break;
+		node = node->next;
+	}
+	if (list->cmpfunc(node->item, item) != 0) list_err("list_remove: Bug in linkedlist. Not users fault.");
+	if (list->hasmap) map_remove(list->map, item);
+	rmfunc(pop_node(list, node));
+}
+void list_removefirst(list_t *list, rmfunc_t rmfunc) {
+	if (list == NULL) list_err("list_removefirst: list = NULL");
+	if (list->head == NULL) list_err("list_removefirst: head = NULL");
+	if (list->size == 0) list_err("list_removefirst: list->size = 0");
+	rmfunc(pop_node(list, list->head));
+}
+void list_removelast(list_t *list, rmfunc_t rmfunc) {
+	if (list == NULL) list_err("list_removelast: list = NULL");
+	if (list->tail == NULL) list_err("list_removelast: head = NULL");
+	if (list->size == 0) list_err("list_removelast: list->size = 0");
+	rmfunc(pop_node(list, list->tail));
+}
+
+// General list functions
+void list_replacecmpfunc(list_t *list, cmpfunc_t cmpfunc) {
+	if (list == NULL) list_err("list_replacefunc: list = NULL");
+	if (cmpfunc == NULL) list_err("list_replacefunc: cmpfunc = NULL");
+	list->cmpfunc = cmpfunc;
+	if (list->hasmap) list->map->cmpfunc = cmpfunc;
+	if (list->haspriority) list->priority->cmpfunc = cmpfunc;
+}
+int list_size(list_t *list) {
+	if (list == NULL) list_err("list_size: list = NULL");
+	return list->size;
+}
+int list_contains(list_t *list, void *item) {
+	if (list == NULL) list_err("list_contains: list = NULL");
+	if (item == NULL) list_err("list_contains: item = NULL");
+	if (list->hasmap) return map_hasitem(list->map, item);
+	node_t *tmp_node = list->head;
+	for (;tmp_node != NULL; tmp_node = tmp_node->next)
+		if (list->cmpfunc(tmp_node->item, item) == 0) return 1;
+	return 0;
+}
+// TODO: implement
+void list_sort(list_t *list) {
+	// list_err("list sort is not implemented yet");
+}
+
 /*
  * Iterator functions
  */
@@ -350,21 +353,23 @@ list_iter_t *list_createiter(list_t *list) {
 	tmp_iter->list = list;
 	return tmp_iter;
 }
-void list_copyiter(list_iter_t *a, list_iter_t *b) {
-	if (a == NULL) list_err("list_copy_iter: iter_a = NULL");
-	if (b == NULL) list_err("list_copy_iter: iter_b = NULL");
-	b->node = a->node;
-}
 void list_destroyiter(list_iter_t *iter) {
 	if (iter == NULL) list_err("list_destroyiter: iter = NULL");
 	free(iter);
 	iter = NULL;
+}
+void list_copyiter(list_iter_t *a, list_iter_t *b) {
+	if (a == NULL) list_err("list_copy_iter: iter_a = NULL");
+	if (b == NULL) list_err("list_copy_iter: iter_b = NULL");
+	b->node = a->node;
 }
 void list_resetiter(list_iter_t *iter) {
 	if (iter->list == NULL) list_err("list_resetiter: list = NULL");
 	if (iter == NULL) list_err("list_resetiter: iter = NULL");
 	iter->node = iter->list->head;
 }
+
+// Check whether iterator has a node
 int list_hasnext(list_iter_t *iter) {
 	if (iter == NULL) list_err("list_hasnext: iter = NULL");
 	if (iter->node == NULL) return 0;
@@ -409,7 +414,7 @@ void *list_prev(list_iter_t *iter) {
 	return tmp_item;
 }
 
-// Adding items with iterators
+// Add item with iterator
 void list_addbefore(list_iter_t *iter, void *item) {
 	if (iter == NULL) list_err("list_addbefore: list iter does not exist");
 	if (iter->list == NULL) list_err("list_addbefore: list does not exist");
@@ -447,48 +452,7 @@ void list_addafter(list_iter_t *iter, void *item) {
 	}
 }
 
-// Popping items with iterators
-void *list_popnext(list_iter_t *iter) {
-	if (iter == NULL) list_err("list_popnext: list iter does not exist");
-	if (iter->list == NULL) list_err("list_popnext: list does not exist");
-	if (iter->list->size == 0) list_err("list_popnext: list has no items");
-	if (iter->node == NULL) list_err("list_popnext: iter->node is NULL");
-	node_t *trash = iter->node;
-	iter->node = iter->node->next;
-	return pop_node(iter->list, trash);
-}
-
-void *list_popprev(list_iter_t *iter) {
-	if (iter == NULL) list_err("list_popprev: list iter does not exist");
-	if (iter->list == NULL) list_err("list_popprev: list does not exist");
-	if (iter->list->size == 0) list_err("list_popprev: list has no items");
-	if (iter->node == NULL) list_err("list_popprev: iter->node is NULL");
-	node_t *trash = iter->node;
-	iter->node = iter->node->prev;
-	return pop_node(iter->list, trash);
-}
-
-// Removing item then moving iterator
-void list_removenext(list_iter_t *iter, rmfunc_t rmfunc) {
-	if (iter == NULL) list_err("list_removenext: list iter does not exist");
-	if (iter->list == NULL) list_err("list_removenext: list does not exist");
-	if (iter->list->size == 0) list_err("list_removenext: list has no items");
-	if (iter->node == NULL) list_err("list_removenext: iter->node is NULL");
-	node_t *newiterpos = iter->node->next;
-	rmfunc(pop_node(iter->list, iter->node));
-	iter->node = newiterpos;
-}
-void list_removeprev(list_iter_t *iter, rmfunc_t rmfunc) {
-	if (iter == NULL) list_err("list_removeprev: list iter does not exist");
-	if (iter->list == NULL) list_err("list_removeprev: list does not exist");
-	if (iter->list->size == 0) list_err("list_removeprev: list has no items");
-	if (iter->node == NULL) list_err("list_removeprev: iter->node is NULL");
-	node_t *newiterpos = iter->node->prev;
-	rmfunc(pop_node(iter->list, iter->node));
-	iter->node = newiterpos;
-}
-
-// Getting and replacing items with iterators
+// Get and replace item with iterator
 void *list_getitem(list_iter_t *iter) {
 	if (iter == NULL) list_err("list_getitem: iter = NULL");
 	if (iter->node == NULL) list_err("list_getitem: iter->node = NULL");
@@ -515,6 +479,47 @@ void list_replaceiteritem(list_iter_t *iter, void *item) {
 		map_put(iter->list->map, item, iter->node);
 	}
 	iter->node->item = item;
+}
+
+// Pop item with iterator
+void *list_popnext(list_iter_t *iter) {
+	if (iter == NULL) list_err("list_popnext: list iter does not exist");
+	if (iter->list == NULL) list_err("list_popnext: list does not exist");
+	if (iter->list->size == 0) list_err("list_popnext: list has no items");
+	if (iter->node == NULL) list_err("list_popnext: iter->node is NULL");
+	node_t *trash = iter->node;
+	iter->node = iter->node->next;
+	return pop_node(iter->list, trash);
+}
+
+void *list_popprev(list_iter_t *iter) {
+	if (iter == NULL) list_err("list_popprev: list iter does not exist");
+	if (iter->list == NULL) list_err("list_popprev: list does not exist");
+	if (iter->list->size == 0) list_err("list_popprev: list has no items");
+	if (iter->node == NULL) list_err("list_popprev: iter->node is NULL");
+	node_t *trash = iter->node;
+	iter->node = iter->node->prev;
+	return pop_node(iter->list, trash);
+}
+
+// Remove item, then moving iterator
+void list_removenext(list_iter_t *iter, rmfunc_t rmfunc) {
+	if (iter == NULL) list_err("list_removenext: list iter does not exist");
+	if (iter->list == NULL) list_err("list_removenext: list does not exist");
+	if (iter->list->size == 0) list_err("list_removenext: list has no items");
+	if (iter->node == NULL) list_err("list_removenext: iter->node is NULL");
+	node_t *newiterpos = iter->node->next;
+	rmfunc(pop_node(iter->list, iter->node));
+	iter->node = newiterpos;
+}
+void list_removeprev(list_iter_t *iter, rmfunc_t rmfunc) {
+	if (iter == NULL) list_err("list_removeprev: list iter does not exist");
+	if (iter->list == NULL) list_err("list_removeprev: list does not exist");
+	if (iter->list->size == 0) list_err("list_removeprev: list has no items");
+	if (iter->node == NULL) list_err("list_removeprev: iter->node is NULL");
+	node_t *newiterpos = iter->node->prev;
+	rmfunc(pop_node(iter->list, iter->node));
+	iter->node = newiterpos;
 }
 
 /*
