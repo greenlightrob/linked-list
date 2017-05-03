@@ -63,7 +63,7 @@ check if list is sorted when list contains
 | `list_rolldown`				| Yes			| Unknown	||
 | `list_rollup`					| Yes			| Unknown	||
 | `list_reverse`				| Yes			| Unknown	||
-| `list_swapitems`				| No			| Unknown	||
+| `list_swapitems`				| Yes			| Unknown	||
 | `list_randomize`				| No			| Unknown	||
 | `list_isequal`				| No			| Unknown	||
 | `list_hassameitems`			| No			| Unknown	||

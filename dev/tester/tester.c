@@ -344,6 +344,7 @@ int test_list_copyiter(int *array) {
 	list_inputarr(list, array);
 	list_iter_t *iter_a, *iter_b;
 	iter_a = list_createiter(list);
+	iter_b = list_createiter(list);
 	list_movenext(iter_a);
 	list_movenext(iter_a);
 	list_copyiter(iter_a, iter_b);
@@ -377,7 +378,7 @@ int test_list_hasnext(int *array) {
 	list_inputarr(list, array);
 	list_iter_t *iter= list_createiter(list);
 
-	list_hasnext(iter);
+	if (!list_hasnext(iter)) return 0;
 
 	free(array);
 	return 1;
@@ -386,8 +387,9 @@ int test_list_hasbefore(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 	list_iter_t *iter= list_createiter(list);
+	list_movenext(iter);
 
-	list_hasbefore(iter);
+	if (!list_hasbefore(iter)) return 0;
 
 	free(array);
 	return 1;
@@ -397,85 +399,92 @@ int test_list_hasafter(int *array) {
 	list_inputarr(list, array);
 	list_iter_t *iter= list_createiter(list);
 
-	list_hasafter(iter);
+	if (!list_hasafter(iter)) return 0;
 
 	free(array);
 	return 1;
 }
-
+	
 // Iterator manipulations
 int test_list_movenext(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 	list_iter_t *iter= list_createiter(list);
-
+	
 	list_movenext(iter);
-
+	if (*(int *)list_getitem(iter) != 1) return 0;
+	
 	free(array);
 	return 1;
-}
+}	
 int test_list_moveprev(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 	list_iter_t *iter= list_createiter(list);
-
+	
+	list_movenext(iter);
+	list_movenext(iter);
 	list_moveprev(iter);
-
+	if (*(int *)list_getitem(iter) != 1) return 0;
+	
 	free(array);
 	return 1;
-}
+}	
 int test_list_next(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 	list_iter_t *iter= list_createiter(list);
-
-	list_next(iter);
-
+	
+	if(*(int *)list_next(iter) != 0) return 0;
+	
 	free(array);
 	return 1;
-}
+}	
 int test_list_prev(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 	list_iter_t *iter= list_createiter(list);
-
+	
+	list_movenext(iter);
 	list_prev(iter);
-
+	if(*(int *)list_next(iter) != 1) return 0;
+	
 	free(array);
 	return 1;
-}
-
+}	
+	
 // Adding items with iterators
 int test_list_addbefore(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 	list_iter_t *iter= list_createiter(list);
 	list_movenext(iter);
-
-	list_addbefore(iter, &array[9]);
-
+	
+	list_addbefore(iter, allocate_int(11));
+	if (*(int *)list_getfirst(list) != 11) return 0;
+	
 	free(array);
 	return 1;
-}
+}	
 int test_list_addafter(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 	list_iter_t *iter= list_createiter(list);
-
+	
 	list_addafter(iter, &array[4]);
-
+	
 	free(array);
 	return 1;
-}
-
+}	
+	
 // Popping items with iterators
 int test_list_popnext(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 	list_iter_t *iter= list_createiter(list);
-
+	
 	list_popnext(iter);
-
+	
 	free(array);
 	return 1;
 }

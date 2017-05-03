@@ -109,7 +109,7 @@ void *list_getitembyidx(list_t *list, int idx);
 int list_getidxbyitem(list_t *list, void *item);
 
 // Priority functions
-void list_activateprioriy(list_t *list);
+void list_activatepriority(list_t *list);
 void list_deactivatepriority(list_t *list);
 void list_replaceprioritycmpfunc(list_t *list, cmpfunc_t cmpfunc);
 void *list_poppriority(list_t *list);
