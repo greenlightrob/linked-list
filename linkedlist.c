@@ -530,7 +530,14 @@ void list_randomize(list_t *list) {
 
 }
 int list_isequal(list_t *lista, list_t *listb) {
-
+	if (lista == NULL) list_err("list_isequal: first list = NULL");
+	if (listb == NULL) list_err("list_isequal: second list = NULL");
+	if (lista->cmpfunc != listb->cmpfunc) list_err("list_isequal: lists has different cmpfuncs");
+	if (lista->size != listb->size) return 0;
+	list_iter_t *itera = list_createiter(lista);
+	list_iter_t *iterb = list_createiter(listb);
+	while (list_hasnext(itera) && list_hasnext(iterb)) if (lista->cmpfunc(list_next(itera), list_next(iterb)) != 0) return 0;
+	return 1;
 }
 int list_hassameitems(list_t *lista, list_t *listb) {
 
