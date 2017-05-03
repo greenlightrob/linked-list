@@ -30,15 +30,15 @@ check if list is sorted when list contains
 | `list_deepcopy`				| Yes			| Unknown	| Changes must also happen in hashmap|
 | `list_addfirst`				| Yes			| Unknown	| Changes must also happen in hashmap|
 | `list_addlast`				| Yes			| Unknown	| Changes must also happen in hashmap|
-| `list_popitem`				| Yes			| Unknown	| Hashmap can be used better on this Changes must also happen in hashmap|
+| `list_popitem`				| Yes			| Unknown	| Changes must also happen in hashmap|
 | `list_popfirst`				| Yes			| Unknown	| Changes must also happen in hashmap|
 | `list_poplast`				| Yes			| Unknown	| Changes must also happen in hashmap|
-| `list_removeitem`				| Yes			| Unknown	| Hashmap can be used better on this Changes must also happen in hashmap|
+| `list_removeitem`				| Yes			| Unknown	| Changes must also happen in hashmap|
 | `list_removefirst`			| Yes			| Unknown	| Changes must also happen in hashmap|
 | `list_removelast`				| Yes			| Unknown	| Changes must also happen in hashmap|
 | `list_getfirst`				| Yes			| Unknown	||
 | `list_getlast`				| Yes			| Unknown	||
-| `list_replaceitem`			| Yes			| Unknown	| Hashmap can be used better on this Changes must also happen in hashmap|
+| `list_replaceitem`			| Yes			| Unknown	|Changes must also happen in hashmap|
 | `list_createiter`				| Yes			| Unknown	||
 | `list_copyiter`				| Yes			| Unknown	||
 | `list_destroyiter`			| Yes			| Unknown	||

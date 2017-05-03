@@ -255,6 +255,7 @@ void *list_popitem(list_t *list, void *item) {
 	if (list == NULL) list_err("list_popitem: list = NULL");
 	if (list->head == NULL) list_err("list_popitem: head = NULL");
 	if (!list_contains(list, item)) list_err("list_popitem: trying to pop something that does not exist");
+	if (list->hasmap) return pop_node(list, map_getnode(list->map, item));
 	node_t *node = list->head;
 	while (node->next) {
 		if (list->cmpfunc(node->item, item) == 0) break;
@@ -282,6 +283,8 @@ void list_removeitem(list_t *list, void *item, rmfunc_t rmfunc) {
 	if (list == NULL) list_err("list_removeitem: list = NULL");
 	if (list->head == NULL) list_err("list_removeitem: head = NULL");
 	if (!list_contains(list, item)) list_err("list_removeitem: trying to remove something that does not exist");
+	if (!rmfunc) list_err("list_removeitem: rmfunc doesnt't exist");
+	if (list->hasmap) return rmfunc(pop_node(list, map_getnode(list->map, item)));
 	node_t *node = list->head;
 	while (node->next) {
 		if (list->cmpfunc(node->item, item) == 0) break;
@@ -321,6 +324,15 @@ void list_replaceitem(list_t *list, void *originalitem, void *newitem) {
 	if (list == NULL) list_err("list_replaceitem: list = NULL");
 	if (list->head == NULL) list_err("list_replaceitem: head = NULL");
 	if (!list_contains(list, originalitem)) list_err("list_replaceitem: trying to replace something that does not exist");
+	if (originalitem == NULL) list_err("list_replaceitem: originalitem = NULL");
+	if (newitem == NULL) list_err("list_replaceitem: newitem = NULL");
+	if (list->hasmap) {
+		node_t *node = map_getnode(list->map, originalitem);
+		node->item = newitem;
+		map_remove(list->map, originalitem);
+		map_put(list->map, newitem, node);
+		return;
+	}
 	node_t *node = list->head;
 	while (node->next) {
 		if (list->cmpfunc(node->item, originalitem) == 0) break;
@@ -328,10 +340,6 @@ void list_replaceitem(list_t *list, void *originalitem, void *newitem) {
 	}
 	node->item = newitem;
 	if (list->cmpfunc(node->item, originalitem) != 0) list_err("list_replaceitem: Bug in linkedlist. Not users fault.");
-	if (list->hasmap) {
-		map_remove(list->map, originalitem);
-		map_put(list->map, newitem, node);
-	}
 }
 
 /*
