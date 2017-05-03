@@ -207,13 +207,14 @@ void list_addlast(list_t *list, void *item) {
 void *list_popitem(list_t *list, void *item) {
 	if (list == NULL) list_err("list_popitem: list = NULL");
 	if (list->head == NULL) list_err("list_popitem: head = NULL");
-	if (list->hasmap) map_remove(list->map, item);
+	if (!list_contains(list, item)) list_err("list_popitem: trying to pop something that does not exist");
 	node_t *node = list->head;
 	while (node->next) {
 		if (list->cmpfunc(node->item, item) == 0) break;
 		node = node->next;
 	}
-	if (list->cmpfunc(node->item, item) != 0) list_err("list_popitem: cannot remove something that is not here");
+	if (list->cmpfunc(node->item, item) != 0) list_err("list_popitem: Bug in linkedlist. Not users fault");
+	if (list->hasmap) map_remove(list->map, item);
 	return pop_node(list, node);
 }
 void *list_popfirst(list_t *list) {
@@ -231,15 +232,16 @@ void *list_poplast(list_t *list) {
 
 // Removing items
 void list_removeitem(list_t *list, void *item, rmfunc_t rmfunc) {
-	if (list == NULL) list_err("list_remove: list = NULL");
-	if (list->head == NULL) list_err("list_remove: head = NULL");
-	if (list->hasmap) map_remove(list->map, item);
+	if (list == NULL) list_err("list_removeitem: list = NULL");
+	if (list->head == NULL) list_err("list_removeitem: head = NULL");
+	if (!list_contains(list, item)) list_err("list_removeitem: trying to remove something that does not exist");
 	node_t *node = list->head;
 	while (node->next) {
 		if (list->cmpfunc(node->item, item) == 0) break;
 		node = node->next;
 	}
-	if (list->cmpfunc(node->item, item) != 0) list_err("list_remove: cannot remove something that is not here");
+	if (list->cmpfunc(node->item, item) != 0) list_err("list_remove: Bug in linkedlist. Not users fault.");
+	if (list->hasmap) map_remove(list->map, item);
 	rmfunc(pop_node(list, node));
 }
 void list_removefirst(list_t *list, rmfunc_t rmfunc) {
