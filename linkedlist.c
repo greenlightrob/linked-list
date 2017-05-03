@@ -3,30 +3,39 @@
 #include <time.h>
 #include "list.h"
 
+// hashfunc in map
+
 // Boolean
 enum bool {
 	true = 1,
 	false = 0
 };
 
+typedef struct mapnode mapnode_t;
+typedef struct map map_t;
+typedef struct node node_t;
+
 // Hashmap structs
-typedef struct mapnode {
-	void *key;
-} mapnode_t;
-typedef struct map {
+struct mapnode {
+	void *item;
+	node_t *node;
+};
+struct map {
 	list_t **hashtable;
 	int size;
 	int maxsize;
+	hashfunc_t hashfunc;
 	cmpfunc_t cmpfunc;
-} map_t;
+	strfunc_t strfunc;
+};
 
 // List structs
-typedef struct node {
+struct node {
 	struct node *next;
 	struct node *prev;
 	void *item;
 
-} node_t;
+};
 struct list {
 	cmpfunc_t cmpfunc;
 	node_t *head;
@@ -53,12 +62,12 @@ struct list_iter {
 };
 
 // Hashmap declarations
-map_t *map_create(cmpfunc_t cmpfunc);
+map_t *map_create(cmpfunc_t cmpfunc, strfunc_t strfunc);
 void map_destroy(map_t *map);
-void map_replacecmpfunc(map_t *map, cmpfunc_t cmpfunc);
-void map_put(map_t *map, void *key);
-void map_remove(map_t *map, void *key);
-int map_haskey(map_t *map, void *key);
+void map_put(map_t *map, void *item, node_t *node);
+node_t *map_getnode(map_t *map, void *item);
+void map_remove(map_t *map, void *item);
+int map_hasitem(map_t *map, void *item);
 
 /*
  * Internal functions
@@ -72,12 +81,24 @@ node_t *create_node(list_t *list, void *item) {
 	node_t *node = malloc(sizeof(node_t));
 	if (node == NULL) list_err("create_node: failed to allocate memory");
 	node->item = item;
-	if (list->hasmap) map_put(list->map, item);
 	list->size++;
+	if (list->hasmap) map_put(list->map, item, node);
+	if (list->haspriority) {
+		// TODO implement
+	}
+	if (list->hasindex) {
+		// TODO implment
+	}
 	return node;
 }
 void *pop_node(list_t *list, node_t *node) {
 	if (list->hasmap) map_remove(list->map, node->item);
+	if (list->haspriority) {
+		// TODO implement
+	}
+	if (list->hasindex) {
+		// TODO implment
+	}
 	void *tmpitem = node->item;
 	if (list->size == 1) {
 		list->head = NULL;
@@ -109,7 +130,7 @@ void *pop_node(list_t *list, node_t *node) {
 list_t *list_create(cmpfunc_t cmpfunc) {
 	list_t *tmp_list = malloc(sizeof(list_t));
 	if (tmp_list == NULL) list_err("list_create: failed to allocate memory");
-	if (cmpfunc == NULL) list_err("list_create: cmpfunc = NULL");
+	if (!cmpfunc) list_err("list_create: cmpfunc doesn't exist");
 	tmp_list->cmpfunc = cmpfunc;
 	tmp_list->head = NULL;
 	tmp_list->tail = NULL;
@@ -122,6 +143,12 @@ list_t *list_create(cmpfunc_t cmpfunc) {
 void list_destroy(list_t *list) {
 	if (list == NULL) list_err("list_destroy: list = NULL");
 	if (list->hasmap) map_destroy(list->map);
+	if (list->haspriority) {
+		// TODO implement
+	}
+	if (list->hasindex) {
+		// TODO implment
+	}
 	while (list->size > 0) list_poplast(list);
 	free(list);
 	list = NULL;
@@ -130,6 +157,12 @@ void list_destroy(list_t *list) {
 void list_deepdestroy(list_t *list, rmfunc_t rmfunc) {
 	if (list == NULL) list_err("list_deepdestroy: list = NULL");
 	if (list->hasmap) map_destroy(list->map);
+	if (list->haspriority) {
+		// TODO implement
+	}
+	if (list->hasindex) {
+		// TODO implment
+	}
 	if (list->size > 0) rmfunc(list_poplast(list));
 	free(list);
 	list = NULL;
@@ -140,7 +173,10 @@ void list_replacecmpfunc(list_t *list, cmpfunc_t cmpfunc) {
 	if (list == NULL) list_err("list_replacefunc: list = NULL");
 	if (cmpfunc == NULL) list_err("list_replacefunc: cmpfunc = NULL");
 	list->cmpfunc = cmpfunc;
-	if (list->hasmap) map_replacecmpfunc(list->map, cmpfunc);
+	if (list->hasmap) list->map->cmpfunc = cmpfunc;
+	if (list->haspriority) {
+		// TODO implement
+	}
 }
 int list_size(list_t *list) {
 	if (list == NULL) list_err("list_size: list = NULL");
@@ -149,7 +185,7 @@ int list_size(list_t *list) {
 int list_contains(list_t *list, void *item) {
 	if (list == NULL) list_err("list_contains: list = NULL");
 	if (item == NULL) list_err("list_contains: item = NULL");
-	if (list->hasmap) return map_haskey(list->map, item);
+	if (list->hasmap) return map_hasitem(list->map, item);
 	node_t *tmp_node = list->head;
 	for (;tmp_node != NULL; tmp_node = tmp_node->next)
 		if (list->cmpfunc(tmp_node->item, item) == 0) return 1;
@@ -164,19 +200,29 @@ void list_sort(list_t *list) {
 list_t *list_copy(list_t *list) {
 	if (list == NULL) list_err("list_copy: list = NULL");
 	list_t *copy = list_create(list->cmpfunc);
-	if (list->hasmap) list_activatehashmap(copy);
+	if (list->hasmap) list_activatehashmap(copy, list->map->strfunc);
 	list_iter_t *iter = list_createiter(list);
 	while (list_hasnext(iter))
 		list_addlast(copy, list_next(iter));
+	if (list->haspriority) {
+		list_activatepriority(copy);
+		list_replaceprioritycmpfunc(copy, list->priority->cmpfunc);
+	}
+	if (list->hasindex) list_activateindex(copy);
 	return copy;
 }
 list_t *list_deepcopy(list_t *list, cpyfunc_t cpyfunc) {
 	if (list == NULL) list_err("list_deepcopy: list = NULL");
 	list_t *copy = list_create(list->cmpfunc);
 	list_iter_t *iter = list_createiter(list);
-	if (list->hasmap) list_activatehashmap(copy);
+	if (list->hasmap) list_activatehashmap(copy, list->map->strfunc);
 	while (list_hasnext(iter))
 		list_addlast(copy, cpyfunc(list_next(iter)));
+	if (list->haspriority) {
+		list_activatepriority(copy);
+		list_replaceprioritycmpfunc(copy, list->priority->cmpfunc);
+	}
+	if (list->hasindex) list_activateindex(copy);
 	return copy;
 }
 
@@ -209,6 +255,7 @@ void *list_popitem(list_t *list, void *item) {
 	if (list == NULL) list_err("list_popitem: list = NULL");
 	if (list->head == NULL) list_err("list_popitem: head = NULL");
 	if (!list_contains(list, item)) list_err("list_popitem: trying to pop something that does not exist");
+	if (list->hasmap) return pop_node(list, map_getnode(list->map, item));
 	node_t *node = list->head;
 	while (node->next) {
 		if (list->cmpfunc(node->item, item) == 0) break;
@@ -236,6 +283,8 @@ void list_removeitem(list_t *list, void *item, rmfunc_t rmfunc) {
 	if (list == NULL) list_err("list_removeitem: list = NULL");
 	if (list->head == NULL) list_err("list_removeitem: head = NULL");
 	if (!list_contains(list, item)) list_err("list_removeitem: trying to remove something that does not exist");
+	if (!rmfunc) list_err("list_removeitem: rmfunc doesnt't exist");
+	if (list->hasmap) return rmfunc(pop_node(list, map_getnode(list->map, item)));
 	node_t *node = list->head;
 	while (node->next) {
 		if (list->cmpfunc(node->item, item) == 0) break;
@@ -275,6 +324,15 @@ void list_replaceitem(list_t *list, void *originalitem, void *newitem) {
 	if (list == NULL) list_err("list_replaceitem: list = NULL");
 	if (list->head == NULL) list_err("list_replaceitem: head = NULL");
 	if (!list_contains(list, originalitem)) list_err("list_replaceitem: trying to replace something that does not exist");
+	if (originalitem == NULL) list_err("list_replaceitem: originalitem = NULL");
+	if (newitem == NULL) list_err("list_replaceitem: newitem = NULL");
+	if (list->hasmap) {
+		node_t *node = map_getnode(list->map, originalitem);
+		node->item = newitem;
+		map_remove(list->map, originalitem);
+		map_put(list->map, newitem, node);
+		return;
+	}
 	node_t *node = list->head;
 	while (node->next) {
 		if (list->cmpfunc(node->item, originalitem) == 0) break;
@@ -282,10 +340,6 @@ void list_replaceitem(list_t *list, void *originalitem, void *newitem) {
 	}
 	node->item = newitem;
 	if (list->cmpfunc(node->item, originalitem) != 0) list_err("list_replaceitem: Bug in linkedlist. Not users fault.");
-	if (list->hasmap) {
-		map_remove(list->map, originalitem);
-		map_put(list->map, newitem);
-	}
 }
 
 /*
@@ -464,7 +518,7 @@ void list_replaceiteritem(list_iter_t *iter, void *item) {
 	if (item == NULL) list_err("list_replaceitem: item = NULL");
 	if (iter->list->hasmap) {
 		map_remove(iter->list->map, iter->node->item);
-		map_put(iter->list->map, item);
+		map_put(iter->list->map, item, iter->node);
 	}
 	iter->node->item = item;
 }
@@ -556,17 +610,30 @@ int list_hassameitems(list_t *lista, list_t *listb) {
 	while (list_hasnext(iter)) if (list_contains(smallest, list_next(iter)) == 0) return 0;
 	return 1;
 }
+// curpos
 // Hashmap functions
-void list_activatehashmap(list_t *list) {
-	list->map = map_create(list->cmpfunc);
+void list_activatehashmap(list_t *list, strfunc_t strfunc) {
+	if (list == NULL) list_err("list_activatehashmap: list = NULL");
+	if (!strfunc) list_err("list_activatehashmap: strfunc doesn't exist");
+	list->map = map_create(list->cmpfunc, strfunc);
 	list_iter_t *iter = list_createiter(list);
-	while (list_hasnext(iter))
-		map_put(list->map, list_next(iter));
+	while (list_hasafter(iter)) {
+		map_put(list->map, list_getitem(iter), iter->node);
+		list_movenext(iter);
+	}
 	list->hasmap = true;
 }
 // TODO: implement
 void list_deactivatehashmap(list_t *list) {
-
+	if (list == NULL) list_err("list_deactivatehashmap: list = NULL");
+	if (!list->hasmap) list_err("list_deactivatehashmap: list can't deactivate hashmap when not activated");
+	map_destroy(list->map);
+	list->hasmap = false;
+}
+void list_replacehashfunc(list_t *list, hashfunc_t hashfunc) {
+	if (list == NULL) list_err("list_replacehashfunc: list = NULL");
+	if (!hashfunc) list_err("list_replacehashfunc: hashfunc doesn't exist");
+	list->map->hashfunc = hashfunc;
 }
 
 // Index functions
@@ -619,7 +686,7 @@ void list_swapidxs(list_t *list, void *itema, void *itemb) {
 }
 
 // Priority functions
-void list_activateprioriy(list_t *list) {
+void list_activatepriority(list_t *list) {
 	if (list == NULL) list_err("list_activatepriority: list = NULL");
 	list->haspriority = true;
 	list->priority = list_copy(list);
@@ -631,6 +698,10 @@ void list_deactivatepriority(list_t *list) {
 	list->haspriority = false;
 	list_destroy(list->priority);
 }
+// TODO: implement
+void list_replaceprioritycmpfunc(list_t *list, cmpfunc_t cmpfunc) {
+}
+
 void *list_poppriority(list_t *list) {
 	if (list == NULL) list_err("list_deactivatepriority: list = NULL");
 	if (list->priority == NULL) list_err("list_deactivatepriority: list->priority = NULL");
@@ -647,7 +718,92 @@ void *list_getpriority(list_t *list) {
  * Hashmap
  */
 
-// Hashmap
+unsigned long djb2(unsigned char *str);
+void error_check(void *input);
+int map_resize(map_t *map);
+mapnode_t *new_mapnode(void *item, node_t *node);
+
+// Supported functions
+map_t *map_create(cmpfunc_t cmpfunc, strfunc_t strfunc) {
+	map_t *map = malloc(sizeof(map_t));
+	error_check(map);
+	map->size = 0;
+	map->maxsize = 10;
+	map->hashtable = calloc(sizeof(list_t*), map->maxsize);
+	map->cmpfunc = cmpfunc;
+	map->strfunc = strfunc;
+	map->hashfunc = djb2;
+	return map;
+}
+void map_destroy(map_t *map) {
+	for (int i = 0; i < map->maxsize; i++)
+		if (map->hashtable[i] != NULL)
+			list_destroy(map->hashtable[i]);
+	free(map->hashtable);
+	map->hashtable = NULL;
+	free(map);
+	map = NULL;
+}
+void map_put(map_t *map, void *item, node_t *node) {
+	unsigned long hashval = map->hashfunc(map->strfunc(item));
+	int idx = hashval % map->maxsize;
+	if (map_hasitem(map, item) == 0) {
+		if (map->hashtable[idx] == NULL) {
+			map->hashtable[idx] = list_create(map->cmpfunc);
+			map->size++;
+		}
+		list_addlast(map->hashtable[idx], new_mapnode(item, node));
+		if (map->size >= map->maxsize / 2)
+			map_resize(map);
+	}
+	else {
+		list_iter_t *iter = list_createiter(map->hashtable[idx]);
+		void *tmp_item;
+		while (list_hasnext(iter)) {
+			tmp_item = list_next(iter);
+			if (map->hashfunc(map->strfunc(((mapnode_t*)tmp_item)->item)) == hashval)
+				if (!map->cmpfunc(((mapnode_t*)tmp_item)->item, item))
+					break;
+		}
+	}
+}
+node_t *map_getnode(map_t *map, void *item) {
+	if (map_hasitem(map, item) == 0) list_err("map_getnode: cannot remove something that is not here");
+	unsigned long hashval = map->hashfunc(map->strfunc(item));
+	int idx = hashval % map->maxsize;
+	list_iter_t *iter = list_createiter(map->hashtable[idx]);
+	void *tmp_item;
+	while (list_hasnext(iter)) {
+		tmp_item = list_next(iter);
+		if (map->hashfunc(map->strfunc(((mapnode_t*)tmp_item)->item)) == hashval)
+			if (!map->cmpfunc(((mapnode_t*)tmp_item)->item, item))
+				return ((mapnode_t*)tmp_item)->node;
+	}
+	list_err("map_getnode: Bug in list. Not users fault");
+}
+void map_remove(map_t *map, void *item) {
+	if (map_hasitem(map, item) == 0) list_err("map_remove: cannot remove something that is not here");
+	unsigned long hashval = map->hashfunc(map->strfunc(item));
+	int idx = hashval % map->maxsize;
+	list_popitem(map->hashtable[idx], item);
+}
+int map_hasitem(map_t *map, void *item) {
+	unsigned long hashval = map->hashfunc(map->strfunc(item));
+	int idx = hashval % map->maxsize;
+	if (map->hashtable[idx] == NULL) return 0;
+	list_iter_t *iter = list_createiter(map->hashtable[idx]);
+	void *tmp_item;
+	while (list_hasnext(iter)) {
+		tmp_item = list_next(iter);
+		if (map->hashfunc(map->strfunc(((mapnode_t*)tmp_item)->item)) == hashval) {
+			if (!map->cmpfunc(((mapnode_t*)tmp_item)->item, item))
+				return 1;
+		}
+	}
+	return 0;
+}
+
+// Internal functions
 unsigned long djb2(unsigned char *str) {
     unsigned long hash = 5381;
     int c;
@@ -673,80 +829,15 @@ int map_resize(map_t *map) {
 	map->hashtable = calloc(sizeof(list_t*), map->maxsize);
 	while (list_size(tmp_list) > 0) {
 		tmp_item = list_popfirst(tmp_list);
-		map_put(map, ((mapnode_t*)tmp_item)->key);
+		map_put(map, ((mapnode_t*)tmp_item)->item, ((mapnode_t*)tmp_item)->node);
 	}
 	list_destroy(tmp_list);
 	return 0;
 }
-mapnode_t *map_new_node(void *key) {
+mapnode_t *new_mapnode(void *item, node_t *node) {
 	mapnode_t *newnode = malloc(sizeof(mapnode_t));
 	error_check(newnode);
-	newnode->key = key;
+	newnode->item = item;
+	newnode->node = node;
 	return newnode;
-}
-map_t *map_create(cmpfunc_t cmpfunc) {
-	map_t *map = malloc(sizeof(map_t));
-	error_check(map);
-	map->size = 0;
-	map->maxsize = 10;
-	map->hashtable = calloc(sizeof(list_t*), map->maxsize);
-	map->cmpfunc = cmpfunc;
-	return map;
-}
-void map_destroy(map_t *map) {
-	for (int i = 0; i < map->maxsize; i++)
-		if (map->hashtable[i] != NULL)
-			list_destroy(map->hashtable[i]);
-	free(map->hashtable);
-	map->hashtable = NULL;
-	free(map);
-	map = NULL;
-}
-void map_replacecmpfunc(map_t *map, cmpfunc_t cmpfunc) {
-	map->cmpfunc = cmpfunc;
-}
-void map_put(map_t *map, void *key) {
-	unsigned long hashval = djb2(key);
-	int idx = hashval % map->maxsize;
-	if (map_haskey(map, key) == 0) {
-		if (map->hashtable[idx] == NULL) {
-			map->hashtable[idx] = list_create(map->cmpfunc);
-			map->size++;
-		}
-		list_addlast(map->hashtable[idx], map_new_node(key));
-		if (map->size >= map->maxsize / 2)
-			map_resize(map);
-	}
-	else {
-		list_iter_t *iter = list_createiter(map->hashtable[idx]);
-		void *tmp_item;
-		while (list_hasnext(iter)) {
-			tmp_item = list_next(iter);
-			if (djb2(((mapnode_t*)tmp_item)->key) == hashval)
-				if (!map->cmpfunc(((mapnode_t*)tmp_item)->key, key))
-					break;
-		}
-	}
-}
-void map_remove(map_t *map, void *key) {
-	if (map_haskey(map, key) == 0) list_err("map_remove: cannot remove something that is not here");
-	unsigned long hashval = djb2(key);
-	int idx = hashval % map->maxsize;
-	list_popitem(map->hashtable[idx], key);
-}
-int map_haskey(map_t *map, void *key) {
-	unsigned long hashval = djb2(key);
-	int idx = hashval % map->maxsize;
-	if (map->hashtable[idx] == NULL)
-		return 0;
-	list_iter_t *iter = list_createiter(map->hashtable[idx]);
-	void *tmp_item;
-	while (list_hasnext(iter)) {
-		tmp_item = list_next(iter);
-		if (djb2(((mapnode_t*)tmp_item)->key) == hashval) {
-			if (!map->cmpfunc(((mapnode_t*)tmp_item)->key, key))
-				return 1;
-		}
-	}
-	return 0;
 }

@@ -4,6 +4,8 @@
 typedef int (*cmpfunc_t)(void *, void *);
 typedef void *(*cpyfunc_t)(void *);
 typedef void (*rmfunc_t)(void *);
+typedef char *(*strfunc_t)(void *);
+typedef unsigned long (*hashfunc_t)(unsigned char *);
 
 struct list;
 typedef struct list list_t;
@@ -96,7 +98,7 @@ int list_isequal(list_t *lista, list_t *listb);
 int list_hassameitems(list_t *lista, list_t *listb);
 
 // Initialize hashmap
-void list_activatehashmap(list_t *list);											// Initialize hashmap
+void list_activatehashmap(list_t *list, strfunc_t strfunc);											// Initialize hashmap
 void list_deactivatehashmap(list_t *list);
 
 // Index functions
@@ -108,8 +110,9 @@ void list_replaceitembyidx(list_t *list, void *item, int idx);
 void list_swapidxs(list_t *list, void *itema, void *itemb);
 
 // Priority functions
-void list_activateprioriy(list_t *list);
+void list_activatepriority(list_t *list);
 void list_deactivatepriority(list_t *list);
+void list_replaceprioritycmpfunc(list_t *list, cmpfunc_t cmpfunc);
 void *list_poppriority(list_t *list);
 void *list_getpriority(list_t *list);
 
