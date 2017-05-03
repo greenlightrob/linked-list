@@ -77,8 +77,8 @@ void *list_popnext(list_iter_t *iter);										// Popping item, then moving nex
 void *list_popprev(list_iter_t *iter);										// Popping item, then moving prev
 
 // Removing item then moving iterator
-void *list_removenext(list_iter_t *iter, rmfunc_t rmfunc); // implement
-void *list_removeprev(list_iter_t *iter, rmfunc_t rmfunc); // implement
+void list_removenext(list_iter_t *iter, rmfunc_t rmfunc); // implement
+void list_removeprev(list_iter_t *iter, rmfunc_t rmfunc); // implement
 
 // Getting and replacing items with iterators
 void *list_getitem(list_iter_t *iter);

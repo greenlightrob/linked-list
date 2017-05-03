@@ -444,11 +444,23 @@ void *list_popprev(list_iter_t *iter) {
 }
 
 // Removing item then moving iterator
-void *list_removenext(list_iter_t *iter, rmfunc_t rmfunc) {
-	return NULL;
+void list_removenext(list_iter_t *iter, rmfunc_t rmfunc) {
+	if (iter == NULL) list_err("list_removenext: list iter does not exist");
+	if (iter->list == NULL) list_err("list_removenext: list does not exist");
+	if (iter->list->size == 0) list_err("list_removenext: list has no items");
+	if (iter->node == NULL) list_err("list_removenext: iter->node is NULL");
+	node_t *newiterpos = iter->node->next;
+	rmfunc(pop_node(iter->list, iter->node));
+	iter->node = newiterpos;
 }
-void *list_removeprev(list_iter_t *iter, rmfunc_t rmfunc) {
-	return NULL;
+void list_removeprev(list_iter_t *iter, rmfunc_t rmfunc) {
+	if (iter == NULL) list_err("list_removeprev: list iter does not exist");
+	if (iter->list == NULL) list_err("list_removeprev: list does not exist");
+	if (iter->list->size == 0) list_err("list_removeprev: list has no items");
+	if (iter->node == NULL) list_err("list_removeprev: iter->node is NULL");
+	node_t *newiterpos = iter->node->prev;
+	rmfunc(pop_node(iter->list, iter->node));
+	iter->node = newiterpos;
 }
 
 // Getting and replacing items with iterators
