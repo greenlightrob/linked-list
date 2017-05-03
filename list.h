@@ -95,4 +95,7 @@ void list_rolldown(list_t *list);
 void list_rollup(list_t *list);
 void list_reverse(list_t *list);
 void list_randomize(list_t *list);
+
+int list_isequal(list_t *lista, list_t *listb);
+int list_hassameitems(list_t *lista, list_t *listb);
 #endif
