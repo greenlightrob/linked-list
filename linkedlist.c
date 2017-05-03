@@ -9,24 +9,30 @@ enum bool {
 	false = 0
 };
 
+typedef struct mapnode mapnode_t;
+typedef struct map map_t;
+typedef struct node node_t;
+
 // Hashmap structs
-typedef struct mapnode {
-	void *key;
-} mapnode_t;
-typedef struct map {
+struct mapnode {
+	void *item;
+	node_t *node;
+};
+struct map {
 	list_t **hashtable;
 	int size;
 	int maxsize;
 	cmpfunc_t cmpfunc;
-} map_t;
+	strfunc_t strfunc;
+};
 
 // List structs
-typedef struct node {
+struct node {
 	struct node *next;
 	struct node *prev;
 	void *item;
 
-} node_t;
+};
 struct list {
 	cmpfunc_t cmpfunc;
 	node_t *head;
@@ -44,12 +50,11 @@ struct list_iter {
 };
 
 // Hashmap declarations
-map_t *map_create(cmpfunc_t cmpfunc);
+map_t *map_create(cmpfunc_t cmpfunc, strfunc_t strfunc);
 void map_destroy(map_t *map);
-void map_replacecmpfunc(map_t *map, cmpfunc_t cmpfunc);
-void map_put(map_t *map, void *key);
-void map_remove(map_t *map, void *key);
-int map_haskey(map_t *map, void *key);
+void map_put(map_t *map, void *item, node_t *node);
+void map_remove(map_t *map, void *item);
+int map_hasitem(map_t *map, void *item);
 
 /*
  * Internal functions
@@ -129,7 +134,7 @@ void list_replacecmpfunc(list_t *list, cmpfunc_t cmpfunc) {
 	if (list == NULL) list_err("list_replacefunc: list = NULL");
 	if (cmpfunc == NULL) list_err("list_replacefunc: cmpfunc = NULL");
 	list->cmpfunc = cmpfunc;
-	if (list->hasmap) map_replacecmpfunc(list->map, cmpfunc);
+	if (list->hasmap) list->map->cmpfunc = cmpfunc;
 }
 int list_size(list_t *list) {
 	if (list == NULL) list_err("list_size: list = NULL");
@@ -607,7 +612,79 @@ void *list_getpriority(list_t *list) {
  * Hashmap
  */
 
-// Hashmap
+unsigned long djb2(unsigned char *str);
+void error_check(void *input);
+int map_resize(map_t *map);
+mapnode_t *new_mapnode(void *item, node_t *node);
+
+// Supported functions
+map_t *map_create(cmpfunc_t cmpfunc, strfunc_t strfunc) {
+	map_t *map = malloc(sizeof(map_t));
+	error_check(map);
+	map->size = 0;
+	map->maxsize = 10;
+	map->hashtable = calloc(sizeof(list_t*), map->maxsize);
+	map->cmpfunc = cmpfunc;
+	map->strfunc = strfunc;
+	return map;
+}
+void map_destroy(map_t *map) {
+	for (int i = 0; i < map->maxsize; i++)
+		if (map->hashtable[i] != NULL)
+			list_destroy(map->hashtable[i]);
+	free(map->hashtable);
+	map->hashtable = NULL;
+	free(map);
+	map = NULL;
+}
+void map_put(map_t *map, void *item, node_t *node) {
+	unsigned long hashval = djb2(map->strfunc(item));
+	int idx = hashval % map->maxsize;
+	if (map_haskey(map, key) == 0) {
+		if (map->hashtable[idx] == NULL) {
+			map->hashtable[idx] = list_create(map->cmpfunc);
+			map->size++;
+		}
+		list_addlast(map->hashtable[idx], map_new_node(key));
+		if (map->size >= map->maxsize / 2)
+			map_resize(map);
+	}
+	else {
+		list_iter_t *iter = list_createiter(map->hashtable[idx]);
+		void *tmp_item;
+		while (list_hasnext(iter)) {
+			tmp_item = list_next(iter);
+			if (djb2(((mapnode_t*)tmp_item)->key) == hashval)
+				if (!map->cmpfunc(((mapnode_t*)tmp_item)->key, key))
+					break;
+		}
+	}
+}
+// TODO: can david check that this seems right
+void map_remove(map_t *map, void *item) {
+	if (map_haskey(map, key) == 0) list_err("map_remove: cannot remove something that is not here");
+	unsigned long hashval = djb2(key);
+	int idx = hashval % map->maxsize;
+	list_popitem(map->hashtable[idx], key);
+}
+int map_hasitem(map_t *map, void *item) {
+	unsigned long hashval = djb2(key);
+	int idx = hashval % map->maxsize;
+	if (map->hashtable[idx] == NULL)
+		return 0;
+	list_iter_t *iter = list_createiter(map->hashtable[idx]);
+	void *tmp_item;
+	while (list_hasnext(iter)) {
+		tmp_item = list_next(iter);
+		if (djb2(((mapnode_t*)tmp_item)->key) == hashval) {
+			if (!map->cmpfunc(((mapnode_t*)tmp_item)->key, key))
+				return 1;
+		}
+	}
+	return 0;
+}
+
+// Internal functions
 unsigned long djb2(unsigned char *str) {
     unsigned long hash = 5381;
     int c;
@@ -638,76 +715,10 @@ int map_resize(map_t *map) {
 	list_destroy(tmp_list);
 	return 0;
 }
-mapnode_t *map_new_node(void *key) {
+mapnode_t *new_mapnode(void *item, node_t *node) {
 	mapnode_t *newnode = malloc(sizeof(mapnode_t));
 	error_check(newnode);
-	newnode->key = key;
+	newnode->item = item;
+	newnode->node = node;
 	return newnode;
-}
-map_t *map_create(cmpfunc_t cmpfunc) {
-	map_t *map = malloc(sizeof(map_t));
-	error_check(map);
-	map->size = 0;
-	map->maxsize = 10;
-	map->hashtable = calloc(sizeof(list_t*), map->maxsize);
-	map->cmpfunc = cmpfunc;
-	return map;
-}
-void map_destroy(map_t *map) {
-	for (int i = 0; i < map->maxsize; i++)
-		if (map->hashtable[i] != NULL)
-			list_destroy(map->hashtable[i]);
-	free(map->hashtable);
-	map->hashtable = NULL;
-	free(map);
-	map = NULL;
-}
-void map_replacecmpfunc(map_t *map, cmpfunc_t cmpfunc) {
-	map->cmpfunc = cmpfunc;
-}
-void map_put(map_t *map, void *key) {
-	unsigned long hashval = djb2(key);
-	int idx = hashval % map->maxsize;
-	if (map_haskey(map, key) == 0) {
-		if (map->hashtable[idx] == NULL) {
-			map->hashtable[idx] = list_create(map->cmpfunc);
-			map->size++;
-		}
-		list_addlast(map->hashtable[idx], map_new_node(key));
-		if (map->size >= map->maxsize / 2)
-			map_resize(map);
-	}
-	else {
-		list_iter_t *iter = list_createiter(map->hashtable[idx]);
-		void *tmp_item;
-		while (list_hasnext(iter)) {
-			tmp_item = list_next(iter);
-			if (djb2(((mapnode_t*)tmp_item)->key) == hashval)
-				if (!map->cmpfunc(((mapnode_t*)tmp_item)->key, key))
-					break;
-		}
-	}
-}
-// TODO: can david check that this seems right
-void map_remove(map_t *map, void *key) {
-	if (map_haskey(map, key) == 0) list_err("map_remove: cannot remove something that is not here");
-	unsigned long hashval = djb2(key);
-	int idx = hashval % map->maxsize;
-	list_popitem(map->hashtable[idx], key);
-}
-int map_haskey(map_t *map, void *key) {
-	unsigned long hashval = djb2(key);
-	int idx = hashval % map->maxsize;
-	if (map->hashtable[idx] == NULL)
-		return 0;
-	list_iter_t *iter = list_createiter(map->hashtable[idx]);
-	void *tmp_item;
-	while (list_hasnext(iter)) {
-		tmp_item = list_next(iter);
-		if (djb2(((mapnode_t*)tmp_item)->key) == hashval) {
-			if (!map->cmpfunc(((mapnode_t*)tmp_item)->key, key))
-				return 1;
-		}
-	}
-	return 0;
 }

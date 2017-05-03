@@ -4,6 +4,7 @@
 typedef int (*cmpfunc_t)(void *, void *);
 typedef void *(*cpyfunc_t)(void *);
 typedef void (*rmfunc_t)(void *);
+typedef void (*strfunc_t)(void *);
 
 struct list;
 typedef struct list list_t;
@@ -96,7 +97,7 @@ int list_isequal(list_t *lista, list_t *listb);
 int list_hassameitems(list_t *lista, list_t *listb);
 
 // Initialize hashmap
-void list_activatehashmap(list_t *list);											// Initialize hashmap
+void list_activatehashmap(list_t *list, strfunc_t strfunc);											// Initialize hashmap
 void list_deactivatehashmap(list_t *list);
 
 // Index functions
