@@ -32,9 +32,18 @@ struct list {
 	node_t *head;
 	node_t *tail;
 	int size;
+
 	// Hashmap
 	enum bool hasmap;
 	map_t *map;
+
+	// Priority
+	enum bool haspriority;
+	list_t *priority;
+
+	// Index
+	enum bool hasindex;
+	void **index;
 };
 
 // Iterator
@@ -105,6 +114,8 @@ list_t *list_create(cmpfunc_t cmpfunc) {
 	tmp_list->head = NULL;
 	tmp_list->tail = NULL;
 	tmp_list->hasmap = false;
+	tmp_list->haspriority = false;
+	tmp_list->index = false;
 	tmp_list->size = 0;
 	return tmp_list;
 }
@@ -561,15 +572,21 @@ void list_deactivatehashmap(list_t *list) {
 // Index functions
 // TODO: implement
 void list_activateindex(list_t *list) {
-
+	if (list == NULL) list_err("list_activateindex: list = NULL");
+	list->haspriority = true;
+	list->priority = list_copy(list);
+	list_sort(list->priority);
 }
 // TODO: implement
 void list_deactivateindex(list_t *list) {
-
+	if (list == NULL) list_err("list_deactivateindex: list = NULL");
+	if (list->priority == NULL) list_err("list_deactivateindex: list->priority = NULL");
+	list->haspriority = false;
+	list_destroy(list->priority);
 }
 // TODO: implement
 void list_swapidxs(list_t *list, void *itema, void *itemb) {
-
+	
 }
 void *list_getitembyidx(list_t *list, int idx) {
 	if (list == NULL) list_err("list_getitembyidx: list = NULL");
@@ -585,26 +602,36 @@ void *list_getitembyidx(list_t *list, int idx) {
 }
 // TODO: implement
 int list_getidxbyitem(list_t *list, void *item) {
-	
+	if (list == NULL) list_err("list_getidxbyitem: list = NULL");
+	if (list->size == 0) list_err("list_getidxbyitem: list->size = 0");
+	if (item == NULL) list_err("list_getidxbyitem: num is larger than list");
+		
 	return 0;
 }
 
 // Priority functions
-// TODO: implement
 void list_activateprioriy(list_t *list) {
-
+	if (list == NULL) list_err("list_activatepriority: list = NULL");
+	list->haspriority = true;
+	list->priority = list_copy(list);
+	list_sort(list->priority);
 }
-// TODO: implement
 void list_deactivatepriority(list_t *list) {
-
+	if (list == NULL) list_err("list_deactivatepriority: list = NULL");
+	if (list->priority == NULL) list_err("list_deactivatepriority: list->priority = NULL");
+	list->haspriority = false;
+	list_destroy(list->priority);
 }
-// TODO: implement
 void *list_poppriority(list_t *list) {
-	return NULL;
+	if (list == NULL) list_err("list_deactivatepriority: list = NULL");
+	if (list->priority == NULL) list_err("list_deactivatepriority: list->priority = NULL");
+	if (!list->priority->size) list_err("list_deactivatepriority: list->priority = NULL");
+	return list_popitem(list, list_popfirst(list->priority));
 }
-// TODO: implement
 void *list_getpriority(list_t *list) {
-	return NULL;
+	if (list == NULL) list_err("list_deactivatepriority: list = NULL");
+	if (list->priority == NULL) list_err("list_deactivatepriority: list->priority = NULL");
+	return list_getfirst(list->priority);
 }
 
 /*
