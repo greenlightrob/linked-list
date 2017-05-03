@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <stdarg.h>
+#include <time.h>
 #include "list.h"
 
 // Boolean
@@ -527,7 +527,17 @@ void list_reverse(list_t *list) {
 	}
 }
 void list_randomize(list_t *list) {
-
+	if (list == NULL) list_err("list_randomize: list = NULL");
+	if (list->size < 2) return;
+	srand(time(0));
+	void *itema;
+	void *itemb;
+	for (unsigned long long int i = list->size * 5; i > 1; i--) {
+		itema = list_getitemnumfromfirst(list, rand() % list->size);
+		itemb = list_getitemnumfromfirst(list, rand() % list->size);
+		list_replaceitem(list, itema, itemb);
+		list_replaceitem(list, itemb, itema);
+	}
 }
 int list_isequal(list_t *lista, list_t *listb) {
 	if (lista == NULL) list_err("list_isequal: first list = NULL");
