@@ -39,7 +39,7 @@ coming
 | `list_getlast`				| Yes			| Unknown	||
 | `list_getitemnumfromfirst`	| Yes			| Unknown	| Needs to be renamed|
 | `list_getitemnumfromlast`		| Yes			| Unknown	| Needs to be renamed|
-| `list_replaceitem`			| No			| Unknown	| Hashmap can be used better on this Changes must also happen in hashmap|
+| `list_replaceitem`			| Yes			| Unknown	| Hashmap can be used better on this Changes must also happen in hashmap|
 | `list_createiter`				| Yes			| Unknown	||
 | `list_copyiter`				| Yes			| Unknown	||
 | `list_destroyiter`			| Yes			| Unknown	||

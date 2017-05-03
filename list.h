@@ -90,7 +90,6 @@ void list_replaceiteritem(list_iter_t *iter, void *item); // fix
  * Specialized list functions
  */
 
-// List manipulations
 void list_rolldown(list_t *list);
 void list_rollup(list_t *list);
 void list_reverse(list_t *list);

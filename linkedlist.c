@@ -55,13 +55,8 @@ int map_haskey(map_t *map, void *key);
  * Internal functions
  */
 
-void list_err(char *msg, ...) {
-	fprintf (stderr, "fatal error in linkedlist: ");
-	va_list args;
-	va_start (args, msg);
-	vfprintf (stderr, msg, args);
-	va_end (args);
-	fputc ('\n', stderr);
+void list_err(char *msg) {
+	fprintf (stderr, "\e[38;2;255;0;0mlinkedlist error:\e[m %s\n", msg);
 	exit (1);
 }
 node_t *create_node(list_t *list, void *item) {
@@ -496,7 +491,6 @@ void list_replaceiteritem(list_iter_t *iter, void *item) {
  * Specialized list functions
  */
 
-// List manipulations
 void list_rolldown(list_t *list) {
 	if (list == NULL) list_err("list_rolldown: list = NULL");
 	if (list->size < 2) return;
@@ -535,7 +529,6 @@ void list_reverse(list_t *list) {
 void list_randomize(list_t *list) {
 
 }
-
 int list_isequal(list_t *lista, list_t *listb) {
 
 }
