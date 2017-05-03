@@ -295,7 +295,20 @@ void *list_getitemnumfromlast(list_t *list, int num) {
 	return tmp_node->item;
 }
 void list_replaceitem(list_t *list, void *originalitem, void *newitem) {
-	// TODO: implement
+	if (list == NULL) list_err("list_replaceitem: list = NULL");
+	if (list->head == NULL) list_err("list_replaceitem: head = NULL");
+	if (!list_contains(list, originalitem)) list_err("list_replaceitem: trying to replace something that does not exist");
+	node_t *node = list->head;
+	while (node->next) {
+		if (list->cmpfunc(node->item, originalitem) == 0) break;
+		node = node->next;
+	}
+	node->item = newitem;
+	if (list->cmpfunc(node->item, originalitem) != 0) list_err("list_replaceitem: Bug in linkedlist. Not users fault.");
+	if (list->hasmap) {
+		map_remove(list->map, originalitem);
+		map_put(list->map, newitem);
+	}
 }
 
 /*
