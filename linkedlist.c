@@ -84,20 +84,20 @@ node_t *create_node(list_t *list, void *item) {
 	list->size++;
 	if (list->hasmap) map_put(list->map, item, node);
 	if (list->haspriority) {
-		// TODO implement
+		list_addfirst(list->priority, item);
+		list_sort(list->priority);
 	}
 	if (list->hasindex) {
-		// TODO implment
+		list_deactivateindex(list);	
+		list_activateindex(list);	
 	}
 	return node;
 }
 void *pop_node(list_t *list, node_t *node) {
 	if (list->hasmap) map_remove(list->map, node->item);
 	if (list->haspriority) {
-		// TODO implement
-	}
-	if (list->hasindex) {
-		// TODO implment
+		node_t *node = pop_node(list->priority, node);
+		if (list->priority->size != 0) list_sort(list->priority);
 	}
 	void *tmpitem = node->item;
 	if (list->size == 1) {
@@ -119,6 +119,10 @@ void *pop_node(list_t *list, node_t *node) {
 	list->size--;
 	free(node);
 	node = NULL;
+	if (list->hasindex) {
+		list_deactivateindex(list);	
+		list_activateindex(list);	
+	}
 	return tmpitem;
 }
 
@@ -143,12 +147,8 @@ list_t *list_create(cmpfunc_t cmpfunc) {
 void list_destroy(list_t *list) {
 	if (list == NULL) list_err("list_destroy: list = NULL");
 	if (list->hasmap) map_destroy(list->map);
-	if (list->haspriority) {
-		// TODO implement
-	}
-	if (list->hasindex) {
-		// TODO implment
-	}
+	if (list->haspriority) list_deactivatepriority(list);
+	if (list->hasindex) list_deactivateindex(list);
 	while (list->size > 0) list_poplast(list);
 	free(list);
 	list = NULL;
@@ -157,12 +157,8 @@ void list_destroy(list_t *list) {
 void list_deepdestroy(list_t *list, rmfunc_t rmfunc) {
 	if (list == NULL) list_err("list_deepdestroy: list = NULL");
 	if (list->hasmap) map_destroy(list->map);
-	if (list->haspriority) {
-		// TODO implement
-	}
-	if (list->hasindex) {
-		// TODO implment
-	}
+	if (list->haspriority) list_deactivatepriority(list);
+	if (list->hasindex) list_deactivateindex(list);
 	if (list->size > 0) rmfunc(list_poplast(list));
 	free(list);
 	list = NULL;
@@ -174,9 +170,7 @@ void list_replacecmpfunc(list_t *list, cmpfunc_t cmpfunc) {
 	if (cmpfunc == NULL) list_err("list_replacefunc: cmpfunc = NULL");
 	list->cmpfunc = cmpfunc;
 	if (list->hasmap) list->map->cmpfunc = cmpfunc;
-	if (list->haspriority) {
-		// TODO implement
-	}
+	if (list->haspriority) list->priority->cmpfunc = cmpfunc;
 }
 int list_size(list_t *list) {
 	if (list == NULL) list_err("list_size: list = NULL");
@@ -610,7 +604,7 @@ int list_hassameitems(list_t *lista, list_t *listb) {
 	while (list_hasnext(iter)) if (list_contains(smallest, list_next(iter)) == 0) return 0;
 	return 1;
 }
-// curpos
+
 // Hashmap functions
 void list_activatehashmap(list_t *list, strfunc_t strfunc) {
 	if (list == NULL) list_err("list_activatehashmap: list = NULL");
@@ -623,7 +617,6 @@ void list_activatehashmap(list_t *list, strfunc_t strfunc) {
 	}
 	list->hasmap = true;
 }
-// TODO: implement
 void list_deactivatehashmap(list_t *list) {
 	if (list == NULL) list_err("list_deactivatehashmap: list = NULL");
 	if (!list->hasmap) list_err("list_deactivatehashmap: list can't deactivate hashmap when not activated");
@@ -698,8 +691,8 @@ void list_deactivatepriority(list_t *list) {
 	list->haspriority = false;
 	list_destroy(list->priority);
 }
-// TODO: implement
 void list_replaceprioritycmpfunc(list_t *list, cmpfunc_t cmpfunc) {
+	list->priority->cmpfunc = cmpfunc;
 }
 
 void *list_poppriority(list_t *list) {
