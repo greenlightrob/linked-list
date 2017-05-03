@@ -562,12 +562,14 @@ void list_randomize(list_t *list) {
 	srand(time(0));
 	void *itema;
 	void *itemb;
+	list_activateindex(list);
 	for (int i = list->size * 5; i > 1; i--) {
 		itema = list_getitembyidx(list, rand() % list->size);
 		itemb = list_getitembyidx(list, rand() % list->size);
 		list_replaceitem(list, itema, itemb);
 		list_replaceitem(list, itemb, itema);
 	}
+	list_deactivateindex(list);
 }
 void list_swapitems(list_t *list, void *itema, void *itemb) {
 	if (list == NULL) list_err("list_swapitems: first list = NULL");
@@ -635,7 +637,7 @@ void list_activateindex(list_t *list) {
 	list->hasindex = true;
 	list->index = calloc(list->size, sizeof(node_t *));
 	list_iter_t *iter = list_createiter(list);
-	for(int i = 0; list_hasnext(iter); i++) {
+	for(int i = 0; list_hasafter(iter); i++) {
 		list->index[i] = iter->node;
 		list_movenext(iter);
 	}
