@@ -616,6 +616,9 @@ void list_activateprioriy(list_t *list) {
 void list_deactivatepriority(list_t *list) {
 
 }
+void list_replaceprioritycmpfunc(list_t *list, cmpfunc_t cmpfunc) {
+
+}
 // TODO: implement
 void *list_poppriority(list_t *list) {
 	return NULL;
@@ -680,7 +683,18 @@ void map_put(map_t *map, void *item, node_t *node) {
 }
 // TODO: implement
 node_t *map_getnode(map_t *map, void *item) {
-
+	if (map_hasitem(map, item) == 0) list_err("map_getnode: cannot remove something that is not here");
+	unsigned long hashval = map->hashfunc(map->strfunc(item));
+	int idx = hashval % map->maxsize;
+	list_iter_t *iter = list_createiter(map->hashtable[idx]);
+	void *tmp_item;
+	while (list_hasnext(iter)) {
+		tmp_item = list_next(iter);
+		if (map->hashfunc(map->strfunc(((mapnode_t*)tmp_item)->item)) == hashval)
+			if (!map->cmpfunc(((mapnode_t*)tmp_item)->item, item))
+				return ((mapnode_t*)tmp_item)->node;
+	}
+	list_err("map_getnode: Bug in list. Not users fault");
 }
 void map_remove(map_t *map, void *item) {
 	if (map_hasitem(map, item) == 0) list_err("map_remove: cannot remove something that is not here");
