@@ -18,7 +18,6 @@ typedef struct list_iter list_iter_t;
 list_t *list_create(cmpfunc_t cmpfunc);
 void list_destroy(list_t *list);
 void list_deepdestroy(list_t *list, rmfunc_t rmfunc);
-void list_usehashmap(list_t *list);											// Initialize hashmap
 void list_replacecmpfunc(list_t *list, cmpfunc_t cmpfunc);					// Change the comparefunction used
 int list_size(list_t *list);												// Getting list size
 int list_contains(list_t *list, void *item);								// Checking weather item exits in list
@@ -96,10 +95,21 @@ void list_swapitems(list_t *list, void *itema, void *itemb);
 int list_isequal(list_t *lista, list_t *listb);
 int list_hassameitems(list_t *lista, list_t *listb);
 
+// Initialize hashmap
+void list_activatehashmap(list_t *list);											// Initialize hashmap
+void list_deactivatehashmap(list_t *list);
+
 // Index functions
-void list_index(list_t *list);
+void list_activateindex(list_t *list);
+void list_deactivateindex(list_t *list);
 void list_swapidxs(list_t *list, void *itema, void *itemb);
 void *list_getitembyidx(list_t *list, int idx);
 int list_getidxbyitem(list_t *list, void *item);
+
+// Priority functions
+void list_activateprioriy(list_t *list);
+void list_deactivatepriority(list_t *list);
+void *list_poppriority(list_t *list);
+void *list_getpriority(list_t *list);
 
 #endif

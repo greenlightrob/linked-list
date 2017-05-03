@@ -124,13 +124,7 @@ void list_deepdestroy(list_t *list, rmfunc_t rmfunc) {
 	list = NULL;
 	return;
 }
-void list_usehashmap(list_t *list) {
-	list->map = map_create(list->cmpfunc);
-	list_iter_t *iter = list_createiter(list);
-	while (list_hasnext(iter))
-		map_put(list->map, list_next(iter));
-	list->hasmap = true;
-}
+
 void list_replacecmpfunc(list_t *list, cmpfunc_t cmpfunc) {
 	if (list == NULL) list_err("list_replacefunc: list = NULL");
 	if (cmpfunc == NULL) list_err("list_replacefunc: cmpfunc = NULL");
@@ -150,6 +144,7 @@ int list_contains(list_t *list, void *item) {
 		if (list->cmpfunc(tmp_node->item, item) == 0) return 1;
 	return 0;
 }
+// TODO: implement
 void list_sort(list_t *list) {
 	// list_err("list sort is not implemented yet");
 }
@@ -158,7 +153,7 @@ void list_sort(list_t *list) {
 list_t *list_copy(list_t *list) {
 	if (list == NULL) list_err("list_copy: list = NULL");
 	list_t *copy = list_create(list->cmpfunc);
-	if (list->hasmap) list_usehashmap(copy);
+	if (list->hasmap) list_activatehashmap(copy);
 	list_iter_t *iter = list_createiter(list);
 	while (list_hasnext(iter))
 		list_addlast(copy, list_next(iter));
@@ -168,7 +163,7 @@ list_t *list_deepcopy(list_t *list, cpyfunc_t cpyfunc) {
 	if (list == NULL) list_err("list_deepcopy: list = NULL");
 	list_t *copy = list_create(list->cmpfunc);
 	list_iter_t *iter = list_createiter(list);
-	if (list->hasmap) list_usehashmap(copy);
+	if (list->hasmap) list_activatehashmap(copy);
 	while (list_hasnext(iter))
 		list_addlast(copy, cpyfunc(list_next(iter)));
 	return copy;
@@ -515,6 +510,7 @@ void list_randomize(list_t *list) {
 		list_replaceitem(list, itemb, itema);
 	}
 }
+// TODO: implement
 void list_swapitems(list_t *list, void *itema, void *itemb) {
 
 }
@@ -546,12 +542,29 @@ int list_hassameitems(list_t *lista, list_t *listb) {
 	while (list_hasnext(iter)) if (list_contains(smallest, list_next(iter)) == 0) return 0;
 	return 1;
 }
-
-
-// Index functions
-void list_index(list_t *list) {
+// Hashmap functions
+void list_activatehashmap(list_t *list) {
+	list->map = map_create(list->cmpfunc);
+	list_iter_t *iter = list_createiter(list);
+	while (list_hasnext(iter))
+		map_put(list->map, list_next(iter));
+	list->hasmap = true;
+}
+// TODO: implement
+void list_deactivatehashmap(list_t *list) {
 
 }
+
+// Index functions
+// TODO: implement
+void list_activateindex(list_t *list) {
+
+}
+// TODO: implement
+void list_deactivateindex(list_t *list) {
+
+}
+// TODO: implement
 void list_swapidxs(list_t *list, void *itema, void *itemb) {
 
 }
@@ -567,10 +580,28 @@ void *list_getitembyidx(list_t *list, int idx) {
 	}
 	return tmp_node->item;
 }
+// TODO: implement
 int list_getidxbyitem(list_t *list, void *item) {
-
+	return 0;
 }
 
+// Priority functions
+// TODO: implement
+void list_activateprioriy(list_t *list) {
+
+}
+// TODO: implement
+void list_deactivatepriority(list_t *list) {
+
+}
+// TODO: implement
+void *list_poppriority(list_t *list) {
+	return NULL;
+}
+// TODO: implement
+void *list_getpriority(list_t *list) {
+	return NULL;
+}
 
 /*
  * Hashmap
