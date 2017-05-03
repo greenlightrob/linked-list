@@ -76,8 +76,8 @@ void *pop_node(list_t *list, node_t *node) {
 	if (list->hasmap) map_remove(list->map, node->item);
 	void *tmpitem = node->item;
 	if (list->size == 1) {
-		list->head == NULL;
-		list->tail == NULL;
+		list->head = NULL;
+		list->tail = NULL;
 	}
 	else if (node == list->head) {
 		list->head = list->head->next;
@@ -377,7 +377,7 @@ void list_addbefore(list_iter_t *iter, void *item) {
 
 	if (iter->node == NULL || iter->list->size < 1 || iter->node == iter->list->tail) {
 		list_addlast(iter->list, item);
-		iter->node == iter->list->tail; // hm
+		iter->node = iter->list->tail; // hm
 	}
 	else if (iter->node == iter->list->head) list_addlast(iter->list, item);
 	else {
@@ -395,7 +395,7 @@ void list_addafter(list_iter_t *iter, void *item) {
 
 	if (iter->node == NULL || iter->list->size < 1 || iter->node == iter->list->head) {
 		list_addfirst(iter->list, item);
-		iter->node == iter->list->head; // hm
+		iter->node = iter->list->head; // hm
 	}
 	else if (iter->node == iter->list->head) list_addlast(iter->list, item);
 	else {
@@ -430,10 +430,10 @@ void *list_popprev(list_iter_t *iter) {
 
 // Removing item then moving iterator
 void *list_removenext(list_iter_t *iter, rmfunc_t rmfunc) {
-
+	return NULL;
 }
 void *list_removeprev(list_iter_t *iter, rmfunc_t rmfunc) {
-
+	return NULL;
 }
 
 // Getting and replacing items with iterators
@@ -509,6 +509,13 @@ void list_randomize(list_t *list) {
 
 }
 
+int list_isequal(list_t *lista, list_t *listb) {
+
+}
+int list_hassameitems(list_t *lista, list_t *listb) {
+
+}
+
 /*
  * Hashmap
  */
@@ -518,7 +525,7 @@ unsigned long djb2(unsigned char *str) {
     unsigned long hash = 5381;
     int c;
 
-    while (c = *str++)
+    while ((c = *str++))
         hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
 
     return hash;
@@ -560,7 +567,6 @@ map_t *map_create(cmpfunc_t cmpfunc) {
 	return map;
 }
 void map_destroy(map_t *map) {
-	mapnode_t *tmpnode;
 	for (int i = 0; i < map->maxsize; i++)
 		if (map->hashtable[i] != NULL)
 			list_destroy(map->hashtable[i]);
