@@ -550,7 +550,22 @@ int list_isequal(list_t *lista, list_t *listb) {
 	return 1;
 }
 int list_hassameitems(list_t *lista, list_t *listb) {
-
+	if (lista == NULL) list_err("list_isequal: first list = NULL");
+	if (listb == NULL) list_err("list_isequal: second list = NULL");
+	if (lista->cmpfunc != listb->cmpfunc) list_err("list_isequal: lists has different cmpfuncs");
+	list_t *largest;
+	list_t *smallest;
+	if (lista->size > listb->size) {
+		largest = lista;
+		smallest = listb;
+	}
+	else {
+		largest = listb;
+		smallest = lista;
+	}
+	list_iter_t *iter = list_createiter(largest);
+	while (list_hasnext(iter)) if (list_contains(smallest, list_next(iter)) == 0) return 0;
+	return 1;
 }
 
 /*
