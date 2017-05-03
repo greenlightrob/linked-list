@@ -327,13 +327,13 @@ void list_replaceitem(list_t *list, void *originalitem, void *newitem) {
 		map_put(list->map, newitem, node);
 		return;
 	}
-	node_t *node = list->head;
-	while (node->next) {
-		if (list->cmpfunc(node->item, originalitem) == 0) break;
-		node = node->next;
+	list_iter_t *iter = list_createiter(list);
+	while (list_hasafter(iter)) {
+		if (list->cmpfunc(list_getitem(iter), originalitem) == 0) break;
+		list_movenext(iter);
 	}
-	node->item = newitem;
-	if (list->cmpfunc(node->item, originalitem) != 0) list_err("list_replaceitem: Bug in linkedlist. Not users fault.");
+	if (list->cmpfunc(list_getitem(iter), originalitem) != 0) list_err("list_replaceitem: Bug in linkedlist. Not users fault.");
+	list_replaceiteritem(iter, newitem);
 }
 
 /*
@@ -634,10 +634,11 @@ void list_replacehashfunc(list_t *list, hashfunc_t hashfunc) {
 // Index functions
 void list_activateindex(list_t *list) {
 	if (list == NULL) list_err("list_activateindex: list = NULL");
+	if (list->hasindex) list_deactivateindex(list);
 	list->hasindex = true;
 	list->index = calloc(list->size, sizeof(node_t *));
 	list_iter_t *iter = list_createiter(list);
-	for(int i = 0; list_hasafter(iter); i++) {
+	for(int i = 0; list_hasnext(iter); i++) {
 		list->index[i] = iter->node;
 		list_movenext(iter);
 	}
