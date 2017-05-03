@@ -21,13 +21,13 @@ void print_status(char *func_name, int status) {
 #define size 10
 
 int main() {
-	int arr[10] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, i;
+	int arr[10] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 
 	// List functions
 	print_status("list_create", test_list_create(dup_arr(arr, size)));
 	print_status("list_destroy", test_list_destroy(dup_arr(arr, size)));
 	print_status("list_deepdestroy", test_list_deepdestroy(dup_arr(arr, size)));
-	print_status("list_usehashmap", test_list_usehashmap(dup_arr(arr, size)));
+	print_status("list_activatehashmap", test_list_activatehashmap(dup_arr(arr, size)));
 	print_status("list_replacecmpfunc", test_list_replacecmpfunc(dup_arr(arr, size)));
 	print_status("list_size", test_list_size(dup_arr(arr, size)));
 	print_status("list_contains", test_list_contains(dup_arr(arr, size)));
@@ -119,10 +119,10 @@ int test_list_deepdestroy(int *array) {
 	return 0;
 }
 
-int test_list_usehashmap(int *array) {
+int test_list_activatehashmap(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
-	list_usehashmap(list);
+	list_activatehashmap(list);
 
 	free(array);
 	return 1;
@@ -307,7 +307,7 @@ int test_list_getitemnumfromfirst(int *array) {
 	list_inputarr(list, array);
 
 
-	for (int i = 0; i < size; i++) if (*(int *)list_getitemnumfromfirst(list, i) != array[i]) return 0;
+	for (int i = 0; i < size; i++) if (*(int *)list_getitembyidx(list, i) != array[i]) return 0;
 
 	free(array);
 	return 1;
@@ -316,7 +316,7 @@ int test_list_getitemnumfromlast(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 
-	for (int i = 0; i < size; i++) if (*(int *)list_getitemnumfromlast(list, i) != array[size - i - 1]) return 0;
+	for (int i = 0; i < size; i++) if (*(int *)list_getitembyidx(list, i) != array[size - i - 1]) return 0;
 
 	free(array);
 	return 1;

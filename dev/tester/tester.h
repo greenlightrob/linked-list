@@ -9,7 +9,7 @@
 int test_list_create(int *array);												
 int test_list_destroy(int *array);													
 int test_list_deepdestroy(int *array);									
-int test_list_usehashmap(int *array);			// Initialize hashmap
+int test_list_activatehashmap(int *array);			// Initialize hashmap
 int test_list_replacecmpfunc(int *array);		// Change the comparefunction used
 int test_list_size(int *array);					// Getting list size
 int test_list_contains(int *array);				// Checking weather item exits in list
