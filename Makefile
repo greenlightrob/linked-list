@@ -1,12 +1,15 @@
 list_src=linkedlist.c
-main_src=dev/tester/tester.c dev/tester/common.c
+list_headers=list.h
 
-header_src=list.h dev/tester/common.h
+tester_src=dev/tester/tester.c dev/tester/common.c
+tester_headers=dev/tester/common.h
+
+headers=$(list_headers) $(tester_headers)
 
 all: tester
 
-tester: $(list_src) $(main_src) $(header_src)
-	gcc -std=gnu11 $(list_src) $(main_src) -o tester
+tester: $(list_src) $(tester_src) $(headers)
+	@gcc -Wall -std=gnu11 $(list_src) $(tester_src) -o $@
 
 clean:
 	rm tester
