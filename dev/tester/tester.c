@@ -123,8 +123,10 @@ list_t *list_inputarr(list_t *list, int *array) {
 
 // Create list
 int test_list_create(int *array) {
+
 	// Testing funcion call
 	list_t *list = list_create(compare_int);
+
 	int result = (list) ? 1 : 0;
 
 	// Freeing memory
@@ -137,20 +139,24 @@ int test_list_destroy(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 	list_t *copy = list_copy(list);
+
 	// Testing funcion call
 	list_destroy(list);
+
 	int result = (!list) ? 1 : 0;
 
 	// Freeinf memory
 	list_deepdestroy(copy, destroy_int);
-	free(array);
+	free(array);		
 	return result;
 }
 int test_list_deepdestroy(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
+	
 	// Testing funcion call
 	list_deepdestroy(list, destroy_int);
+
 	int result = (!list) ? 1 : 0;
 
 	// Freeing memory
@@ -165,6 +171,7 @@ int test_list_copy(int *array) {
 
 	// Testing funcion call
 	list_t *copylist = list_copy(list);
+
 	while(list_size(list) > 2 && list_size(copylist) > 2) {
 		if (result == 1) result = (compare_int(list_popfirst(list), list_popfirst(copylist)) != 0) ? 0 : 1;
 	}
@@ -184,6 +191,7 @@ int test_list_deepcopy(int *array) {
 
 	// Testing funcion call
 	list_t *copylist = list_deepcopy(list, copy_int);
+	
 	while(list_size(list) > 2 && list_size(copylist) > 2) {
 		if (result == 1 )result =  (compare_int(list_popfirst(list), list_popfirst(copylist)) != 0) ? 0 : 1;
 	}
@@ -203,6 +211,7 @@ int test_list_addfirst(int *array) {
 
 	// Testing funcion call
 	list_addfirst(list, &array[1]);
+
 	int result = (*(int *)list_popfirst(list) != array[1]) ? 0 : 1;
 
 	// Freeing memory
@@ -215,6 +224,7 @@ int test_list_addlast(int *array) {
 
 	// Testing funcion call
 	list_addlast(list, &array[1]);
+
 	int result = (*(int *)list_popfirst(list) != array[1]) ? 0 : 1;
 
 	// Freeing memory
@@ -250,10 +260,11 @@ int test_list_getlast(int *array) {
 int test_list_replaceitem(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
+	int result = 0;
 
 	// Testing funcion call
-	int result = 0;
 	list_replaceitem(list, &array[1], &array[4]);
+
 	result = 1;
 
 	// Freeing memory
@@ -268,6 +279,7 @@ int test_list_popitem(int *array) {
 
 	// Testing funcion call
 	list_popitem(list, &array[5]);
+
 	int result = (list_contains(list, allocate_int(5))) ? 0 : 1;
 
 	// Freeing memory
@@ -281,6 +293,7 @@ int test_list_popfirst(int *array) {
 
 	// Testing funcion call
 	list_popfirst(list);
+
 	int result = 1;
 
 	// Freeing memory
@@ -294,6 +307,7 @@ int test_list_poplast(int *array) {
 
 	// Testing funcion call
 	list_poplast(list);
+
 	int result = 1;
 
 	// Freeing memory
@@ -308,6 +322,7 @@ int test_list_removeitem(int *array) {
 
 	// Testing funcion call
 	list_removeitem(list, &array[2], destroy_int);
+
 	int result = (!list_contains(list, allocate_int(2))) ? 0 : 1;
 
 	// Freeing memory
@@ -321,6 +336,7 @@ int test_list_removefirst(int *array) {
 
 	// Testing funcion call
 	list_removefirst(list, destroy_int);
+
 	int result = (!list_contains(list, allocate_int(0))) ? 0 : 1;
 
 	// Freeing memory
@@ -334,6 +350,7 @@ int test_list_removelast(int *array) {
 
 	// Testing funcion call
 	list_removelast(list, destroy_int);
+
 	int result = (!list_contains(list, allocate_int(9))) ? 0 : 1;
 
 	// Freeing memory
@@ -347,8 +364,10 @@ int test_list_replacecmpfunc(int *array) {
 	list_inputarr(list, array);
 
 	int cmpres_int = list_contains(list, &array[5]);
+
 	// Testing funcion call
 	list_replacecmpfunc(list, compare_null);
+
 	int cmpres_null = list_contains(list, &array[5]);
 	int result = (!cmpres_int || cmpres_null) ? 0 : 1;
 
@@ -361,8 +380,9 @@ int test_list_replacecmpfunc(int *array) {
 int test_list_size(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
-	// Testing function call
 	int result = 1;
+
+	// Testing function call
 	for (int i = 0; i < size; i++, list_poplast(list)) if (result == 1) result = (list_size(list) != size - i) ? 0 : 1;
 
 	// Freeing memory
@@ -376,8 +396,10 @@ int test_list_contains(int *array) {
 	int result = 1;
 	
 	for (int i = 0; i < size; i++) {
+
 		// Testing function call
 		result = (!list_contains(list, &array[i]) && result == 1) ? 0 : 1;
+
 	}
 
 	// Freeing memory
@@ -392,6 +414,7 @@ int test_list_sort(int *array) {
 
 	// Testing function call
 	list_sort(list);
+
 	int result = 1;
 
 	// Freeing memory
@@ -412,8 +435,10 @@ int test_list_createiter(int *array) {
 	// Freeing memory
 	list_deepdestroy(list, destroy_int);
 	free(array);
+
 	// Testing function call
 	int result = (list_createiter(list)) ? 1: 0;
+
 	return result;
 }
 int test_list_destroyiter(int *array) {
@@ -423,6 +448,7 @@ int test_list_destroyiter(int *array) {
 
 	// Testing function call
 	list_destroyiter(iter);
+
 	int result = 1;
 
 	// Freeing memory
@@ -438,8 +464,10 @@ int test_list_copyiter(int *array) {
 	iter_b = list_createiter(list);
 	list_movenext(iter_a);
 	list_movenext(iter_a);
+
 	// Testing function call
 	list_copyiter(iter_a, iter_b);
+
 	int result = (*(int *)list_getitem(iter_a) != *(int *)list_getitem(iter_b)) ? 0 : 1;
 
 	// Freeing memory
@@ -454,6 +482,7 @@ int test_list_resetiter(int *array) {
 
 	// Testing function call
 	list_resetiter(iter);
+
 	int result = 1;
 
 	// Freeing memory
@@ -510,6 +539,7 @@ int test_list_movenext(int *array) {
 	
 	// Testing function call
 	list_movenext(iter);
+
 	int result = (*(int *)list_getitem(iter) != 1) ? 0 : 1;
 	
 	// Freeing memory
@@ -524,8 +554,10 @@ int test_list_moveprev(int *array) {
 	
 	list_movenext(iter);
 	list_movenext(iter);
+
 	// Testing function call
 	list_moveprev(iter);
+
 	int result = (*(int *)list_getitem(iter) != 1) ? 0 : 1;
 	
 	// Freeing memory
@@ -552,8 +584,10 @@ int test_list_prev(int *array) {
 	list_iter_t *iter= list_createiter(list);
 	
 	list_movenext(iter);
+
 	// Testing function call
 	list_prev(iter);
+
 	int result = (*(int *)list_next(iter) != 1) ? 0 : 1;
 	
 	// Freeing memory
@@ -570,6 +604,7 @@ int test_list_addbefore(int *array) {
 	
 	// Testing function call
 	list_addbefore(iter, allocate_int(11));
+
 	int result = (*(int *)list_getfirst(list) != 11) ? 0 : 1;
 	
 	// Freeing memory
@@ -584,6 +619,7 @@ int test_list_addafter(int *array) {
 	
 	// Testing function call
 	list_addafter(iter, &array[4]);
+
 	int result = 1;
 	
 	// Freeing memory
@@ -599,6 +635,7 @@ int test_list_getitem(int *array) {
 
 	// Testing function call
 	list_getitem(iter);
+
 	int result = 1;
 
 	// Freeing memory
@@ -614,6 +651,7 @@ int test_list_getbefore(int *array) {
 
 	// Testing function call
 	list_getbefore(iter);
+
 	int result = 1;
 
 	// Freeing memory
@@ -628,6 +666,7 @@ int test_list_getafter(int *array) {
 
 	// Testing function call
 	list_getafter(iter);
+
 	int result = 1;
 
 	// Freeing memory
@@ -642,6 +681,7 @@ int test_list_replaceiteritem(int *array) {
 
 	// Testing function call
 	list_replaceiteritem(iter, &array[5]);
+
 	int result = 1;
 
 	// Freeing memory
@@ -657,6 +697,7 @@ int test_list_popnext(int *array) {
 	
 	// Testing function call
 	list_popnext(iter);
+
 	int result = 1;
 	
 	// Freeing memory
@@ -671,6 +712,7 @@ int test_list_popprev(int *array) {
 
 	// Testing function call
 	list_popprev(iter);
+
 	int result = 1;
 
 	// Freeing memory
@@ -686,6 +728,7 @@ int test_list_removenext(int *array) {
 
 	// Testing function call
 	list_removenext(iter, destroy_int);
+
 	int result = 1;
 
 	// Freeing memory
@@ -700,6 +743,7 @@ int test_list_removeprev(int *array) {
 
 	// Testing function call
 	list_removeprev(iter, destroy_int);
+
 	int result = 1;
 
 	// Freeing memory
@@ -719,6 +763,7 @@ int test_list_rolldown(int *array) {
 
 	// Testing function call
 	list_rolldown(list);
+
 	int result = 1;
 
 	// Freeing memory
@@ -732,6 +777,7 @@ int test_list_rollup(int *array) {
 
 	// Testing function call
 	list_rollup(list);
+
 	int result = 1;
 
 	// Freeing memory
@@ -745,6 +791,7 @@ int test_list_reverse(int *array) {
 
 	// Testing function call
 	list_reverse(list);
+
 	int result = 1;
 
 	// Freeing memory
@@ -758,6 +805,7 @@ int test_list_randomize(int *array) {
 
 	// Testing function call
 	list_randomize(list);
+
 	int result = 1;
 
 	// Freeing memory
@@ -771,6 +819,7 @@ int test_list_swapitems(int *array) {
 
 	// Testing function call
 	list_swapitems(list, allocate_int(1), allocate_int(9));
+
 	int result = 1;
 
 	// Freeing memory
@@ -785,6 +834,7 @@ int test_list_isequal(int *array) {
 
 	// Testing function call
 	list_isequal(list, list2);
+
 	int result = 1;
 
 	// Freeing memory
@@ -799,6 +849,7 @@ int test_list_hassameitems(int *array) {
 
 	// Testing function call
 	list_hassameitems(list, list2);
+	
 	int result = 1;
 
 	// Freeing memory
@@ -810,8 +861,10 @@ int test_list_hassameitems(int *array) {
 int test_list_activatehashmap(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
+
 	// Testing function call
 	list_activatehashmap(list, int_to_str);
+
 	int result = 1;
 
 	// Freeing memory
@@ -824,8 +877,10 @@ int test_list_deactivatehashmap(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 	list_activatehashmap(list, int_to_str);
+
 	// Testing function call
 	list_deactivatehashmap(list);
+
 	int result = 1;
 
 	// Freeing memory
@@ -837,8 +892,10 @@ int test_list_deactivatehashmap(int *array) {
 int test_list_activateindex(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
+
 	// Testing function call
 	list_activateindex(list);
+
 	int result = 1;
 
 	// Freeing memory
@@ -851,8 +908,10 @@ int test_list_deactivateindex(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 	list_activateindex(list);
+
 	// Testing function call
 	list_deactivateindex(list);
+
 	int result = 1;
 
 	// Freeing memory
@@ -864,8 +923,10 @@ int test_list_getitembyidx(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 	list_activateindex(list);
+
 	// Testing function call
 	list_getitembyidx(list, 4);
+
 	int result = 1;
 
 	// Freeing memory
@@ -878,8 +939,10 @@ int test_list_getidxbyitem(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 	list_activateindex(list);
+
 	// Testing function call
 	list_getidxbyitem(list, allocate_int(7));
+
 	int result = 1;
 
 	// Freeing memory
@@ -892,8 +955,10 @@ int test_list_replaceitembyidx(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 	list_activateindex(list);
+
 	// Testing function call
 	list_replaceitembyidx(list, allocate_int(3), 4);
+
 	int result = 1;
 
 	// Freeing memory
@@ -906,8 +971,10 @@ int test_list_swapidxs(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 	list_activateindex(list);
+
 	// Testing function call
 	list_swapidxs(list, allocate_int(4), allocate_int(5));
+
 	int result = 1;
 
 	// Freeing memory
@@ -920,8 +987,10 @@ int test_list_swapidxs(int *array) {
 int test_list_activatepriority(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
+
 	// Testing function call
 	list_activatepriority(list);
+
 	int result = 1;
 
 	// Freeing memory
@@ -934,8 +1003,10 @@ int test_list_deactivatepriority(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 	list_activatepriority(list);
+
 	// Testing function call
 	list_deactivatepriority(list);
+
 	int result = 1;
 
 	// Freeing memory
@@ -947,8 +1018,10 @@ int test_list_replaceprioritycmpfunc(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 	list_activatepriority(list);
+
 	// Testing function call
 	list_replaceprioritycmpfunc(list, compare_string);
+
 	int result = 1;
 
 	// Freeing memory
@@ -961,8 +1034,10 @@ int test_list_poppriority(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 	list_activatepriority(list);
+
 	// Testing function call
 	list_poppriority(list);
+
 	int result = 1;
 
 	// Freeing memory
@@ -975,8 +1050,10 @@ int test_list_getpriority(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 	list_activatepriority(list);
+
 	// Testing function call
 	list_getpriority(list);
+
 	int result = 1;
 
 	// Freeing memory
