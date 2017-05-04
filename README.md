@@ -9,7 +9,7 @@ coming
 
 ## Development:
 
-```c
+```Bash
 \e[38;2;255;0;0mtesting\e[m
 ```
 
