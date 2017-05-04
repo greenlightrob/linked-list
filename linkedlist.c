@@ -96,7 +96,7 @@ node_t *create_node(list_t *list, void *item) {
 void *pop_node(list_t *list, node_t *node) {
 	if (list->hasmap) map_remove(list->map, node->item);
 	if (list->haspriority) {
-		pop_node(list->priority, node);
+		list_popitem(list->priority, node->item);
 		if (list->priority->size != 0) list_sort(list->priority);
 	}
 	void *tmpitem = node->item;
@@ -689,8 +689,8 @@ void list_swapidxs(list_t *list, void *itema, void *itemb) {
 // Priority functions
 void list_activatepriority(list_t *list) {
 	if (list == NULL) list_err("list_activatepriority: list = NULL");
-	list->haspriority = true;
 	list->priority = list_copy(list);
+	list->haspriority = true;
 	list_sort(list->priority);
 }
 void list_deactivatepriority(list_t *list) {
@@ -707,7 +707,7 @@ void *list_poppriority(list_t *list) {
 	if (list == NULL) list_err("list_deactivatepriority: list = NULL");
 	if (list->priority == NULL) list_err("list_deactivatepriority: list->priority = NULL");
 	if (!list->priority->size) list_err("list_deactivatepriority: list->priority = NULL");
-	return list_popitem(list, list_popfirst(list->priority));
+	return list_popitem(list, list_getfirst(list->priority)); 
 }
 void *list_getpriority(list_t *list) {
 	if (list == NULL) list_err("list_deactivatepriority: list = NULL");
