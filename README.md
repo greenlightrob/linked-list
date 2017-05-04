@@ -9,6 +9,8 @@ coming
 
 ## Development:
 
+<span style="color:red">No</span>
+
 ### Todos
 check if list is sorted when list contains
 * Rewriting
