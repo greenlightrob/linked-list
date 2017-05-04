@@ -60,14 +60,14 @@ check if list is sorted when list contains
 | `list_getbefore`				| Yes			| Unknown	||
 | `list_getafter`				| Yes			| Unknown	||
 | `list_replaceiteritem`		| Yes			| Unknown	| Changes must also happen in hashmap|
-| `list_rolldown`				| Yes			| Unknown	||
-| `list_rollup`					| Yes			| Unknown	||
+| `list_rolldown`				| Yes			| Unknown	|Bug|
+| `list_rollup`					| Yes			| Unknown	|Bug|
 | `list_reverse`				| Yes			| Unknown	||
 | `list_swapitems`				| Yes			| Unknown	||
-| `list_randomize`				| No			| Unknown	||
-| `list_isequal`				| No			| Unknown	||
-| `list_hassameitems`			| No			| Unknown	||
-| `list_index(list_t *list)`	| No			| Unknown	||
-| `list_swapidxs`				| No			| Unknown	||
+| `list_randomize`				| Yes			| Unknown	||
+| `list_isequal`				| Yes			| Unknown	||
+| `list_hassameitems`			| Yes			| Unknown	||
+| `list_index(list_t *list)`	| Yes			| Unknown	||
+| `list_swapidxs`				| Yes			| Unknown	||
 | `list_getitembyidx`			| Yes			| Unknown	||
-| `list_getidxbyitem`			| No			| Unknown	||
+| `list_getidxbyitem`			| Yes			| Unknown	||
