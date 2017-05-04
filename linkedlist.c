@@ -140,7 +140,7 @@ list_t *list_create(cmpfunc_t cmpfunc) {
 	tmp_list->tail = NULL;
 	tmp_list->hasmap = false;
 	tmp_list->haspriority = false;
-	tmp_list->index = false;
+	tmp_list->hasindex = false;
 	tmp_list->size = 0;
 	return tmp_list;
 }
