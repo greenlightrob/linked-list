@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdarg.h>
+#include "../../list.h"
 
 // Print error message and exit program
 void fatal_error(char *msg, ...);
