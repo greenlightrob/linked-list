@@ -161,7 +161,6 @@ void list_deepdestroy(list_t *list, rmfunc_t rmfunc) {
 	if (list->hasmap) map_destroy(list->map);
 	if (list->haspriority) list_deactivatepriority(list);
 	if (list->hasindex) list_deactivateindex(list);
-	if (list->size > 0) rmfunc(list_poplast(list));
 	while (list->size > 0) rmfunc(list_poplast(list));
 	free(list);
 	list = NULL;
