@@ -116,347 +116,302 @@ list_t *list_inputarr(list_t *list, int *array) {
 	for (int i = 0; i < size; i++) list_addlast(list, allocate_int(array[i]));
 	return list;
 }
-
-/*
-//	List functions
-*/
-
-// Create list
-int test_list_create(int *array) {
-
-	// Testing funcion call
-	list_t *list = list_create(compare_int);
-
-	int result = (list) ? 1 : 0;
-
-	// Freeing memory
-	list_deepdestroy(list, destroy_int);
-	free(array);
-	return result;
-}
-// Destroy list
-int test_list_destroy(int *array) {
-	list_t *list = list_create(compare_int);
-	list_inputarr(list, array);
-	list_t *copy = list_copy(list);
-
-	// Testing funcion call
-	list_destroy(list);
-
-	int result = (!list) ? 1 : 0;
-
-	// Freeinf memory
-	list_deepdestroy(copy, destroy_int);
-	free(array);		
-	return result;
-}
-int test_list_deepdestroy(int *array) {
+												
+/*												
+//	List functions								
+*/												
+												
+// Create list									
+int test_list_create(int *array) {				
+	int result = 1;										// Init
+												
+	list_t *list = list_create(compare_int); 			// Testing funcion call
+	result = (list) ? 1 : 0;					
+													
+	list_deepdestroy(list, destroy_int); 				// Freeing memory
+	free(array);								
+	return result;								
+}												
+// Destroy list									
+int test_list_destroy(int *array) {				
+	int result = 1;										// Init	
+	list_t *list = list_create(compare_int);	
+	list_inputarr(list, array);					
+	list_t *copy = list_copy(list);				
+													
+	list_destroy(list);									// Testing funcion call						
+	result = (!list) ? 1 : 0;					
+													
+	list_deepdestroy(copy, destroy_int);				// Freeing memory							
+	free(array);								
+	return result;								
+}													
+int test_list_deepdestroy(int *array) {			
+	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
-	
-	// Testing funcion call
-	list_deepdestroy(list, destroy_int);
-
-	int result = (!list) ? 1 : 0;
-
-	// Freeing memory
-	free(array);
+													
+	list_deepdestroy(list, destroy_int); 				// Testing funcion call
+	result = (!list) ? 1 : 0;
+													
+	free(array); 										// Freeing memory
 	return result;
-}
+}													
 // Copy list
 int test_list_copy(int *array) {
+	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
-	int result = 1;
-
-	// Testing funcion call
-	list_t *copylist = list_copy(list);
-
+													
+	list_t *copylist = list_copy(list); 				// Testing funcion call
 	while(list_size(list) > 2 && list_size(copylist) > 2) {
 		if (result == 1) result = (compare_int(list_popfirst(list), list_popfirst(copylist)) != 0) ? 0 : 1;
 	}
 	list_deepdestroy(list, destroy_int);
 	int val = *(int *)list_poplast(copylist);
 	if (result == 1) result = (val == 9) ? 0 : 1;
-
-	// Freeing memory
-	list_deepdestroy(copylist, destroy_int);
+													
+	list_deepdestroy(copylist, destroy_int); 			// Freeing memory
 	free(array);
 	return result;
-}
+}													
 int test_list_deepcopy(int *array) {
-	list_t *list = list_create(compare_int);
+	int result = 1;										// Init
+	list_t *list = list_create(compare_int), *copy;
 	list_inputarr(list, array);
-	int result = 1;
-
-	// Testing funcion call
-	list_t *copylist = list_deepcopy(list, copy_int);
-	
-	while(list_size(list) > 2 && list_size(copylist) > 2) {
-		if (result == 1 )result =  (compare_int(list_popfirst(list), list_popfirst(copylist)) != 0) ? 0 : 1;
+													
+	copy = list_deepcopy(list, copy_int); 				// Testing funcion call
+	while(list_size(list) > 2 && list_size(copy) > 2) {
+		if (result == 1 )result =  (compare_int(list_popfirst(list), list_popfirst(copy)) != 0) ? 0 : 1;
 	}
-
+													
 	list_deepdestroy(list, destroy_int);
-	int val = *(int *)list_poplast(copylist);
+	int val = *(int *)list_poplast(copy);
 	if (result == 1) result = (val != 9) ? 0 : 1; 
-
-	// Freeing memory
-	list_deepdestroy(copylist, destroy_int);
+													
+	list_deepdestroy(copy, destroy_int); 				// Freeing memory
 	free(array);
 	return result;
-}
+}													
 // Add item
 int test_list_addfirst(int *array) {
+	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
-
-	// Testing funcion call
-	list_addfirst(list, &array[1]);
-
-	int result = (*(int *)list_popfirst(list) != array[1]) ? 0 : 1;
-
-	// Freeing memory
-	list_deepdestroy(list, destroy_int);
+													
+	list_addfirst(list, &array[1]); 					// Testing funcion call
+	result = (*(int *)list_popfirst(list) != array[1]) ? 0 : 1;
+													
+	list_deepdestroy(list, destroy_int); 				// Freeing memory
 	free(array);
 	return result;
-}
+}													
 int test_list_addlast(int *array) {
+	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
-
-	// Testing funcion call
-	list_addlast(list, &array[1]);
-
-	int result = (*(int *)list_popfirst(list) != array[1]) ? 0 : 1;
-
-	// Freeing memory
-	list_deepdestroy(list, destroy_int);
+													
+	list_addlast(list, &array[1]); 						// Testing funcion call
+	result = (*(int *)list_popfirst(list) != array[1]) ? 0 : 1;
+													
+	list_deepdestroy(list, destroy_int); 				// Freeing memory
 	free(array);
 	return result;
-}
+}													
 // Get and replace item
 int test_list_getfirst(int *array) {
+	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
-
-	// Testing funcion call
-	int result = (*(int *)list_getfirst(list) != 0) ? 0 : 1;
-
-	// Freeing memory
-	list_deepdestroy(list, destroy_int);
+													
+	result = (*(int *)list_getfirst(list) != 0) ? 0 : 1;// Testing funcion call
+													
+	list_deepdestroy(list, destroy_int); 				// Freeing memory
 	free(array);
 	return result;
-}
+}													
 int test_list_getlast(int *array) {
+	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
-
-	// Testing funcion call
-	int result = (*(int *)list_getlast(list) != 9) ? 0 : 1;
-
-	// Freeing memory
-	list_deepdestroy(list, destroy_int);
+													
+	result = (*(int *)list_getlast(list) != 9) ? 0 : 1;	// Testing funcion call
+													
+	list_deepdestroy(list, destroy_int); 				// Freeing memory
 	free(array);
 	return result;
-}
+}													
 int test_list_replaceitem(int *array) {
+	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
-	int result = 0;
-
-	// Testing funcion call
-	list_replaceitem(list, &array[1], &array[4]);
-
+													
+	list_replaceitem(list, &array[1], &array[4]); 		// Testing funcion call
 	result = 1;
-
-	// Freeing memory
-	list_deepdestroy(list, destroy_int);
+													
+	list_deepdestroy(list, destroy_int); 				// Freeing memory
 	free(array);
 	return result;
-}
+}													
 // Pop item
 int test_list_popitem(int *array) {
+	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
-
-	// Testing funcion call
-	list_popitem(list, &array[5]);
-
-	int result = (list_contains(list, allocate_int(5))) ? 0 : 1;
-
-	// Freeing memory
-	list_deepdestroy(list, destroy_int);
+													
+	list_popitem(list, &array[5]); 						// Testing funcion call
+	result = (list_contains(list, allocate_int(5))) ? 0 : 1;
+													
+	list_deepdestroy(list, destroy_int); 				// Freeing memory
 	free(array);
 	return result;
-}
+}													
 int test_list_popfirst(int *array) {
+	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
-
-	// Testing funcion call
-	list_popfirst(list);
-
-	int result = 1;
-
-	// Freeing memory
-	list_deepdestroy(list, destroy_int);
+													
+	list_popfirst(list); 								// Testing funcion call
+	result = 1;
+													
+	list_deepdestroy(list, destroy_int); 				// Freeing memory
 	free(array);
 	return result;
-}
+}													
 int test_list_poplast(int *array) {
+	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
-
-	// Testing funcion call
-	list_poplast(list);
-
-	int result = 1;
-
-	// Freeing memory
-	list_deepdestroy(list, destroy_int);
+													
+	list_poplast(list); 								// Testing funcion call
+	result = 1;
+													
+	list_deepdestroy(list, destroy_int); 				// Freeing memory
 	free(array);
 	return result;
-}
+}													
 // Remove item
 int test_list_removeitem(int *array) {
+	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
-
-	// Testing funcion call
-	list_removeitem(list, &array[2], destroy_int);
-
-	int result = (!list_contains(list, allocate_int(2))) ? 0 : 1;
-
-	// Freeing memory
-	list_deepdestroy(list, destroy_int);
+													
+	list_removeitem(list, &array[2], destroy_int); 		// Testing funcion call
+	result = (!list_contains(list, allocate_int(2))) ? 0 : 1;
+													
+	list_deepdestroy(list, destroy_int); 				// Freeing memory
 	free(array);
 	return result;
-}
+}													
 int test_list_removefirst(int *array) {
+	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
-
-	// Testing funcion call
-	list_removefirst(list, destroy_int);
-
-	int result = (!list_contains(list, allocate_int(0))) ? 0 : 1;
-
-	// Freeing memory
-	list_deepdestroy(list, destroy_int);
+													
+	list_removefirst(list, destroy_int); 				// Testing funcion call
+	result = (!list_contains(list, allocate_int(0))) ? 0 : 1;
+													
+	list_deepdestroy(list, destroy_int); 				// Freeing memory
 	free(array);
 	return result;
-}
+}													
 int test_list_removelast(int *array) {
+	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
-
-	// Testing funcion call
-	list_removelast(list, destroy_int);
-
-	int result = (!list_contains(list, allocate_int(9))) ? 0 : 1;
-
-	// Freeing memory
-	list_deepdestroy(list, destroy_int);
+													
+	list_removelast(list, destroy_int); 				// Testing funcion call
+	result = (!list_contains(list, allocate_int(9))) ? 0 : 1;
+													
+	list_deepdestroy(list, destroy_int); 				// Freeing memory
 	free(array);
 	return result;
-}
+}													
 // Genereal list functions
 int test_list_replacecmpfunc(int *array) {
+	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
-
 	int cmpres_int = list_contains(list, &array[5]);
-
-	// Testing funcion call
-	list_replacecmpfunc(list, compare_null);
-
+													
+	list_replacecmpfunc(list, compare_null); 			// Testing funcion call
 	int cmpres_null = list_contains(list, &array[5]);
-	int result = (!cmpres_int || cmpres_null) ? 0 : 1;
-
-	// Freeing memory
-	list_deepdestroy(list, destroy_int);
+	result = (!cmpres_int || cmpres_null) ? 0 : 1;
+													
+	list_deepdestroy(list, destroy_int); 				// Freeing memory
 	free(array);
 	return result;
-}
-
+}													
+													
 int test_list_size(int *array) {
+	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
-	int result = 1;
-
-	// Testing function call
-	for (int i = 0; i < size; i++, list_poplast(list)) if (result == 1) result = (list_size(list) != size - i) ? 0 : 1;
-
-	// Freeing memory
-	list_deepdestroy(list, destroy_int);
-	free(array);
-	return result;
-}
-int test_list_contains(int *array) {
-	list_t *list = list_create(compare_int);
-	list_inputarr(list, array);
-	int result = 1;
-	
-	for (int i = 0; i < size; i++) {
-
-		// Testing function call
-		result = (!list_contains(list, &array[i]) && result == 1) ? 0 : 1;
-
+													
+	for (int i = 0; i < size; i++, list_poplast(list)) {
+		if (list_size(list) != size - i) result = 1; 	// Testing function call
 	}
-
-	// Freeing memory
-	list_deepdestroy(list, destroy_int);
+													
+	list_deepdestroy(list, destroy_int); 				// Freeing memory
 	free(array);
 	return result;
-}
-
+}													
+int test_list_contains(int *array) {
+	int result = 1;										// Init
+	list_t *list = list_create(compare_int);			
+	list_inputarr(list, array);							
+														
+	for (int i = 0; i < size; i++) {					
+		if (!list_contains(list, &array[i])) result = 1;// Testing function call
+	}
+													
+	list_deepdestroy(list, destroy_int); 				// Freeing memory
+	free(array);
+	return result;
+}													
+													
 int test_list_sort(int *array) {
+	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
-
-	// Testing function call
-	list_sort(list);
-
-	int result = 1;
-
-	// Freeing memory
-	list_deepdestroy(list, destroy_int);
+													
+	list_sort(list); 									// Testing function call
+	result = 1;
+													
+	list_deepdestroy(list, destroy_int); 				// Freeing memory
 	free(array);
 	return result;
-}
-
-/*
+}													
+													
+/*													
 //	Iterator functions
-*/
-
+*/													
+													
 // Create iterator
 int test_list_createiter(int *array) {
+	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
-
-	// Freeing memory
-	list_deepdestroy(list, destroy_int);
+													
+	result = (list_createiter(list)) ? 1: 0; 			// Testing function call
+													
+	list_deepdestroy(list, destroy_int); 				// Freeing memory
 	free(array);
-
-	// Testing function call
-	int result = (list_createiter(list)) ? 1: 0;
-
 	return result;
-}
+}													
 int test_list_destroyiter(int *array) {
+	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 	list_iter_t *iter= list_createiter(list);
-
-	// Testing function call
-	list_destroyiter(iter);
-
-	int result = 1;
-
-	// Freeing memory
-	list_deepdestroy(list, destroy_int);
+													
+	list_destroyiter(iter); 							// Testing function call
+	result = 1;
+													
+	list_deepdestroy(list, destroy_int); 				// Freeing memory
 	free(array);
 	return result;
-}
+}													
 int test_list_copyiter(int *array) {
+	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 	list_iter_t *iter_a, *iter_b;
@@ -464,601 +419,529 @@ int test_list_copyiter(int *array) {
 	iter_b = list_createiter(list);
 	list_movenext(iter_a);
 	list_movenext(iter_a);
-
-	// Testing function call
-	list_copyiter(iter_a, iter_b);
-
-	int result = (*(int *)list_getitem(iter_a) != *(int *)list_getitem(iter_b)) ? 0 : 1;
-
-	// Freeing memory
-	list_deepdestroy(list, destroy_int);
+													
+	list_copyiter(iter_a, iter_b); 						// Testing function call
+	result = (*(int *)list_getitem(iter_a) != *(int *)list_getitem(iter_b)) ? 0 : 1;
+													
+	list_deepdestroy(list, destroy_int); 				// Freeing memory
 	free(array);
 	return result;
-}
+}													
 int test_list_resetiter(int *array) {
+	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 	list_iter_t *iter= list_createiter(list);
-
-	// Testing function call
-	list_resetiter(iter);
-
-	int result = 1;
-
-	// Freeing memory
-	list_deepdestroy(list, destroy_int);
+													
+	list_resetiter(iter); 								// Testing function call
+	result = 1;
+													
+	list_deepdestroy(list, destroy_int); 				// Freeing memory
 	free(array);
 	return result;
-}
+}													
 // Check wether iterator has a node
 int test_list_hasnext(int *array) {
+	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 	list_iter_t *iter= list_createiter(list);
-
-	// Testing function call
-	int result = (!list_hasnext(iter)) ? 0 : 1;
-
-	// Freeing memory
-	list_deepdestroy(list, destroy_int);
+													
+	result = (!list_hasnext(iter)) ? 0 : 1; 			// Testing function call
+													
+	list_deepdestroy(list, destroy_int); 				// Freeing memory
 	free(array);
 	return result;
-}
+}													
 int test_list_hasbefore(int *array) {
+	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 	list_iter_t *iter= list_createiter(list);
 	list_movenext(iter);
-
-	// Testing function call
-	int result = (!list_hasbefore(iter)) ? 0 : 1;
-
-	// Freeing memory
-	list_deepdestroy(list, destroy_int);
+													
+	result = (!list_hasbefore(iter)) ? 0 : 1; 			// Testing function call
+													
+	list_deepdestroy(list, destroy_int); 				// Freeing memory
 	free(array);
 	return result;
-}
+}													
 int test_list_hasafter(int *array) {
+	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 	list_iter_t *iter= list_createiter(list);
-
-	// Testing function call
-	int result = (!list_hasafter(iter)) ? 0 : 1;
-
-	// Freeing memory
-	list_deepdestroy(list, destroy_int);
+													
+	result = (!list_hasafter(iter)) ? 0 : 1; 			// Testing function call
+													
+	list_deepdestroy(list, destroy_int); 				// Freeing memory
 	free(array);
 	return result;
-}
+}													
 // Iterator manipulations
 int test_list_movenext(int *array) {
+	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 	list_iter_t *iter= list_createiter(list);
+														
+	list_movenext(iter); 								// Testing function call
+	result = (*(int *)list_getitem(iter) != 1) ? 0 : 1;
 	
-	// Testing function call
-	list_movenext(iter);
-
-	int result = (*(int *)list_getitem(iter) != 1) ? 0 : 1;
-	
-	// Freeing memory
-	list_deepdestroy(list, destroy_int);
+	list_deepdestroy(list, destroy_int); 				// Freeing memory
 	free(array);
 	return result;
-}	
+}														
 int test_list_moveprev(int *array) {
+	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 	list_iter_t *iter= list_createiter(list);
-	
 	list_movenext(iter);
 	list_movenext(iter);
-
-	// Testing function call
-	list_moveprev(iter);
-
-	int result = (*(int *)list_getitem(iter) != 1) ? 0 : 1;
+													
+	list_moveprev(iter); 								// Testing function call
+	result = (*(int *)list_getitem(iter) != 1) ? 0 : 1;
 	
-	// Freeing memory
-	list_deepdestroy(list, destroy_int);
+	list_deepdestroy(list, destroy_int); 				// Freeing memory
 	free(array);
 	return result;
-}	
+}														
 int test_list_next(int *array) {
+	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 	list_iter_t *iter= list_createiter(list);
 	
-	// Testing function call
-	int result = (*(int *)list_next(iter) != 0) ? 0 : 1;
+	result = (*(int *)list_next(iter) != 0) ? 0 : 1; 	// Testing function call
 	
-	// Freeing memory
-	list_deepdestroy(list, destroy_int);
+	list_deepdestroy(list, destroy_int); 				// Freeing memory
 	free(array);
 	return result;
-}	
+}														
 int test_list_prev(int *array) {
+	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 	list_iter_t *iter= list_createiter(list);
 	
 	list_movenext(iter);
-
-	// Testing function call
-	list_prev(iter);
-
-	int result = (*(int *)list_next(iter) != 1) ? 0 : 1;
+													
+	list_prev(iter); 									// Testing function call
+	result = (*(int *)list_next(iter) != 1) ? 0 : 1;
 	
-	// Freeing memory
-	list_deepdestroy(list, destroy_int);
+	list_deepdestroy(list, destroy_int); 				// Freeing memory
 	free(array);
 	return result;
-}	
+}														
 // Add item with iterator
 int test_list_addbefore(int *array) {
+	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 	list_iter_t *iter= list_createiter(list);
 	list_movenext(iter);
-	
-	// Testing function call
-	list_addbefore(iter, allocate_int(11));
-
-	int result = (*(int *)list_getfirst(list) != 11) ? 0 : 1;
-	
-	// Freeing memory
-	list_deepdestroy(list, destroy_int);
+														
+	list_addbefore(iter, allocate_int(11)); 			// Testing function call
+	result = (*(int *)list_getfirst(list) != 11) ? 0 : 1;
+														
+	list_deepdestroy(list, destroy_int); 				// Freeing memory
 	free(array);
 	return result;
-}	
+}														
 int test_list_addafter(int *array) {
+	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 	list_iter_t *iter= list_createiter(list);
-	
-	// Testing function call
-	list_addafter(iter, &array[4]);
-
-	int result = 1;
-	
-	// Freeing memory
-	list_deepdestroy(list, destroy_int);
+														
+	list_addafter(iter, &array[4]); 					// Testing function call
+	result = 1;
+														
+	list_deepdestroy(list, destroy_int); 				// Freeing memory
 	free(array);
 	return result;
-}	
+}														
 // Get and replace item with iterator
 int test_list_getitem(int *array) {
+	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 	list_iter_t *iter= list_createiter(list);
-
-	// Testing function call
-	list_getitem(iter);
-
-	int result = 1;
-
-	// Freeing memory
-	list_deepdestroy(list, destroy_int);
+													
+	list_getitem(iter); 								// Testing function call
+	result = 1;
+													
+	list_deepdestroy(list, destroy_int); 				// Freeing memory
 	free(array);
 	return result;
-}
+}													
 int test_list_getbefore(int *array) {
+	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 	list_iter_t *iter= list_createiter(list);
 	list_movenext(iter);
-
-	// Testing function call
-	list_getbefore(iter);
-
-	int result = 1;
-
-	// Freeing memory
-	list_deepdestroy(list, destroy_int);
+													
+	list_getbefore(iter); 								// Testing function call
+	result = 1;
+													
+	list_deepdestroy(list, destroy_int); 				// Freeing memory
 	free(array);
 	return result;
-}
+}													
 int test_list_getafter(int *array) {
+	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 	list_iter_t *iter= list_createiter(list);
-
-	// Testing function call
-	list_getafter(iter);
-
-	int result = 1;
-
-	// Freeing memory
-	list_deepdestroy(list, destroy_int);
+													
+	list_getafter(iter); 								// Testing function call
+	result = 1;
+													
+	list_deepdestroy(list, destroy_int); 				// Freeing memory
 	free(array);
 	return result;
-}
+}													
 int test_list_replaceiteritem(int *array) {
+	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 	list_iter_t *iter= list_createiter(list);
-
-	// Testing function call
-	list_replaceiteritem(iter, &array[5]);
-
-	int result = 1;
-
-	// Freeing memory
-	list_deepdestroy(list, destroy_int);
+													
+	list_replaceiteritem(iter, &array[5]); 				// Testing function call
+	result = 1;
+													
+	list_deepdestroy(list, destroy_int); 				// Freeing memory
 	free(array);
 	return result;
-}
+}													
 // Pop item with iterator
 int test_list_popnext(int *array) {
+	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 	list_iter_t *iter= list_createiter(list);
-	
-	// Testing function call
-	list_popnext(iter);
-
-	int result = 1;
-	
-	// Freeing memory
-	list_deepdestroy(list, destroy_int);
+														
+	list_popnext(iter); 								// Testing function call
+	result = 1;
+														
+	list_deepdestroy(list, destroy_int); 				// Freeing memory
 	free(array);
 	return result;
-}
+}													
 int test_list_popprev(int *array) {
+	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 	list_iter_t *iter= list_createiter(list);
-
-	// Testing function call
-	list_popprev(iter);
-
-	int result = 1;
-
-	// Freeing memory
-	list_deepdestroy(list, destroy_int);
+													
+	list_popprev(iter); 								// Testing function call
+	result = 1;
+													
+	list_deepdestroy(list, destroy_int); 				// Freeing memory
 	free(array);
 	return result;
-}
+}													
 // Remove item, then move iterator
 int test_list_removenext(int *array) {
+	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 	list_iter_t *iter= list_createiter(list);
-
-	// Testing function call
-	list_removenext(iter, destroy_int);
-
-	int result = 1;
-
-	// Freeing memory
-	list_deepdestroy(list, destroy_int);
+													
+	list_removenext(iter, destroy_int); 				// Testing function call
+	result = 1;
+													
+	list_deepdestroy(list, destroy_int); 				// Freeing memory
 	free(array);
 	return result;
-}
+}													
 int test_list_removeprev(int *array) {
+	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 	list_iter_t *iter= list_createiter(list);
-
-	// Testing function call
-	list_removeprev(iter, destroy_int);
-
-	int result = 1;
-
-	// Freeing memory
-	list_deepdestroy(list, destroy_int);
+													
+	list_removeprev(iter, destroy_int); 				// Testing function call
+	result = 1;
+													
+	list_deepdestroy(list, destroy_int); 				// Freeing memory
 	free(array);
 	return result;
-}
-
-/*
+}													
+													
+/*													
 //	Specialized list functions
-*/
-
+*/													
+													
 // Specialized list manipulations
 int test_list_rolldown(int *array) {
+	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
-
-	// Testing function call
-	list_rolldown(list);
-
-	int result = 1;
-
-	// Freeing memory
-	list_deepdestroy(list, destroy_int);
+													
+	list_rolldown(list); 								// Testing function call
+	result = 1;
+													
+	list_deepdestroy(list, destroy_int); 				// Freeing memory
 	free(array);
 	return result;
-}
+}													
 int test_list_rollup(int *array) {
+	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
-
-	// Testing function call
-	list_rollup(list);
-
-	int result = 1;
-
-	// Freeing memory
-	list_deepdestroy(list, destroy_int);
+													
+	list_rollup(list); 									// Testing function call
+	result = 1;
+													
+	list_deepdestroy(list, destroy_int); 				// Freeing memory
 	free(array);
 	return result;
-}
+}													
 int test_list_reverse(int *array) {
+	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
-
-	// Testing function call
-	list_reverse(list);
-
-	int result = 1;
-
-	// Freeing memory
-	list_deepdestroy(list, destroy_int);
+													
+	list_reverse(list); 								// Testing function call
+	result = 1;
+													
+	list_deepdestroy(list, destroy_int); 				// Freeing memory
 	free(array);
 	return result;
-}
+}													
 int test_list_randomize(int *array) {
+	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
-
-	// Testing function call
-	list_randomize(list);
-
-	int result = 1;
-
-	// Freeing memory
-	list_deepdestroy(list, destroy_int);
+													
+	list_randomize(list); 								// Testing function call
+	result = 1;
+													
+	list_deepdestroy(list, destroy_int); 				// Freeing memory
 	free(array);
 	return result;
-}
+}													
 int test_list_swapitems(int *array) {
+	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
-
-	// Testing function call
-	list_swapitems(list, allocate_int(1), allocate_int(9));
-
-	int result = 1;
-
-	// Freeing memory
-	list_deepdestroy(list, destroy_int);
+	int *item_a = allocate_int(1);
+	int *item_b = allocate_int(9);
+													
+	list_swapitems(list, item_a, item_b); 				// Testing function call
+	result = 1;
+													
+	list_deepdestroy(list, destroy_int); 				// Freeing memory
 	free(array);
 	return result;
-}
+}													
 int test_list_isequal(int *array) {
+	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 	list_t *list2 = list_copy(list);
-
-	// Testing function call
-	list_isequal(list, list2);
-
-	int result = 1;
-
-	// Freeing memory
-	list_deepdestroy(list, destroy_int);
+													
+	list_isequal(list, list2); 							// Testing function call
+	result = 1;
+													
+	list_deepdestroy(list, destroy_int); 				// Freeing memory
 	free(array);
 	return result;
-}
+}													
 int test_list_hassameitems(int *array) {
+	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 	list_t *list2 = list_copy(list);
-
-	// Testing function call
-	list_hassameitems(list, list2);
-	
-	int result = 1;
-
-	// Freeing memory
-	list_deepdestroy(list, destroy_int);
+													
+	list_hassameitems(list, list2); 					// Testing function call
+	result = 1;
+													
+	list_deepdestroy(list, destroy_int); 				// Freeing memory
 	free(array);
 	return result;
-}
-// Initialize hashmap
+}													
+		// Initialize hashmap
 int test_list_activatehashmap(int *array) {
+	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
-
-	// Testing function call
-	list_activatehashmap(list, int_to_str);
-
-	int result = 1;
-
-	// Freeing memory
-	list_deactivatehashmap(list);
+													
+	list_activatehashmap(list, int_to_str); 			// Testing function call
+	result = 1;
+													
+	list_deactivatehashmap(list); 						// Freeing memory
 	list_deepdestroy(list, destroy_int);
 	free(array);
 	return result;
-}
+}													
 int test_list_deactivatehashmap(int *array) {
+	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 	list_activatehashmap(list, int_to_str);
-
-	// Testing function call
-	list_deactivatehashmap(list);
-
-	int result = 1;
-
-	// Freeing memory
-	list_deepdestroy(list, destroy_int);
+													
+	list_deactivatehashmap(list); 						// Testing function call
+	result = 1;
+													
+	list_deepdestroy(list, destroy_int); 				// Freeing memory
 	free(array);
 	return result;
-}
+}													
 // Index functions
 int test_list_activateindex(int *array) {
+	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
-
-	// Testing function call
-	list_activateindex(list);
-
-	int result = 1;
-
-	// Freeing memory
-	list_deactivateindex(list);
+													
+	list_activateindex(list); 							// Testing function call
+	result = 1;
+													
+	list_deactivateindex(list); 						// Freeing memory
 	list_deepdestroy(list, destroy_int);
 	free(array);
 	return result;
-}
+}													
 int test_list_deactivateindex(int *array) {
+	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 	list_activateindex(list);
-
-	// Testing function call
-	list_deactivateindex(list);
-
-	int result = 1;
-
-	// Freeing memory
-	list_deepdestroy(list, destroy_int);
+													
+	list_deactivateindex(list); 						// Testing function call
+	result = 1;
+													
+	list_deepdestroy(list, destroy_int); 				// Freeing memory
 	free(array);
 	return result;
-}
+}													
 int test_list_getitembyidx(int *array) {
+	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 	list_activateindex(list);
-
-	// Testing function call
-	list_getitembyidx(list, 4);
-
-	int result = 1;
-
-	// Freeing memory
-	list_deactivateindex(list);
+													
+	list_getitembyidx(list, 4); 						// Testing function call
+	result = 1;
+													
+	list_deactivateindex(list); 						// Freeing memory
 	list_deepdestroy(list, destroy_int);
 	free(array);
 	return result;
-}
+}													
 int test_list_getidxbyitem(int *array) {
+	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 	list_activateindex(list);
-
-	// Testing function call
-	list_getidxbyitem(list, allocate_int(7));
-
-	int result = 1;
-
-	// Freeing memory
-	list_deactivateindex(list);
+													
+	list_getidxbyitem(list, allocate_int(7)); 			// Testing function call
+	result = 1;
+													
+	list_deactivateindex(list); 						// Freeing memory
 	list_deepdestroy(list, destroy_int);
 	free(array);
 	return result;
-}
+}													
 int test_list_replaceitembyidx(int *array) {
+	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 	list_activateindex(list);
-
-	// Testing function call
-	list_replaceitembyidx(list, allocate_int(3), 4);
-
-	int result = 1;
-
-	// Freeing memory
-	list_deactivateindex(list);
+													
+	list_replaceitembyidx(list, allocate_int(3), 4); 	// Testing function call
+	result = 1;
+													
+	list_deactivateindex(list); 						// Freeing memory
 	list_deepdestroy(list, destroy_int);
 	free(array);
 	return result;
-}
+}													
 int test_list_swapidxs(int *array) {
+	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 	list_activateindex(list);
-
-	// Testing function call
-	list_swapidxs(list, allocate_int(4), allocate_int(5));
-
-	int result = 1;
-
-	// Freeing memory
-	list_deactivateindex(list);
+	int *item_a = allocate_int(4);
+	int *item_b = allocate_int(5);
+													
+	list_swapidxs(list, item_a, item_b); 				// Testing function call
+	result = 1;
+													
+	list_deactivateindex(list); 						// Freeing memory
 	list_deepdestroy(list, destroy_int);
 	free(array);
 	return result;
-}
+}													
 // Priority functions
 int test_list_activatepriority(int *array) {
+	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
-
-	// Testing function call
-	list_activatepriority(list);
-
-	int result = 1;
-
-	// Freeing memory
-	list_deactivatepriority(list);
+													
+	list_activatepriority(list); 						// Testing function call
+	result = 1;
+													
+	list_deactivatepriority(list); 						// Freeing memory
 	list_deepdestroy(list, destroy_int);
 	free(array);
 	return result;
-}
+}													
 int test_list_deactivatepriority(int *array) {
+	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 	list_activatepriority(list);
-
-	// Testing function call
-	list_deactivatepriority(list);
-
-	int result = 1;
-
-	// Freeing memory
-	list_deepdestroy(list, destroy_int);
+													
+	list_deactivatepriority(list); 						// Testing function call
+	result = 1;
+													
+	list_deepdestroy(list, destroy_int); 				// Freeing memory
 	free(array);
 	return result;
-}
+}													
 int test_list_replaceprioritycmpfunc(int *array) {
+	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 	list_activatepriority(list);
-
-	// Testing function call
-	list_replaceprioritycmpfunc(list, compare_string);
-
-	int result = 1;
-
-	// Freeing memory
-	list_deactivatepriority(list);
+													
+	list_replaceprioritycmpfunc(list, compare_string);	// Testing function call
+	result = 1;
+													
+	list_deactivatepriority(list); 						// Freeing memory
 	list_deepdestroy(list, destroy_int);
 	free(array);
 	return result;
-}
+}													
 int test_list_poppriority(int *array) {
+	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 	list_activatepriority(list);
-
-	// Testing function call
-	list_poppriority(list);
-
-	int result = 1;
-
-	// Freeing memory
-	list_deactivatepriority(list);
+													
+	list_poppriority(list); 							// Testing function call
+	result = 1;
+													
+	list_deactivatepriority(list); 						// Freeing memory
 	list_deepdestroy(list, destroy_int);
 	free(array);
 	return result;
-}
+}													
 int test_list_getpriority(int *array) {
+	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 	list_activatepriority(list);
-
-	// Testing function call
-	list_getpriority(list);
-
-	int result = 1;
-
-	// Freeing memory
-	list_deactivatepriority(list);
+													
+	list_getpriority(list); 							// Testing function call
+	result = 1;
+													
+	list_deactivatepriority(list); 						// Freeing memory
 	list_deepdestroy(list, destroy_int);
 	free(array);
 	return result;
-}
+}													
