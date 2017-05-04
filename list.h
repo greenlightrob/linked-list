@@ -95,8 +95,8 @@ void list_removeprev(list_iter_t *iter, rmfunc_t rmfunc);
  */
 
 // Specialized list manipulations
-void list_rolldown(list_t *list);
-void list_rollup(list_t *list);
+void list_rolldown(list_t *list);											// Bug
+void list_rollup(list_t *list);												// Bug
 void list_reverse(list_t *list);
 void list_randomize(list_t *list);
 void list_swapitems(list_t *list, void *itema, void *itemb);

@@ -162,6 +162,7 @@ void list_deepdestroy(list_t *list, rmfunc_t rmfunc) {
 	if (list->haspriority) list_deactivatepriority(list);
 	if (list->hasindex) list_deactivateindex(list);
 	if (list->size > 0) rmfunc(list_poplast(list));
+	while (list->size > 0) rmfunc(list_poplast(list));
 	free(list);
 	list = NULL;
 	return;
@@ -529,6 +530,7 @@ void list_removeprev(list_iter_t *iter, rmfunc_t rmfunc) {
 void list_rolldown(list_t *list) {
 	if (list == NULL) list_err("list_rolldown: list = NULL");
 	if (list->size < 2) return;
+	return;
 	node_t *tmptail = list->tail;
 
 	list->tail = list->tail->prev;
@@ -541,6 +543,7 @@ void list_rolldown(list_t *list) {
 void list_rollup(list_t *list) {
 	if (list == NULL) list_err("list_rollup: list = NULL");
 	if (list->size < 2) return;
+	return;
 	node_t *tmphead = list->head;
 	
 	list->head = list->head->next;
