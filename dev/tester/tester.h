@@ -83,7 +83,8 @@ int test_list_removeprev(int *array);
 /*																								
  * Specialized list functions																								
  */																								
-																								
+
+// Specialized list manipulations
 int test_list_rolldown(int *array);																								
 int test_list_rollup(int *array);																								
 int test_list_reverse(int *array);																								
@@ -93,7 +94,7 @@ int test_list_isequal(int *array);
 int test_list_hassameitems(int *array);																								
 																								
 // Initialize hashmap																								
-int test_list_activatehashmap(int *array);				// Initialize hashmap																								
+int test_list_activatehashmap(int *array);																											
 int test_list_deactivatehashmap(int *array);																								
 
 // Index functions
