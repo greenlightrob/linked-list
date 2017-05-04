@@ -67,8 +67,8 @@ int main() {
 	print_status("list_next", test_list_next(dup_arr(arr, size)));
 	print_status("list_prev", test_list_prev(dup_arr(arr, size)));
 
-	print_status("list_addafter", test_list_addafter(dup_arr(arr, size)));
 	print_status("list_addbefore", test_list_addbefore(dup_arr(arr, size)));
+	print_status("list_addafter", test_list_addafter(dup_arr(arr, size)));
 
 	print_status("list_getitem", test_list_getitem(dup_arr(arr, size)));
 	print_status("list_getbefore", test_list_getbefore(dup_arr(arr, size)));
@@ -140,7 +140,7 @@ int test_list_destroy(int *array) {
 	list_t *copy = list_copy(list);				
 													
 	list_destroy(list);									// Testing funcion call						
-	result = (!list) ? 1 : 0;					
+	result = (!list_size(list)) ? 1 : 0;					
 													
 	list_deepdestroy(copy, destroy_int);				// Freeing memory							
 	free(array);								
@@ -152,7 +152,7 @@ int test_list_deepdestroy(int *array) {
 	list_inputarr(list, array);
 													
 	list_deepdestroy(list, destroy_int); 				// Testing funcion call
-	result = (!list) ? 1 : 0;
+	result = (!list_size(list)) ? 1 : 0;
 													
 	free(array); 										// Freeing memory
 	return result;
@@ -243,8 +243,10 @@ int test_list_replaceitem(int *array) {
 	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
+	void *item_a = allocate_int(1);
+	void *item_b = allocate_int(4);
 													
-	list_replaceitem(list, &array[1], &array[4]); 		// Testing funcion call
+	list_replaceitem(list, item_a, item_b); 			// Testing funcion call
 	result = 1;
 													
 	list_deepdestroy(list, destroy_int); 				// Freeing memory
@@ -293,9 +295,10 @@ int test_list_removeitem(int *array) {
 	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
+	int *item = allocate_int(2);
 													
-	list_removeitem(list, &array[2], destroy_int); 		// Testing funcion call
-	result = (!list_contains(list, allocate_int(2))) ? 0 : 1;
+	list_removeitem(list, item, destroy_int); 			// Testing funcion call
+	result = (list_contains(list, item)) ? 0 : 1;
 													
 	list_deepdestroy(list, destroy_int); 				// Freeing memory
 	free(array);
@@ -305,9 +308,10 @@ int test_list_removefirst(int *array) {
 	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
+	int *item = allocate_int(0);
 													
 	list_removefirst(list, destroy_int); 				// Testing funcion call
-	result = (!list_contains(list, allocate_int(0))) ? 0 : 1;
+	result = (list_contains(list, item)) ? 0 : 1;
 													
 	list_deepdestroy(list, destroy_int); 				// Freeing memory
 	free(array);
@@ -317,9 +321,10 @@ int test_list_removelast(int *array) {
 	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
+	int *item = allocate_int(9);
 													
 	list_removelast(list, destroy_int); 				// Testing funcion call
-	result = (!list_contains(list, allocate_int(9))) ? 0 : 1;
+	result = (list_contains(list, item)) ? 0 : 1;
 													
 	list_deepdestroy(list, destroy_int); 				// Freeing memory
 	free(array);
@@ -524,7 +529,7 @@ int test_list_prev(int *array) {
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 	list_iter_t *iter= list_createiter(list);
-	
+	list_movenext(iter);
 	list_movenext(iter);
 													
 	list_prev(iter); 									// Testing function call
@@ -543,7 +548,8 @@ int test_list_addbefore(int *array) {
 	list_movenext(iter);
 														
 	list_addbefore(iter, allocate_int(11)); 			// Testing function call
-	result = (*(int *)list_getfirst(list) != 11) ? 0 : 1;
+	list_moveprev(iter);
+	result = (*(int *)list_prev(iter) != 11) ? 0 : 1;
 														
 	list_deepdestroy(list, destroy_int); 				// Freeing memory
 	free(array);
@@ -555,7 +561,7 @@ int test_list_addafter(int *array) {
 	list_inputarr(list, array);
 	list_iter_t *iter= list_createiter(list);
 														
-	list_addafter(iter, &array[4]); 					// Testing function call
+	list_addafter(iter, allocate_int(4)); 				// Testing function call
 	result = 1;
 														
 	list_deepdestroy(list, destroy_int); 				// Freeing memory
@@ -609,7 +615,7 @@ int test_list_replaceiteritem(int *array) {
 	list_inputarr(list, array);
 	list_iter_t *iter= list_createiter(list);
 													
-	list_replaceiteritem(iter, &array[5]); 				// Testing function call
+	list_replaceiteritem(iter, allocate_int(5)); 		// Testing function call
 	result = 1;
 													
 	list_deepdestroy(list, destroy_int); 				// Freeing memory
@@ -680,9 +686,9 @@ int test_list_rolldown(int *array) {
 	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
-													
+	
 	list_rolldown(list); 								// Testing function call
-	result = 1;
+	result = 0;
 													
 	list_deepdestroy(list, destroy_int); 				// Freeing memory
 	free(array);
@@ -694,7 +700,7 @@ int test_list_rollup(int *array) {
 	list_inputarr(list, array);
 													
 	list_rollup(list); 									// Testing function call
-	result = 1;
+	result = 0;
 													
 	list_deepdestroy(list, destroy_int); 				// Freeing memory
 	free(array);
