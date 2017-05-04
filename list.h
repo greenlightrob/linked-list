@@ -94,6 +94,7 @@ void list_removeprev(list_iter_t *iter, rmfunc_t rmfunc);
  * Specialized list functions
  */
 
+// Specialized list manipulations
 void list_rolldown(list_t *list);
 void list_rollup(list_t *list);
 void list_reverse(list_t *list);
@@ -103,7 +104,7 @@ int list_isequal(list_t *lista, list_t *listb);
 int list_hassameitems(list_t *lista, list_t *listb);
 
 // Initialize hashmap
-void list_activatehashmap(list_t *list, strfunc_t strfunc);											// Initialize hashmap
+void list_activatehashmap(list_t *list, strfunc_t strfunc);
 void list_deactivatehashmap(list_t *list);
 
 // Index functions
