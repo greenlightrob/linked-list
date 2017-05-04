@@ -10,7 +10,7 @@ coming
 ## Development:
 
 ```c
-testing
+\e[38;2;255;0;0mtesting\e[m
 ```
 
 ### Todos
