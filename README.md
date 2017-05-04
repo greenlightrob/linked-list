@@ -25,7 +25,7 @@ check if list is sorted when list contains
 | `list_replacecmpfunc`			| Yes			| Unknown	| Changes must also happen in hashmap|
 | `list_size`					| Yes			| Unknown	||
 | `list_contains`				| Yes			| Unknown	||
-| `list_sort`					| ```diff -No ```| Unknown	||
+| `list_sort`					| ```diff+No ```| Unknown	||
 | `list_copy`					| Yes			| Unknown	| Changes must also happen in hashmap|
 | `list_deepcopy`				| Yes			| Unknown	| Changes must also happen in hashmap|
 | `list_addfirst`				| Yes			| Unknown	| Changes must also happen in hashmap|
