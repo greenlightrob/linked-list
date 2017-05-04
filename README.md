@@ -9,8 +9,8 @@ coming
 
 ## Development:
 
-```Bash
-\e[38;2;255;0;0mtesting\e[m
+```diff
++testing
 ```
 
 ### Todos
