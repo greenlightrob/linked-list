@@ -137,13 +137,11 @@ int test_list_destroy(int *array) {
 	int result = 1;										// Init	
 	list_t *list = list_create(compare_int);	
 	list_inputarr(list, array);					
-	list_t *copy = list_copy(list);				
 													
 	list_destroy(list);									// Testing funcion call						
 	result = (!list_size(list)) ? 1 : 0;					
 													
-	list_destroy(copy);				// Freeing memory							
-	free(array);								
+	free(array);										// Freeing memory							
 	return result;								
 }													
 int test_list_deepdestroy(int *array) {			
@@ -161,14 +159,15 @@ int test_list_copy(int *array) {
 	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
-													
+
 	list_t *copylist = list_copy(list); 				// Testing funcion call
 	while(list_size(list) > 2 && list_size(copylist) > 2) {
-		if (result == 1) result = (compare_int(list_popfirst(list), list_popfirst(copylist)) != 0) ? 0 : 1;
+		int cmpres = compare_int(list_popfirst(list), list_popfirst(copylist));
+		if (cmpres != 0) result = 0;
 	}
 	list_destroy(list);
 	int val = *(int *)list_poplast(copylist);
-	if (result == 1) result = (val == 9) ? 0 : 1;
+	if (val != 9) result = 0;
 													
 	list_deepdestroy(copylist, destroy_int); 			// Freeing memory
 	free(array);
@@ -181,12 +180,13 @@ int test_list_deepcopy(int *array) {
 													
 	copy = list_deepcopy(list, copy_int); 				// Testing funcion call
 	while(list_size(list) > 2 && list_size(copy) > 2) {
-		if (result == 1 )result =  (compare_int(list_popfirst(list), list_popfirst(copy)) != 0) ? 0 : 1;
+		int cmpres = compare_int(list_popfirst(list), list_popfirst(copy));
+		if (cmpres != 0) result = 0;
 	}
 													
 	list_deepdestroy(list, destroy_int);
 	int val = *(int *)list_poplast(copy);
-	if (result == 1) result = (val != 9) ? 0 : 1; 
+	if (val != 9) result = 0;
 													
 	list_deepdestroy(copy, destroy_int); 				// Freeing memory
 	free(array);
