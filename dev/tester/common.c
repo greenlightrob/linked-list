@@ -39,6 +39,11 @@ unsigned char *int_to_str(void *a) {
 	str = (unsigned char*) strdup("abc");
 	return str;
 }
+void *allocate_var(void *var, char *type) {
+	if (!compare_string(type, "char")) return allocate_string((char *)var);
+	if (!compare_string(type, "int")) return allocate_int(*(int *)var);
+	else return NULL;
+}
 int *allocate_int(int input) {
 	int *output = malloc(sizeof(int));
 	*output = input;
