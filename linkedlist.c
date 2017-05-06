@@ -529,26 +529,14 @@ void list_removeprev(list_iter_t *iter, rmfunc_t rmfunc) {
 void list_rolldown(list_t *list) {
 	if (list == NULL) list_err("list_rolldown: list = NULL");
 	if (list->size < 2) return;
-	return;
-	node_t *tmptail = list->tail;
-
-	list->tail = list->tail->prev;
-	list->tail->next = NULL;
-
-	tmptail->next = list->head;
-	tmptail->prev = NULL;
-	list->head = tmptail;
+	void *tail = list_poplast(list);
+	list_addfirst(list, tail);
 }
 void list_rollup(list_t *list) {
 	if (list == NULL) list_err("list_rollup: list = NULL");
 	if (list->size < 2) return;
-	return;
-	node_t *tmphead = list->head;
-	
-	list->head = list->head->next;
-	tmphead->prev = list->tail;
-	tmphead->next = NULL;
-	list->tail = tmphead;
+	void *head = list_popfirst(list);
+	list_addlast(list, head);
 }
 void list_reverse(list_t *list) {
 	if (list == NULL) list_err("list_addfirst: list = NULL");
