@@ -685,9 +685,8 @@ int test_list_rolldown(int *array) {
 	int result = 1;										// Init
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
-	
 	list_rolldown(list); 								// Testing function call
-	result = 0;
+	result = 1;
 													
 	list_deepdestroy(list, destroy_int); 				// Freeing memory
 	free(array);
@@ -699,7 +698,7 @@ int test_list_rollup(int *array) {
 	list_inputarr(list, array);
 													
 	list_rollup(list); 									// Testing function call
-	result = 0;
+	result = 1;
 													
 	list_deepdestroy(list, destroy_int); 				// Freeing memory
 	free(array);
