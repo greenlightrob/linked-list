@@ -744,10 +744,10 @@ int test_list_randomize(int *array) {
 }													
 int test_list_swapitems(int *array) {
 	int result = 1;										// Init
-	list_t *list = list_create(compare_int);
-	list_inputarr(list, array);
 	int *item_a = allocate_int(1);
 	int *item_b = allocate_int(9);
+	list_t *list = list_create(compare_int);
+	list_inputarr(list, array);
 													
 	list_swapitems(list, item_a, item_b); 				// Testing function call
 	result = 1;
@@ -838,11 +838,12 @@ int test_list_deactivateindex(int *array) {
 }													
 int test_list_getitembyidx(int *array) {
 	int result = 1;										// Init
+	int idx = 4;
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 	list_activateindex(list);
 													
-	list_getitembyidx(list, 4); 						// Testing function call
+	list_getitembyidx(list, idx); 						// Testing function call
 	result = 1;
 													
 	list_deactivateindex(list); 						// Freeing memory
@@ -852,11 +853,12 @@ int test_list_getitembyidx(int *array) {
 }													
 int test_list_getidxbyitem(int *array) {
 	int result = 1;										// Init
+	int item = 7;
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 	list_activateindex(list);
 													
-	list_getidxbyitem(list, allocate_int(7)); 			// Testing function call
+	list_getidxbyitem(list, &item);						// Testing function call
 	result = 1;
 													
 	list_deactivateindex(list); 						// Freeing memory
@@ -866,11 +868,13 @@ int test_list_getidxbyitem(int *array) {
 }													
 int test_list_replaceitembyidx(int *array) {
 	int result = 1;										// Init
+	int *item = allocate_int(3);
+	int idx = 4;
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 	list_activateindex(list);
 													
-	list_replaceitembyidx(list, allocate_int(3), 4); 	// Testing function call
+	list_replaceitembyidx(list, item, idx);			 	// Testing function call
 	result = 1;
 													
 	list_deactivateindex(list); 						// Freeing memory
@@ -880,11 +884,11 @@ int test_list_replaceitembyidx(int *array) {
 }													
 int test_list_swapidxs(int *array) {
 	int result = 1;										// Init
+	int *item_a = allocate_int(4);
+	int *item_b = allocate_int(5);
 	list_t *list = list_create(compare_int);
 	list_inputarr(list, array);
 	list_activateindex(list);
-	int *item_a = allocate_int(4);
-	int *item_b = allocate_int(5);
 													
 	list_swapidxs(list, item_a, item_b); 				// Testing function call
 	result = 1;
