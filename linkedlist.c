@@ -530,7 +530,6 @@ void list_rolldown(list_t *list) {
 	if (list == NULL) list_err("list_rolldown: list = NULL");
 	if (list->size < 2) return;
 	list_addfirst(list, list_poplast(list));
-
 }
 void list_rollup(list_t *list) {
 	if (list == NULL) list_err("list_rollup: list = NULL");

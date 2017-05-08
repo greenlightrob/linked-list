@@ -60,8 +60,8 @@ check if list is sorted when list contains
 | `list_getbefore`				| Yes			| Unknown	||
 | `list_getafter`				| Yes			| Unknown	||
 | `list_replaceiteritem`		| Yes			| Unknown	| Changes must also happen in hashmap|
-| `list_rolldown`				| Yes			| Unknown	|Bug|
-| `list_rollup`					| Yes			| Unknown	|Bug|
+| `list_rolldown`				| Yes			| Unknown	||
+| `list_rollup`					| Yes			| Unknown	||
 | `list_reverse`				| Yes			| Unknown	||
 | `list_swapitems`				| Yes			| Unknown	||
 | `list_randomize`				| Yes			| Unknown	||
